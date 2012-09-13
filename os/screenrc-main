@@ -1,0 +1,3 @@
+# Copy this to $HOME/.screenrc.
+
+source dr/os/screenrc
