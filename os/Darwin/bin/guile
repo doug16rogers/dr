@@ -1,0 +1,3 @@
+#!/bin/bash
+
+LTDL_LIBRARY_PATH=/opt/local/lib /opt/local/bin/guile

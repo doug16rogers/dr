@@ -1,0 +1,3 @@
+# Use ^R rather than the annoying default, ^A.
+escape ^RR
+startup_message off
