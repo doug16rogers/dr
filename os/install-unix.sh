@@ -33,3 +33,8 @@ run cp ~/dr/os/screenrc-main ~/.screenrc
 
 run mv ~/.emacs "$save"
 run cp ~/dr/os/emacs-main.el ~/.emacs
+
+if [ "`uname -s`" == "Darwin" ]; then
+    run cp ~/.profile "$save"
+    run "cat ~/dr/os/profile-main.sh >> ~/.profile"
+fi
