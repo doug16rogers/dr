@@ -5,7 +5,7 @@
 
 export dr_SITE="site"
 
-dr_file="$HOME/dr/os/bashrc"
+dr_file="$HOME/dr/os/bashrc.sh"
 
 if [ -x "$dr_file" ]; then
     source "$dr_file"
