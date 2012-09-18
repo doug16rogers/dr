@@ -1,9 +1,13 @@
 
-# Pick a site name below then replace the main .bashrc (.bash_profile,
-# .profile, whichever) with this. Do the OS-specific and site-specific
-# mods in the other bashrc files.
+# Pick a site name in ~/.dr/site, or use install-unix.sh.
 
-export dr_SITE="site"
+export DR_SITE=none
+
+site_file="$HOME/.dr/site"
+
+if [ -f "$site_file" ]; then
+    export DR_SITE="`cat \"$site_file\"`"
+fi
 
 dr_file="$HOME/dr/os/bashrc.sh"
 
