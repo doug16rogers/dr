@@ -1,16 +1,9 @@
 
-# Pick a site name in ~/.dr/site, or use install-unix.sh.
+# Launch my bashrc.
 
-export DR_SITE=none
+dr_bashrc="$HOME/dr/os/bashrc.sh"
 
-site_file="$HOME/.dr/site"
-
-if [ -f "$site_file" ]; then
-    export DR_SITE="`cat \"$site_file\"`"
+if [ -x "$dr_bashrc" ]; then
+    source "$dr_bashrc"
 fi
 
-dr_file="$HOME/dr/os/bashrc.sh"
-
-if [ -x "$dr_file" ]; then
-    source "$dr_file"
-fi

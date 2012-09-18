@@ -20,31 +20,5 @@ svnstn()
 
 # alias grepwd="cat ~/dr/trunk/amusements/itasoftware-puzzles/word.lst | grep "
 
-export DR_OS_DIR="$HOME/dr/os"
-
-source "$DR_OS_DIR/bash-functions.sh"
-source "$DR_OS_DIR/bash-prompt.sh"
-
-# Now load the OS-specific bashrc.
-
-export DR_OS=`uname -s`
-
-os_bashrc="$DR_OS_DIR/$DR_OS/bashrc.sh"
-
-if [ -x "$os_bashrc" ]; then
-    source "$os_bashrc"
-fi
-
-# Now load the site-specific bashrc.
-
-site_file="$HOME/.dr/site"
-
-if [ -f "$site_file" ]; then
-    export DR_SITE="`cat \"$site_file\"`"
-fi
-
-site_bashrc="$HOME/dr/os/bashrc-${DR_SITE}.sh"
-
-if [ -f "$site_bashrc" ]; then
-    source "$site_bashrc"
-fi
+source "$HOME/dr/os/unix/bash_functions.sh"
+source "$HOME/dr/os/unix/prompt.sh"
