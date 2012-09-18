@@ -2,7 +2,7 @@
 
 # Sets the prompt for Unix systems.
 
-source "$HOME/dr/os/unix/colors.sh"
+source "$DR_OS_DIR/bash-colors.sh"
 
 color_user="$color_yellow"
 color_host="$color_red"
