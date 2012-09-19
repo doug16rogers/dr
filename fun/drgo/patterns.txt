@@ -1,0 +1,403 @@
+#
+# All patterns are given from White's view.
+# 
+# Here's another.
+#
+# asd asdf 
+# after -L to server
+# There's a newer version at Doug's house.
+#
+# The patterns have the form:
+#   <rows> <columns>
+#   <rows-of-pattern...>
+#   <weights-for-each-given-move>
+#
+# Weights should range from 0.0 (well, > 0.0) to 10.0, max.
+#
+# The characters in the pattern are:
+#   -    Empty
+#   E    Edge (off-board)
+#   e    Edge or empty
+#   B    Black stone
+#   b    Black stone or empty
+#   W    White stone
+#   w    White stone or empty
+#   x    Anything
+#   1-9  Possible good moves for White, weights to follow pattern
+#
+2 3
+W 1 -
+B - W
+6.0
+
+2 3
+W - W
+B 1 -
+6.0
+
+2 3
+x W B
+B 1 x
+6.0
+
+2 3
+W - W
+W 2 1
+5.5 5.0
+
+3 3
+w W w
+B 1 B
+x x -
+7.5
+
+3 3
+x B x
+W 1 W
+w b x
+8.0
+
+3 3
+w 1 w
+B W B
+x b x
+7.5
+
+3 3
+w B w
+W 1 W
+e e e
+9.0
+
+3 3
+- x x
+W B x
+- 1 W
+6.0
+
+4 4
+- - 2 -
+- W 1 -
+3 B B -
+- - - -
+6.0 5.0 4.5
+
+4 4
+w w x x
+x W B x
+x B 1 W
+x x w x
+6.0
+
+4 3
+x - 3
+x 2 1
+B W -
+b B W
+7.0 6.5 5.0
+
+4 4
+w w x x
+x W B x
+x B 1 x
+x x W w
+6.0
+
+4 4
+b B w w
+B W - -
+b 1 2 w
+x w w w
+6.0 4.5
+
+4 4
+b B w w
+B W - -
+W - 1 -
+w w - w
+7.0
+
+4 4
+b x x w
+B - 1 -
+- W - B
+w w w x
+4.0
+
+4 3
+E E E
+- - b
+- 1 B
+x W x
+5.0
+
+3 3
+E E E
+- 1 B
+w W b
+6.0
+
+4 3
+E E E
+- - -
+- 1 B
+x W b
+5.5
+
+4 3
+E E E
+- - w
+- 1 B
+x W x
+6.5
+
+3 4
+E E E E
+W - 1 w
+W - B x
+5.0
+
+4 4
+E E E E
+w W 1 B
+W - W B
+w w W x
+6.5
+
+5 4
+E E E E
+E - W W
+E W - W
+E 1 W x
+E B x x
+9.5
+
+4 4
+w w - -
+w w 1 w
+W W B -
+B B 2 -
+6.0 3.0
+
+4 4
+- - - -
+- 1 2 -
+x B W x
+x x W x
+5.0 4.5
+
+5 4
+x x w w
+B B W -
+B W 2 -
+W - 1 x
+W - x x
+6.0 4.5
+
+3 4
+- - - -
+- 1 2 -
+x B W w
+4.0 3.0
+
+3 4
+E E E E
+e - 1 -
+x B W B
+8.0
+
+4 5
+E E E E E
+- - B 1 w
+x B W w w
+x x w - w
+8.0
+
+4 5
+E E E E E
+- - - - -
+x W - 1 -
+x x W B x
+6.5
+
+3 3
+W W x
+W 1 W
+W W W
+-40.0
+
+3 4
+W W W x
+W 1 b W
+W W W W
+-40.0
+
+3 4
+x W W W
+W 1 b W
+W W W W
+-40.0
+
+3 3
+E E E
+W 1 W
+W W W
+-20.0
+
+3 4
+E E E E
+W 1 x W
+W W W W
+-20.0
+
+3 3
+E E E
+E 1 W
+E W W
+-20.0
+
+3 4
+E E E E
+E 1 x W
+E W W W
+-20.0
+
+3 4
+E E E E
+E x 1 W
+E W W W
+-20.0
+
+3 4
+w 1 W b
+x W - W
+x W W W
+7.0
+
+5 5
+E E E E E
+e - - - -
+e w 1 W B
+e w - B b
+e w w x x
+6.0
+
+5 5
+E E E E E
+e - 1 - -
+e 2 - W B
+e w W B b
+e w w x x
+8.0 7.0
+
+4 5
+E E E E E
+e - - - -
+e w 1 B W
+e x x W w
+7.0
+
+4 4
+E E E E
+- 1 - -
+W B W w
+w x w x
+7.0
+
+4 4
+E E E E
+- - - -
+W - 1 w
+W x B -
+7.5
+
+4 4
+E E E E
+- - - -
+W 1 - x
+x B b x
+6.0
+
+4 3
+E E E
+- - -
+- 1 -
+W - B
+6.5
+
+5 3
+E E E
+- 1 -
+B x B
+B x B
+x B b
+-7.0
+
+6 3
+E E E
+- 1 -
+B x B
+B x B
+B x B
+x B b
+-7.0
+
+3 4
+E E E E
+- 1 2 -
+B B B b
+-10.0 -8.0
+
+4 4
+E E E E
+w - - w
+W - 1 W
+x x B w
+6.5
+
+4 4
+E E E E
+- - 2 -
+B W 1 -
+b B W w
+6.5 6.5
+
+4 5
+w w - - -
+W - - - -
+W - - - 1
+w w - - -
+5.0
+
+4 4
+x x B x
+x W 3 -
+W - 2 1
+w - - -
+6.8 7.0 6.0
+
+4 3
+x B -
+W - -
+W - 1
+w - -
+6.0
+
+5 3
+E E E
+e - x
+e 1 B
+e - W
+e w w
+7.0
+
+4 3
+- W B
+- - W
+- 1 -
+x - -
+4.5
+
+#
+# END OF FILE!
+#
