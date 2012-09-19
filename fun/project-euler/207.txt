@@ -1,0 +1,15 @@
+$Id: 207.txt 43 2008-09-12 04:51:21Z rogers $
+
+Use x = 2^t to get the quadratic x^2 - x - k = 0. Solving for x yields
+2^t = (1 + (1 + 4k)^(1/2)) / 2. Need 4k+1 to be square for a valid partition.
+This happens when k = D*(D+1), D = 1, 2, 3 ...
+
+Then let n^2 = 4k+1, then t = log2((n+1)/2).  When t is an integer, this is a
+perfect partition, which happens when n - 1 is a power of 2. This means for
+any D, there are D valid partitions, and floor(log2(D-1)) perfect partitions.
+We want the value of k when the ratio D / floor(log2(D-1) exceeds 12345.
+
+A rough calculation shows that 65537 / 16 is too small but 262145 / 18 is too
+large, so the denominator must be 17 and D must be 17 * 12345 + 1, which is
+209866. Therefore k = 209866 * 209867 = 44,043,947,882.
+
