@@ -1,3 +1,11 @@
+
+# This file is LIVE if ~/.screenrc was copied from screenrc-main.
+
 # Use ^R rather than the annoying default, ^A.
-escape ^RR
+escape ^Rr
 startup_message off
+
+# For some reason these don't work:
+# bufferfile /home/drogers/tmp/screen-clipboard
+# bind b eval "writebuf" "exec sh -c 'pbcopy < /home/drogers/tmp/screen-clipboard'"
+
