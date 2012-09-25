@@ -14,3 +14,6 @@
 # Backup files
 *~
 *.BAK
+
+# Mac OS X desktop file.
+.DS_Store
