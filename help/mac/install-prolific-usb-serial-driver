@@ -1,0 +1,12 @@
+
+http://xbsd.nl/2011/07/pl2303-serial-usb-on-osx-lion.html
+
+cd /System/Library/Extensions/
+sudo tar -xf ~/Documents/osx-pl2303.kext.tgz
+sudo kextload ./osx-pl2303.kext
+
+sudo kextcache --system-cache
+
+
+screen /dev/tty.PL2303-00001014 9600
+
