@@ -9,7 +9,7 @@ local function read_csv_list(filename)
    return list
 end   -- read_csv_list()
 
-local words = read_csv_list('problems/project/words.txt')
+local words = read_csv_list('projecteuler.net/project/words.txt')
 
 -- Build some lookup tables:
 

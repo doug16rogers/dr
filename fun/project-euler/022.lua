@@ -1,6 +1,6 @@
 -- Project Euler Problem 22.
 
-local f = assert(io.open('names.txt', 'rt'))
+local f = assert(io.open('projecteuler.net/project/names.txt', 'rt'))
 local names = loadstring('return { ' .. f:read('*a') .. '}')()
 f:close()
 table.sort(names)
