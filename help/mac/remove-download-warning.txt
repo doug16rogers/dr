@@ -1,0 +1,18 @@
+
+To remove the "Application was downloaded from the Internet" warning, use the following:
+
+sudo xattr -d com.apple.quarantine <application-file>
+
+Often <application-file> will be /Applications/Emacs.app, or something like that.
+To remove the quarantine attribute on all the files in ~/Downloads, use:
+
+sudo xattr -d -r com.apple.quarantine ~/Downloads
+
+This will have to repeated when a new file is downloaded, assuming it is being run
+from there. It's also possible to stop the warning system entirely (not recommended)
+using:
+
+defaults write com.apple.LaunchServices LSQuarantine -bool NO
+
+followed by a reboot.
+

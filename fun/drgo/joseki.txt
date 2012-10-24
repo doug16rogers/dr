@@ -1,0 +1,152 @@
+#
+# All patterns are given from White's view.
+# The patterns have the form:
+#   <rows> <columns>
+#   <rows-of-pattern...>
+#   <weights-for-each-given-move>
+#
+# Weights should range from 0.0 (well, > 0.0) to 10.0, max.
+#
+# The characters in the pattern are:
+#   -    Empty
+#   E    Edge (off-board)
+#   e    Edge or empty
+#   B    Black stone
+#   b    Black stone or empty
+#   W    White stone
+#   w    White stone or empty
+#   x    Anything
+#   1-9  Possible good moves for White, weights to follow pattern
+#
+9 6
+E E E E E E
+E - - - - -
+E - - - - -
+E - - 3 - -
+E - - - B -
+E - - 4 - -
+E - - 1 2 -
+E - - 5 6 -
+E - - - - -
+6.0 4.0 4.0 4.0 5.0 4.0
+
+8 6
+E E E E E E
+E - - - - -
+E - - 3 - -
+E - - - B -
+E - - 4 - -
+E - - 1 2 -
+E - - 5 6 -
+E - - - - -
+5.0 3.0 3.0 3.0 4.0 3.0
+
+6 6
+E E E E E E
+E - - - - -
+E - - - - -
+E - - 3 1 -
+E - - - 2 -
+E - - - - -
+8.5 8.5 7.5
+
+9 6
+E E E E E E
+E - - - - -
+E - - x x x
+E - 2 - x x
+E - 3 - B -
+E - - - - -
+E - - W B -
+E - - - 1 -
+E - - w w -
+8.0 4.0 5.0
+
+9 6
+E E E E E E
+E - - - - -
+E - - - x x
+E - - 4 - x
+E - 3 - W -
+E - - 5 - -
+E - - B 1 -
+E - - w 2 -
+E - - - - -
+6.5 6.0 5.5 4.0 6.0
+
+8 6
+E E E E E E
+E - - - x x
+E - - - - x
+E - 5 - W -
+E - 4 3 - -
+E - - B 1 6
+E - - w 2 -
+E - - - - -
+6.5 6.0 6.5 6.0 5.0 4.0
+
+8 8
+E E E E E E E E
+E - - - - - - -
+E - - - - - - -
+E - - - B - 3 -
+E - - 7 - - 4 -
+E - - 1 2 - - -
+E - - 5 6 - x x
+E - - - - - x x
+7.0 5.5 5.0 4.5 5.0 4.5 3.5
+
+8 8
+E E E E E E E E
+E - - - - - - x
+E - 6 - - - - x
+E - - - W - 1 -
+E - - B - - 2 -
+E - - 4 3 - - -
+E - - - 5 - x x
+E x x x - - x x
+7.5 7.5 7.0 5.0 6.5 6.5
+
+8 8
+E E E E E E E E
+E - - - - - - x
+E - - - 3 - - x
+E - - 2 1 B - -
+E - - - W - 4 -
+E - - 6 - - 5 -
+E - - - 7 - x x
+E x x x - - x x
+7.5 7.0 6.0 5.0 5.5 5.0 6.0
+
+7 6
+E E E E E E  
+E - - - - -  
+E - - - - -  
+E - 4 - W -  
+E - 3 - - -  
+E - - 1 2 -  
+E x - - - x  
+7.5 7.5 6.0 6.0
+
+8 7
+e e e e e e e
+E - - b b - -
+E - - b b - -
+E - w - 2 5 -
+E - w W - 1 -
+E - w - 3 4 -
+E - - b b - -
+E - - b b - -
+6.5 4.5 4.5 5.0 5.0
+
+8 7
+e e e e e e e  
+E - - b b b -  
+E - - b b b -  
+E - w w - 2 4  
+E - w w W - 1  
+E - w w - 3 5  
+E - - b b b -  
+E - - b b b -  
+6.5 5.0 5.0 4.5 4.5
+
