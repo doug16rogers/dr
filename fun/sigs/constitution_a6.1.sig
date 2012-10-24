@@ -1,0 +1,3 @@
+No person shall... be subject to the same offence
+to be twice put in jeopardy of life or limb...
+[Amendment 5, U.S. Constitution]

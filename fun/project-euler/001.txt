@@ -1,0 +1,4 @@
+Solved this by hand and a calculator using repeating pattern every 15.
+So 66 repetitions. Multiply 33 * (975*7 + 2*60) to get all numbers up
+to 990, since 60 is the sum of the multiples of 3 or 5 up to 15. Then
+add the last straggles, 993, 995, 996, and 999 to get 233168.

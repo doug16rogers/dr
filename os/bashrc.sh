@@ -23,13 +23,14 @@ svnstn()
 export DR_OS_DIR="$HOME/dr/os"
 
 source "$DR_OS_DIR/bash-functions.sh"
+source "$DR_OS_DIR/bash-aliases.sh"
 source "$DR_OS_DIR/bash-prompt.sh"
 
 # Now load the OS-specific bashrc.
 
-export DR_OS=`uname -s`
+export DR_OS_NAME=`uname -s`
 
-os_bashrc="$DR_OS_DIR/$DR_OS/bashrc.sh"
+os_bashrc="$DR_OS_DIR/$DR_OS_NAME/bashrc.sh"
 
 if [ -x "$os_bashrc" ]; then
     source "$os_bashrc"

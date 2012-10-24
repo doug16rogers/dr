@@ -1,0 +1,11 @@
+TARGET = xhexclock
+
+INCLUDES = -I/usr/X11R6/include
+CFLAGS = -Wall -Werror -g $(INCLUDES)
+CC = gcc
+
+OBJS = hexon.o daysec.o
+LIBS = -L/usr/X11R6/lib -lm -lXm -lXt -lXp -lXext -lX11
+
+$(TARGET): $(TARGET).o $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
