@@ -61,7 +61,7 @@
 ; (load "~/armasm-mode.el")
 (setq auto-mode-alist (cons '("\\.S"                   . armasm-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(spec\\|body\\).a$" . ada-mode)    auto-mode-alist))
-;(setq auto-mode-alist (cons '("\\.lua"                 . lua-mode)    auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.lua"                 . lua-mode)    auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(4th\\|forth\\)$"   . forth-mode)  auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.max"                 . maxima-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.sch\\(\\|eme\\)$"     . scheme-mode) auto-mode-alist))
@@ -69,7 +69,7 @@
 (setq load-path (cons  "/usr/local/share/maxima/5.9.0/emacs" load-path ))
 (autoload 'maxima      "maxima"      "Running Maxima interactively" t)
 (autoload 'maxima-mode "maxima"      "Maxima editing mode" t)
-;(autoload 'lua-mode    "/home/rogers/opt/share/emacs/site-lisp/lua-mode.el" "Lua editing mode" t)
+(autoload 'lua-mode    "~/dr/os/lua-mode.el" "Lua editing mode" t)
 
 ; (setq load-path (cons  "/usr/local/share/lua/emacs" load-path ))
 ;;; (autoload 'lua "lua" "Running Lua interactively" t)
@@ -813,8 +813,13 @@
 (global-set-key "\C-cdd"   'dr-insert-date-time)
 (global-set-key "\C-cdf"   'dr-insert-commented-function-name)
 (global-set-key "\C-cdh"   'dr-insert-header-guard)
+(global-set-key "\C-cdO"   'overwrite-mode)
 (global-set-key "\C-cdp"   'dr-insert-cplusplus-guard)
 (global-set-key "\C-cdu"   'dr-undo-camel-case)
+(global-set-key "\C-cdG"   'dr-compile-gb-capture)
+(global-set-key "\C-cdx"   'compile)
+(global-set-key "\C-cdX"   'dr-recompile-watch)   ; Takes over find-file-read-only short-cut.
+(global-set-key "\C-cdy"   'dr-insert-doxygen-function-header)
 (global-set-key "\C-ce"    'dr-insert-c-enum-typedef)
 (global-set-key "\C-cf"    'describe-function)
 (global-set-key "\C-cg"    'goto-line)
@@ -832,9 +837,6 @@
 (global-set-key "\C-c\C-r" 'dr-revert-buffer-now)
 ; With C-x:
 (global-set-key "\C-x\C-m" 'eval-region)
-(global-set-key "\C-xc"    'compile)
-(global-set-key "\C-xC"    'dr-recompile-watch)   ; Takes over find-file-read-only short-cut.
-(global-set-key "\C-xg"    'dr-compile-gb-capture)
 
 (fset 'hex-char-convert
    [?\C-d ?\C-d ?\C-  ?\C-f ?\C-w ?\C-f ?\C-y])
@@ -851,14 +853,14 @@
           '(lambda ()
              (c-set-style dr-c-style)
              (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
-             (setq c-basic-offset 2)))
+             (setq c-basic-offset 4)))
 
 (add-hook 'c++-mode-hook
           '(lambda ()
              (c-set-style dr-c-style)
              (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
              (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
-             (setq c-basic-offset 2)))
+             (setq c-basic-offset 4)))
 
 ; If line-move-visual is non-nil, then moving up and down lines will follow
 ; the display lines, not the buffer lines. This only matters when lines are
@@ -879,8 +881,8 @@
 
 (custom-set-variables
  '(auto-save-interval 1000)
- '(c-basic-offset 2)
- '(sh-indentation 2)
+ '(c-basic-offset 4)
+ '(sh-indentation 4)
  '(c-label-minimum-indentation (quote -))
  '(indent-tabs-mode nil)
  '(fill-column 77)
