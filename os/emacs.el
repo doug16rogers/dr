@@ -8,60 +8,21 @@
 
 (setq inhibit-splash-screen t)  ;; OMG that thing is annoying.
 
-;;;
-;;; If you need your own personal ~/.emacs
-;;; please make a copy of this file
-;;; an placein your changes and/or extension.
-;;;
-;;; Copyright (c) 1997-2002 SuSE Gmbh Nuernberg, Germany.
-;;;
-;;; Author: Werner Fink, <feedback@suse.de> 1997,98,99,2002
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Test of Emacs derivates
-;;; -----------------------
-(if (string-match "XEmacs\\|Lucid" emacs-version)
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;; XEmacs
-  ;;; ------
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  (progn
-     (if (file-readable-p "~/.xemacs/init.el")
-        (load "~/.xemacs/init.el" nil t))
-  )
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;; GNU-Emacs
-  ;;; ---------
-  ;;; load ~/.gnu-emacs or, if not exists /etc/skel/.gnu-emacs
-  ;;; For a description and the settings see /etc/skel/.gnu-emacs
-  ;;;   ... for your private ~/.gnu-emacs your are on your one.
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  (if (file-readable-p "~/.gnu-emacs")
-      (load "~/.gnu-emacs" nil t)
-    (if (file-readable-p "/etc/skel/.gnu-emacs")
-	(load "/etc/skel/.gnu-emacs" nil t)))
-
-  ;; Custum Settings
-  ;; ===============
-  ;; To avoid any trouble with the customization system of GNU emacs
-  ;; we set the default file ~/.gnu-emacs-custom
-  (setq custom-file "~/.gnu-emacs-custom")
-  (load "~/.gnu-emacs-custom" t t)
-;;;
-)
-;;;
-
 (setq font-lock-maximum-decoration t)
-(global-font-lock-mode 1 t)
+;(global-font-lock-mode 1 t)
+(global-font-lock-mode t)
 ;; "blue" works well with a white background, but I'm using black above, so the
 ;; default ("yellow") has a better look:
 ; (set-face-foreground 'font-lock-variable-name-face "blue")
 (column-number-mode t)
 
 ; (load "~/armasm-mode.el")
-(setq auto-mode-alist (cons '("\\.S"                   . armasm-mode) auto-mode-alist))
+; (load "~/dr/os/smart-tabs-mode.el")
+; (setq auto-mode-alist (cons '("\\.S"                   . armasm-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(spec\\|body\\).a$" . ada-mode)    auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.lua"                 . lua-mode)    auto-mode-alist))
+
+
+;(setq auto-mode-alist (cons '("\\.lua"                 . lua-mode)    auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(4th\\|forth\\)$"   . forth-mode)  auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.max"                 . maxima-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.sch\\(\\|eme\\)$"     . scheme-mode) auto-mode-alist))
@@ -69,7 +30,7 @@
 (setq load-path (cons  "/usr/local/share/maxima/5.9.0/emacs" load-path ))
 (autoload 'maxima      "maxima"      "Running Maxima interactively" t)
 (autoload 'maxima-mode "maxima"      "Maxima editing mode" t)
-(autoload 'lua-mode    "~/dr/os/lua-mode.el" "Lua editing mode" t)
+;(autoload 'lua-mode    "/home/rogers/opt/share/emacs/site-lisp/lua-mode.el" "Lua editing mode" t)
 
 ; (setq load-path (cons  "/usr/local/share/lua/emacs" load-path ))
 ;;; (autoload 'lua "lua" "Running Lua interactively" t)
@@ -318,8 +279,8 @@
   (insert (format-time-string "%Y" (current-time)))
   (insert " Mandiant Corporation. All rights reserved.")
   (insert (if comment-end comment-end comment-start))
-  (insert "\n")
-  (dr-insert-comment-line "$Id$"))
+  (insert "\n"))
+;  (dr-insert-comment-line "$Id$"))
 
 ;------------------------------------------------------------------------------
 (defun dr-insert-company-copyright ()
@@ -623,6 +584,14 @@
       (insert "\n")
       (indent-according-to-mode))))
 
+;------------------------------------------------------------------------------
+(defun dr-mark-line ()
+  "Inserts a droc markup indicator at the end of the current line."
+  (interactive)
+  (end-of-line)
+  (insert "//@")
+)
+
 ; -----------------------------------------------------------------------------
 ; This is a hack until I can figure out how to gleen syntax information from
 ; the font-lock system. Using (c-guess-basic-syntax) appears to report only
@@ -805,22 +774,21 @@
 (global-set-key "\C-c-"    'dr-insert-horizontal-rule)
 (global-set-key "\C-c4"    'dr-set-tab-width-4)
 (global-set-key "\C-c8"    'dr-set-tab-width-8)
-(global-set-key "\C-cb"    'dr-toggle-bell)
-(global-set-key "\C-cB"    'dr-insert-buffer-name-base)
-(global-set-key "\C-cc"    'dr-insert-company-copyright)
-(global-set-key "\C-cC"    'c++-mode)
-(global-set-key "\C-cr"    'dr-insert-rogers-copyright)
+(global-set-key "\C-cdb"   'dr-insert-buffer-name-base)
+;(global-set-key "\C-cdB"   'dr-toggle-bell)
+(global-set-key "\C-cdc"   'dr-insert-company-copyright)
+(global-set-key "\C-cdC"   'c++-mode)
 (global-set-key "\C-cdd"   'dr-insert-date-time)
+(global-set-key "\C-cde"   'dr-insert-c-enum-typedef)
 (global-set-key "\C-cdf"   'dr-insert-commented-function-name)
 (global-set-key "\C-cdh"   'dr-insert-header-guard)
-(global-set-key "\C-cdO"   'overwrite-mode)
+(global-set-key "\C-cdm"   'dr-mark-line)
 (global-set-key "\C-cdp"   'dr-insert-cplusplus-guard)
+(global-set-key "\C-cdr"   'dr-insert-rogers-copyright)
 (global-set-key "\C-cdu"   'dr-undo-camel-case)
-(global-set-key "\C-cdG"   'dr-compile-gb-capture)
 (global-set-key "\C-cdx"   'compile)
-(global-set-key "\C-cdX"   'dr-recompile-watch)   ; Takes over find-file-read-only short-cut.
+(global-set-key "\C-cdX"   'dr-recompile-watch)
 (global-set-key "\C-cdy"   'dr-insert-doxygen-function-header)
-(global-set-key "\C-ce"    'dr-insert-c-enum-typedef)
 (global-set-key "\C-cf"    'describe-function)
 (global-set-key "\C-cg"    'goto-line)
 (global-set-key "\C-cl"    'dr-toggle-line-move-visual)
@@ -831,12 +799,16 @@
 (global-set-key "\C-cq"    'dr-quote-c-line)
 (global-set-key "\C-ct"    'dr-insert-c-struct-typedef)
 (global-set-key "\C-cw"    'write-region)
-(global-set-key "\C-cx"    'dr-insert-doxygen-function-header)
 (global-set-key "\C-c\C-c" 'comment-region)
 (global-set-key "\C-c\C-i" 'dr-set-tab-width-for-buffer)
 (global-set-key "\C-c\C-r" 'dr-revert-buffer-now)
 ; With C-x:
 (global-set-key "\C-x\C-m" 'eval-region)
+; (global-set-key "\C-xc"    'compile)
+; (global-set-key "\C-xC"    'dr-recompile-watch)   ; Takes over find-file-read-only short-cut.
+(global-set-key "\C-xg"    'dr-compile-gb-capture)
+(global-set-key '[M-up]     (lambda () (interactive) (scroll-up 1)))
+(global-set-key '[M-down]   (lambda () (interactive) (scroll-down 1)))
 
 (fset 'hex-char-convert
    [?\C-d ?\C-d ?\C-  ?\C-f ?\C-w ?\C-f ?\C-y])
@@ -849,18 +821,47 @@
 ; (defconst dr-c-style "ellemtel")
 (defconst dr-c-style "linux")
 
-(add-hook 'c-mode-hook
-          '(lambda ()
-             (c-set-style dr-c-style)
-             (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
-             (setq c-basic-offset 4)))
+(defun add-unix-c-hooks ()
+  "Adds C/C++ mode hooks for Unix environments."
+  (add-hook 'c-mode-hook
+            '(lambda ()
+               (c-set-style dr-c-style)
+               (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
+               (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
+               (setq indent-tabs-mode nil)       ; In Unix I never want to use tabs.
+               (setq c-basic-offset 2)))
+  (add-hook 'c++-mode-hook
+            '(lambda ()
+               (c-set-style dr-c-style)
+               (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
+               (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
+               (setq indent-tabs-mode nil)       ; In Unix I never want to use tabs.
+               (setq c-basic-offset 2))))
 
-(add-hook 'c++-mode-hook
-          '(lambda ()
-             (c-set-style dr-c-style)
-             (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
-             (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
-             (setq c-basic-offset 4)))
+(defun add-windows-c-hooks ()
+  "Adds C/C++ mode hooks for Unix environments."
+  (add-hook 'c-mode-hook
+            '(lambda ()
+               (c-set-style dr-c-style)
+               (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
+               (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
+               (setq indent-tabs-mode nil)       ; At Mandiant, drivers (C) do not use tabs.
+               (setq tab-width 4)
+               (setq c-basic-offset 4)))
+
+  (add-hook 'c++-mode-hook
+            '(lambda ()
+               (c-set-style dr-c-style)
+               (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
+               (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
+;               (setq indent-tabs-mode t)         ; At Mandiant it appears to be the norm in Windows...
+               (setq indent-tabs-mode nil)       ; ... not necessarily true.
+               (setq tab-width 4)
+               (setq c-basic-offset 4))))
+
+(if (eq 'windows-nt system-type)
+    (add-windows-c-hooks)
+  (add-unix-c-hooks))
 
 ; If line-move-visual is non-nil, then moving up and down lines will follow
 ; the display lines, not the buffer lines. This only matters when lines are
@@ -881,14 +882,18 @@
 
 (custom-set-variables
  '(auto-save-interval 1000)
- '(c-basic-offset 4)
- '(sh-indentation 4)
+ '(c-basic-offset 2)
+ '(sh-indentation 2)
  '(c-label-minimum-indentation (quote -))
- '(indent-tabs-mode nil)
+ '(indent-tabs-mode nil)     ; In Unix I never want to use tabs.
+;; '(indent-tabs-mode t)         ; At Mandiant it appears to be the norm in Windows.
  '(fill-column 77)
- '(hide-ifdef-read-only 1))
+ '(hide-ifdef-read-only 1)
+ '(python-indent 4))
 
 (prefer-coding-system 'utf-8)
+
+(customize-set-variable 'whitespace-style '(trailing face tabs tab-mark))
 
 ; Taken from "~/.gnu-emacs-custom":
 
@@ -906,5 +911,5 @@
 (add-to-list 'default-frame-alist (cons 'width  120))
 (add-to-list 'default-frame-alist (cons 'height  40))
 (set-face-foreground 'font-lock-comment-face "red")
-(custom-set-faces
-'(default ((t (:inherit nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 58 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
+; (custom-set-faces
+; '(default ((t (:inherit nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 58 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
