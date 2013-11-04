@@ -5,26 +5,18 @@ args = { ... }
 
 TABSTOP_INCREMENT = 4
 PROGRAM_COMMENT = "//"
-MAX_COMMENT_WIDTH = 30
+MAX_COMMENT_WIDTH = 24
+HEADER_LINE_TEXT_LEN = 100
+
+local printf = function(...) print(string.format(...)) end
+local max    = function(a, b) return (a > b) and a or b end
+local min    = function(a, b) return (a < b) and a or b end
 
 files = {}
 max_filename_len = 0
-max_line_len = 0
+max_line_number_len = 0
+max_line_text_len = 0
 max_comment_len = 0
-
-local function printf(...)
-   local s = string.format(...)
-   print(s)
-   return s
-end   -- printf()
-
-local function max(a, b)
-   if a > b then
-      return a
-   end
-
-   return b
-end   -- max()
 
 -- Replace tabs with the appropriate number of spaces.
 -- Make this a string method.
@@ -62,22 +54,29 @@ end   -- string:basename()
 
 local function handle_file(filename)
    local line_info = {}
-   local f = assert(io.popen(string.format('grep "%s" "%s"', PROGRAM_COMMENT .. "@", filename)))
+   local f = assert(io.popen(string.format('grep -n "%s" "%s"', PROGRAM_COMMENT .. "@", filename)))
 
    for line in f:lines() do
-      local untab = line:untabify(TABSTOP_INCREMENT)
+      local line_number, untab = line:match("^([%d]+):(.*)$")
+      line_number = line_number:trim()
+      untab = untab:untabify(TABSTOP_INCREMENT)
       local comment = untab:match(PROGRAM_COMMENT .. "@{([^}]*)}")
       comment = comment or untab:match(PROGRAM_COMMENT .. "@(.*)$") or ""
       comment = comment:trim()
       -- printf("comment='%s' for '%s'", tostring(comment), untab)
       -- Allow (and remove) "//@{...}", "//@{" and "//@" as markings.
-      local codeline = untab:gsub(PROGRAM_COMMENT .. "@{[^}]*}", "")
-      codeline = codeline:gsub(PROGRAM_COMMENT .. "@{", "")
-      codeline = codeline:gsub(PROGRAM_COMMENT .. "@.*$",  "")
+      local line_text = untab:gsub(PROGRAM_COMMENT .. "@{[^}]*}", "")
+      line_text = line_text:gsub(PROGRAM_COMMENT .. "@{", "")
+      line_text = line_text:gsub(PROGRAM_COMMENT .. "@.*$",  "")
 
+      max_line_number_len = max(max_line_number_len, #line_number)
       max_comment_len = max(max_comment_len, #comment)
-      max_line_len    = max(max_line_len, #codeline)
-      line_info[#line_info+1] = { line = codeline, comment = comment }
+      max_line_text_len = max(max_line_text_len, #line_text)
+      line_info[#line_info+1] = {
+         line_number = line_number,  -- Note: This is a string.
+         line_text = line_text,
+         comment = comment,
+      }
    end
 
    f:close()
@@ -94,30 +93,44 @@ for _, fn in ipairs(args) do
    handle_file(fn)
 end
 
-local print_comment = false
-local fmt = string.format("%%%us|%%s", max_filename_len)
+local rep = string.rep
 
-if max_comment_len > 0 then
-   print_comment = true
-   local comment_len = max_comment_len
-   if comment_len > MAX_COMMENT_WIDTH then comment_len = MAX_COMMENT_WIDTH end
-   fmt = string.format("%%%us|%%-%us|%%s", max_filename_len, comment_len)
-end
+local function print_filename(filename, max_comment, max_number)
+   if max_comment == 0 then
+      printf("+%s+%s", rep('=', max_number), rep('=', HEADER_LINE_TEXT_LEN))
+      printf("|%s|%s", rep('#', max_number), filename)
+      printf("+%s+%s", rep('-', max_number), rep('-', HEADER_LINE_TEXT_LEN))
+   else
+      max_comment = min(max_comment, MAX_COMMENT_WIDTH)
+      printf("+%s+%s+%s", rep('=', max_comment), rep('=', max_number), rep('=', HEADER_LINE_TEXT_LEN))
+      printf("|%s|%s|%s", rep(' ', max_comment), rep('#', max_number), filename)
+      printf("+%s+%s+%s", rep('-', max_comment), rep('-', max_number), rep('-', HEADER_LINE_TEXT_LEN))
+   end
+end   -- print_filename()
 
-for _, fn in ipairs(files) do
-   for _, info in ipairs(files[fn]) do
-      if print_comment then
-         local comment = info.comment
-         if #comment > MAX_COMMENT_WIDTH then comment = comment:sub(1, MAX_COMMENT_WIDTH) end
-         printf(fmt, fn, comment, info.line)
-         local comment_chars_printed = MAX_COMMENT_WIDTH
-         while comment_chars_printed < #info.comment do
-            printf(fmt, "", info.comment:sub(comment_chars_printed + 1, comment_chars_printed + MAX_COMMENT_WIDTH), "")
-            comment_chars_printed = comment_chars_printed + MAX_COMMENT_WIDTH
-         end
-      else
-         printf(fmt, fn, info.line)
+local function print_line_info(info, max_comment, max_number)
+   if max_comment == 0 then
+      local fmt = string.format('|%%%us|%%s', max_number)
+      printf(fmt, info.line_number, info.line_text)
+   else
+      max_comment = min(max_comment, MAX_COMMENT_WIDTH)
+      local fmt = string.format('|%%-%us|%%%us|%%s', max_comment, max_number)
+      local comment = info.comment:sub(1, max_comment)
+      printf(fmt, comment, info.line_number, info.line_text)
+
+      local len_printed = max_comment
+
+      while len_printed < #info.comment do
+         printf(fmt, info.comment:sub(len_printed + 1, len_printed + max_comment), "", "")
+         len_printed = len_printed + max_comment
       end
    end
-end
+end   -- print_line_info()
 
+for _, fn in ipairs(files) do
+   print_filename(fn, max_comment_len, max_line_number_len)
+
+   for _, info in ipairs(files[fn]) do
+      print_line_info(info, max_comment_len, max_line_number_len)
+   end
+end
