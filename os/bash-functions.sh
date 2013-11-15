@@ -148,7 +148,7 @@ elapsed()
 function grind()
 {
     if [ $# -lt 3 ]; then
-	echo "Usage: grind path search-pattern file-pattern..."
+	echo "Usage: [GRIND_GREP_OPTS=''] grind path search-pattern file-pattern..."
     else
         path="$1"
         search="\"$2\""
@@ -160,7 +160,11 @@ function grind()
             shift
         done
 
-        cmd="find \"$path\" \\( \\( -name .svn -prune \\) -o \\( $file \\) \\) -exec grep -n $search /dev/null {} \\;"
+        if [ -z "$GRIND_GREP_OPTS" ]; then
+            GRIND_GREP_OPTS="-n"
+        fi
+
+        cmd="find \"$path\" -type f \\( \\( -name .svn -prune \\) -o \\( $file \\) \\) -exec grep $GRIND_GREP_OPTS $search /dev/null {} \\;"
         echo $cmd
         eval $cmd
     fi
@@ -172,7 +176,7 @@ function grind()
 function grInd()
 {
     if [ $# -lt 3 ]; then
-	echo "Usage: grInd path search-pattern file-pattern..."
+	echo "Usage: [GRIND_GREP_OPTS=''] grInd path search-pattern file-pattern..."
     else
         path="$1"
         search="\"$2\""
@@ -184,7 +188,11 @@ function grInd()
             shift
         done
 
-        cmd="find \"$path\" \\( \\( -name .svn -prune \\) -o \\( $file \\) \\) -exec grep -i -n $search /dev/null {} \\;"
+        if [ -z "$GRIND_GREP_OPTS" ]; then
+            GRIND_GREP_OPTS="-n"
+        fi
+
+        cmd="find \"$path\" -type f \\( \\( -name .svn -prune \\) -o \\( $file \\) \\) -exec grep -i $GRIND_GREP_OPTS $search /dev/null {} \\;"
         echo $cmd
         eval $cmd
     fi
