@@ -1,15 +1,18 @@
 #!/bin/bash
 
-alias ddk="cd ~/mandiant/src/sfAgent/agentModuleSDKs/AuditModules/mktools"
-
-# Already in PATH from system.
-# export PATH="$PATH:/c/Program Files (x86)/Microsoft Visual Studio 9.0/VC/bin/amd64"
-
-emacs_bin_dir="/c/emacs/bin"
+# Python.
 python_bin_dir="/c/Python27"
+export PATH="$PATH:$python_bin_dir"
+
+# Emacs.
+emacs_bin_dir="/c/emacs/bin"
+
+if [ ! -d "$emacs_bin_dir" ]; then
+    emacs_bin_dir="/c/tools/emacs/bin"  # Changed my standard place for this.
+fi
 
 if [ -d "$emacs_bin_dir" ]; then
-    export PATH="$PATH:$emacs_bin_dir:$python_bin_dir"
+    export PATH="$PATH:$emacs_bin_dir"
     export EDITOR=emacs
 else
     export EDITOR=vi

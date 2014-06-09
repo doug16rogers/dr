@@ -5,15 +5,10 @@
 # alias ls="ls --color=auto "    # Doesn't work in MacOS.
 alias grepwd="cat $HOME/dr/fun/itasoftware-puzzles/word.lst | grep "
 
-alias glog="git log --name-status "
-alias gb="git branch -a "
-alias gc="git checkout "
-alias gd="git diff "
-alias gs="git status "
-
 # A lot of git aliases...
 alias glog='git log --name-status '  # Show files changed with each commit.
 alias gb='git branch -a '            # List all branches, including remotely tracked ones.
+alias gc="git checkout "
 alias gd='git diff '
 alias gs='git status '
 alias gf='git show --pretty="format:" --name-only '   # Show files for a commit.

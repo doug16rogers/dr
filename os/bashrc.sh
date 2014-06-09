@@ -36,6 +36,14 @@ if [ -x "$os_bashrc" ]; then
     source "$os_bashrc"
 fi
 
+# Also try bashrc-OS.sh.
+
+os_bashrc2="$DR_OS_DIR/bashrc-${DR_OS_NAME}.sh"
+
+if [ -x "$os_bashrc2" ]; then
+    source "$os_bashrc2"
+fi
+
 # Now load the site-specific bashrc.
 
 site_file="$HOME/.dr/site"

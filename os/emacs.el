@@ -873,18 +873,18 @@
 
 (custom-set-variables
  '(auto-save-interval 1000)
- '(c-basic-offset 2)
- '(sh-indentation 2)
+ '(c-basic-offset 4)
+ '(sh-indentation 4)
  '(c-label-minimum-indentation (quote -))
- '(indent-tabs-mode nil)     ; In Unix I never want to use tabs.
-;; '(indent-tabs-mode t)         ; At Mandiant it appears to be the norm in Windows.
+ '(indent-tabs-mode nil)     ; In Unix I never want to use tabs. Use t (not nil) for tabs.
  '(fill-column 77)
  '(hide-ifdef-read-only 1)
  '(python-indent 4))
 
 (prefer-coding-system 'utf-8)
 
-(customize-set-variable 'whitespace-style '(trailing face tabs tab-mark))
+(customize-set-variable 'whitespace-line-column 120)
+(customize-set-variable 'whitespace-style '(trailing lines-tail face tabs tab-mark))
 
 ; Taken from "~/.gnu-emacs-custom":
 
