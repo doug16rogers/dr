@@ -16,10 +16,11 @@
 ; (set-face-foreground 'font-lock-variable-name-face "blue")
 (column-number-mode t)
 
-(load "~/dr/os/google-c-style.el")
-(load "~/dr/os/mandiant-c-style.el")
-; (load "~/armasm-mode.el")
-; (load "~/dr/os/smart-tabs-mode.el")
+(dr-load "google-c-style.el")
+(dr-load "mandiant-c-style.el")
+; (dr-load "armasm-mode.el")
+; (dr-load "smart-tabs-mode.el")
+
 ; (setq auto-mode-alist (cons '("\\.S"                   . armasm-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(spec\\|body\\).a$" . ada-mode)    auto-mode-alist))
 
@@ -29,10 +30,10 @@
 (setq auto-mode-alist (cons '("\\.max"                 . maxima-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.sch\\(\\|eme\\)$"     . scheme-mode) auto-mode-alist))
 
-(setq load-path (cons  "/usr/local/share/maxima/5.9.0/emacs" load-path ))
-(autoload 'maxima      "maxima"      "Running Maxima interactively" t)
-(autoload 'maxima-mode "maxima"      "Maxima editing mode" t)
-;(autoload 'lua-mode    "/home/rogers/opt/share/emacs/site-lisp/lua-mode.el" "Lua editing mode" t)
+; (setq load-path (cons  "/usr/local/share/maxima/5.9.0/emacs" load-path ))
+; (autoload 'maxima      "maxima"      "Running Maxima interactively" t)
+; (autoload 'maxima-mode "maxima"      "Maxima editing mode" t)
+; (autoload 'lua-mode    "/home/rogers/opt/share/emacs/site-lisp/lua-mode.el" "Lua editing mode" t)
 
 ; (setq load-path (cons  "/usr/local/share/lua/emacs" load-path ))
 ;;; (autoload 'lua "lua" "Running Lua interactively" t)
@@ -207,34 +208,6 @@
       (dr-insert-space-comment-end)))
 
 ; -----------------------------------------------------------------------------
-(defun dr-insert-ici-copyright ()
-  "Inserts ICI's copyright notice."
-  (goto-char 1)
-  (insert "\n")
-  (forward-line -1)
-  (dr-insert-comment-start-space)
-  (insert "Copyright (c) ")
-  (insert (format-time-string "%Y" (current-time)))
-  (insert " Innovative Concepts, Inc. All rights reserved.")
-  (insert (if comment-end comment-end comment-start))
-  (insert "\n")
-  (dr-insert-comment-line "$Id$"))
-;; The old one:
-;; (defun dr-insert-ici-copyright ()
-;;   "Inserts ICI copyright at top of the current buffer based on buffer name."
-;;   (interactive)
-;;   (let ((name (downcase (file-name-nondirectory (buffer-file-name)))))
-;;     (let ((ext (if (file-name-extension name) (file-name-extension name) "")))
-;;       (let ((cext ext))
-;;         (cond
-;;          ((dr-simexp-match "<(c(|c|xx|pp)|h(|h|pp|xx))>" ext) (setq cext "c"))
-;;          ((dr-simexp-match "<(a|ad[abps])>" ext)              (setq cext "ada"))
-;;          ((dr-simexp-match "<(el|emacs)>" ext)                (setq cext "el"))
-;;          ((string-equal (file-name-sans-extension name) "makefile")
-;;           (setq cext "mak")))
-;;         (insert-file (concat "~/copyright/copyright." cext))))))
-
-; -----------------------------------------------------------------------------
 (defun dr-insert-echo360-copyright ()
   "Inserts Echo360's copyright notice."
   (goto-char 1)
@@ -334,8 +307,6 @@
   (insert (replace-regexp-in-string "[\n]" ""
                                     (format-time-string "%Y-%m-%d %a %H:%M:%S"
                                                         (current-time)))))
-;                                    (shell-command-to-string
-;                                     "date \"+%Y-%m-%d %a %H:%M:%S\""))))
 
 ;------------------------------------------------------------------------------
 (defun dr-insert-horizontal-rule ()
@@ -364,10 +335,20 @@
     (insert n)))
 
 ;------------------------------------------------------------------------------
+(defun dr-last-directory-part (full_dir)
+  "Looks for the last '/dir/' in full_dir (which must end with '/')."
+  (string-match "/\\([^/]*\\)/$" full_dir)
+  (let* ((s (match-string 1 full_dir))
+         (n (if s s "?")))
+    n))
+
+;------------------------------------------------------------------------------
 (defun dr-insert-header-guard ()
-  "Uses buffer name to create #ifndef header guard at point and file bottom."
+  "Uses buffer file name to create #ifndef header guard at point and file bottom."
   (interactive)
-  (let ((guard (concat "__" (dr-simexp-replace "[^0-9A-Za-z_]" "_" (buffer-name)) "__")))
+  (let* ((dir_name   (dr-last-directory-part (file-name-directory (buffer-file-name))))
+         (file_name  (concat dir_name "_" (buffer-name)))
+         (guard (upcase (concat (dr-simexp-replace "[^0-9A-Za-z_/\\]" "_" file_name) "_"))))
     (insert "#ifndef " guard "\n")
     (insert "#define " guard "\n")
     (insert "\n")
@@ -375,7 +356,13 @@
       (goto-char (point-max))
       (insert "\n")
       (insert "\n")
-      (insert "#endif\n"))))
+      (insert "#endif  ")
+      (insert "// ")
+      (insert guard))))
+      ;; Eh, we rarely need C comments for this, so hard-code C++.
+      ;; (dr-insert-comment-start-space)
+      ;; (insert guard)
+      ;; (insert (if comment-end comment-end "")))))
 
 ;------------------------------------------------------------------------------
 (defun dr-insert-cplusplus-guard ()
