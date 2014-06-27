@@ -81,6 +81,14 @@
   (while (string-match "[ \t]" (string (char-after)))
     (delete-char 1)))
 
+;------------------------------------------------------------------------------
+(defun dr-droc-mark-line ()
+  "Inserts a droc markup indicator at the end of the current line."
+  (interactive)
+  (end-of-line)
+  (insert "//@")
+)
+
 ; -----------------------------------------------------------------------------
 (defun dr-hex-upcase-region (start end)
   "Converts all C hexadecimal constants in region to be of the form 0xH[H..]."
@@ -196,6 +204,13 @@
     (if (re-search-backward "[^A-Za-z0-9_:]\\([A-Za-z0-9_:]+\\)" nil t 1)
         (match-string 1)
       "unfound_function")))
+
+; -----------------------------------------------------------------------------
+(defun dr-indent-all ()
+  "Runs indent-region on the entire buffer."
+  (interactive)
+  (indent-region (point-min) (point-max))
+)
 
 ; -----------------------------------------------------------------------------
 (defun dr-insert-commented-function-name ()
@@ -358,7 +373,8 @@
       (insert "\n")
       (insert "#endif  ")
       (insert "// ")
-      (insert guard))))
+      (insert guard)
+      (insert "\n"))))
       ;; Eh, we rarely need C comments for this, so hard-code C++.
       ;; (dr-insert-comment-start-space)
       ;; (insert guard)
@@ -576,11 +592,13 @@
       (indent-according-to-mode))))
 
 ;------------------------------------------------------------------------------
-(defun dr-mark-line ()
-  "Inserts a droc markup indicator at the end of the current line."
+(defun dr-mark-all ()
+  "Sets the mark at the top of the file then moves to the bottom."
   (interactive)
-  (end-of-line)
-  (insert "//@")
+  (beginning-of-buffer)
+  (mark)
+  (end-of-buffer)
+  (message "Set region to entire buffer.")
 )
 
 ; -----------------------------------------------------------------------------
@@ -618,6 +636,12 @@
   (compile "make -C ~/svn/gbfirmware/exes/capture_arm"))
 
 ;------------------------------------------------------------------------------
+(defun dr-untabify-entire-buffer ()
+  "Untabifies the current buffer."
+  (interactive)
+  (untabify (point-min) (point-max)))
+
+;------------------------------------------------------------------------------
 (defun dr-revert-buffer-now ()
   "Reverts the buffer immediately without confirming."
   (interactive)
@@ -631,23 +655,6 @@
   (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
         ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
         (t (self-insert-command (or arg 1)))))
-
-;------------------------------------------------------------------------------
-; My bell function doesn't do anything. No screen flash, no noise. I'm amazed
-; that there is no way to turn it off besides completely replacing the
-; function.
-(setq bell-on t)
-(setq orig-bell-function 'ring-bell-function)
-
-; The version below just turns off the bell entirely.
-(defun dr-toggling-bell-function () nil)
-
-; But this is the version I want so that I can turn it on/off. For some
-; reason it will always call orig-bell-function.
-; (defun dr-toggling-bell-function ()
-;   (if bell-on (orig-bell-function) nil))
-
-(setq ring-bell-function 'toggling-bell-function)
 
 ;------------------------------------------------------------------------------
 ; From http://stackoverflow.com/questions/530461/
@@ -675,11 +682,39 @@
     (redraw-display))
 
 ;------------------------------------------------------------------------------
-; Toggles the bell function.
+; My bell function doesn't do anything. No screen flash, no noise. I'm amazed
+; that there is no way to turn it off besides completely replacing the
+; function. The problem with this approach is that it does not then interrupt
+; failing macros.
+; See: http://www.emacswiki.org/emacs/AlarmBell
+
+;; (setq bell-on nil)      ; I hate that thing.
+
+;; ;; (if (not (boundp 'orig-bell-function))
+;; ;;     (setq orig-bell-function bell)
+;; ;;   nil)
+
+;; (defun dr-ring-bell-function (&optional do-not-terminate)
+;;   (if (not (equal bell-on nil)) (bell do-not-terminate) nil))
+
+;; (setq ring-bell-function (lambda () (dr-ring-bell-function)))
+;; ;; (message "bell-on is %S, ring-bell-function is %S" bell-on ring-bell-function)
+
+;; ;------------------------------------------------------------------------------
+;; ; Toggles the bell function.
+;; (defun dr-toggle-bell ()
+;;   "Toggles bell activity - visible or audible."
+;;   (interactive)
+;;   (setq ring-bell-function (if (boundp ring-bell-function)
+;;                                (if (not (equal ring-bell-function
+;;   (setq bell-on (not bell-on)))  ; (if bell-on nil t)))
+
+(setq visible-bell t)   ; This is actually tolerable in Windows.
+
 (defun dr-toggle-bell ()
-  "Toggles bell activity - visible or audible."
+  "Toggles the visual bell."
   (interactive)
-  (setq bell-on (not bell-on)))  ; (if bell-on nil t)))
+  (setq visible-bell (equal visible-bell nil)))
 
 ;------------------------------------------------------------------------------
 ;(defun dr-add-comma-to-word ()
@@ -765,23 +800,29 @@
 (global-set-key "\C-c-"     'dr-insert-horizontal-rule)
 (global-set-key "\C-c4"     'dr-set-tab-width-4)
 (global-set-key "\C-c8"     'dr-set-tab-width-8)
+(global-set-key "\C-cdA"    'dr-mark-all)
 (global-set-key "\C-cdb"    'dr-insert-buffer-name-base)
-;(global-set-key "\C-cdB"    'dr-toggle-bell)
+(global-set-key "\C-cdB"    'dr-toggle-bell)
 (global-set-key "\C-cdc"    'dr-insert-company-copyright)
 (global-set-key "\C-cdC"    'c++-mode)
+(global-set-key "\C-cd\C-C" 'mandiant-set-c-style)
 (global-set-key "\C-cdd"    'dr-insert-date-time)
 (global-set-key "\C-cde"    'dr-insert-c-enum-typedef)
 (global-set-key "\C-cdf"    'dr-insert-commented-function-name)
 (global-set-key "\C-cdh"    'dr-insert-header-guard)
+(global-set-key "\C-cdi"    'indent-region)
+(global-set-key "\C-cdI"    'dr-indent-all)
 (global-set-key "\C-cdm"    'dr-insert-doxygen-main-header)
 (global-set-key "\C-cdM"    'dr-insert-main-c-program)
-(global-set-key "\C-cd\C-m" 'dr-mark-line)
+(global-set-key "\C-cd\C-m" 'dr-droc-mark-line)
 (global-set-key "\C-cdp"    'dr-insert-cplusplus-guard)
 (global-set-key "\C-cdr"    'dr-insert-rogers-copyright)
 (global-set-key "\C-cdu"    'dr-undo-camel-case)
 (global-set-key "\C-cdx"    'compile)
 (global-set-key "\C-cdX"    'dr-recompile-watch)
 (global-set-key "\C-cdy"    'dr-insert-doxygen-function-header)
+(global-set-key "\C-cdw"    'whitespace-mode)
+(global-set-key "\C-cdW"    'whitespace-cleanup)
 (global-set-key "\C-cf"     'describe-function)
 (global-set-key "\C-cg"     'goto-line)
 (global-set-key "\C-cl"     'dr-toggle-line-move-visual)
@@ -823,7 +864,7 @@
                (setq c-basic-offset 2)))
   (add-hook 'c++-mode-hook
             '(lambda ()
-               (c-set-style dr-c-style)
+               (c-set-style mandiant-c-style)
                (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
                (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
                (setq indent-tabs-mode nil)       ; In Unix I never want to use tabs.
@@ -842,7 +883,7 @@
 
   (add-hook 'c++-mode-hook
             '(lambda ()
-               (c-set-style dr-c-style)
+               (c-set-style mandiant-c-style)
                (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
                (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
 ;               (setq indent-tabs-mode t)         ; At Mandiant it appears to be the norm in Windows...

@@ -20,7 +20,16 @@ svnstn()
 
 # alias grepwd="cat ~/dr/trunk/amusements/itasoftware-puzzles/word.lst | grep "
 
-export DR_OS_DIR="$HOME/dr/os"
+if [ -z "$HOME" ]; then
+    if [ ! -z "$USERNAME" ]; then
+        HOME="/c/Users/$USERNAME"
+    fi
+fi
+
+export DR_DIR="$HOME/dr"
+export PATH="$PATH:$DR_DIR/bin"
+
+export DR_OS_DIR="$DR_DIR/os"
 
 source "$DR_OS_DIR/bash-functions.sh"
 source "$DR_OS_DIR/bash-aliases.sh"

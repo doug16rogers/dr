@@ -172,23 +172,6 @@ gradd() {
 }
 
 # -----------------------------------------------------------------------------
-rmbldlib_usage() {
-    echo ""
-    echo "Usage: rmbldlib [options] <name>...     # In root of build area."
-    echo ""
-    echo "Deletes the following patterns (all combinations):"
-    echo "  libs/(Win32|x64)/(Debug|Release)_Static/(lib|include(|/mx))/(|lib)<name>*"
-    echo "  libs/(|mx/)(|lib)<name>*"
-    echo "Prints the name of any successfully removed item."
-    echo ""
-    echo "Options:"
-    echo ""
-    echo "  -h   Print this help."
-    echo "  -c   Run 'cmake -G <generator> -D CMAKE_BUILD_TYPE=<conf> <src>' from cache."
-    echo ""
-}
-
-# -----------------------------------------------------------------------------
 # grep-find
 # Note that this ignores .svn directories.
 function grind()
@@ -248,9 +231,7 @@ function grInd()
 # grep-find on C/C++ source files.
 function grindc()
 {
-    if [ $# -eq 0 ]; then
-        echo "Usage: grindc <regex> [starting-path]"
-    elif [ $# -gt 2 ]; then
+    if [ $# -lt 1 -o $# -gt 2 ]; then
         echo "Usage: grindc <regex> [starting-path]"
     else
         path="."
@@ -282,9 +263,7 @@ function grIndc()
 # grep-find on C/C++ header files.
 function grindh()
 {
-    if [ $# -eq 0 ]; then
-        echo "Usage: grindh <regex> [starting-path]"
-    elif [ $# -gt 2 ]; then
+    if [ $# -lt 1 -o $# -gt 2 ]; then
         echo "Usage: grindh <regex> [starting-path]"
     else
         path="."
@@ -300,9 +279,7 @@ function grindh()
 # grep-find on C/C++ header files, case insensitive.
 function grIndh()
 {
-    if [ $# -eq 0 ]; then
-        echo "Usage: grIndh <regex> [starting-path]"
-    elif [ $# -gt 2 ]; then
+    if [ $# -lt 1 -o $# -gt 2 ]; then
         echo "Usage: grIndh <regex> [starting-path]"
     else
         path="."
@@ -318,9 +295,7 @@ function grIndh()
 # grep-find on C/C++ source or header files.
 function grindch()
 {
-    if [ $# -eq 0 ]; then
-        echo "Usage: grindch <regex> [starting-path]"
-    elif [ $# -gt 2 ]; then
+    if [ $# -lt 1 -o $# -gt 2 ]; then
         echo "Usage: grindch <regex> [starting-path]"
     else
         path="."
@@ -336,9 +311,7 @@ function grindch()
 # grep-find on C/C++ source or header files, case insensitive.
 function grIndch()
 {
-    if [ $# -eq 0 ]; then
-        echo "Usage: grIndch <regex> [starting-path]"
-    elif [ $# -gt 2 ]; then
+    if [ $# -lt 1 -o $# -gt 2 ]; then
         echo "Usage: grIndch <regex> [starting-path]"
     else
         path="."
@@ -349,6 +322,38 @@ function grIndch()
         grInd "$path" "$1" "*.h" "*.h++" "*.hpp" "*.hh" "*.c" "*.c++" "*.cpp" "*.cc"
     fi
 }   # grIndch()
+
+# -----------------------------------------------------------------------------
+# grep-find on CMakeLists.txt.
+function grindcm()
+{
+    if [ $# -lt 1 -o $# -gt 2 ]; then
+        echo "Usage: grindcm <regex> [starting-path]"
+    else
+        path="."
+        if [ $# -gt 1 ]; then
+            path="$2"
+        fi
+
+        grind "$path" "$1" "CMakeLists.txt"
+    fi
+}   # grindcm()
+
+# -----------------------------------------------------------------------------
+# grep-find on CMakeLists.txt, case-insensitive.
+function grIndcm()
+{
+    if [ $# -lt 1 -o $# -gt 2 ]; then
+        echo "Usage: grIndcm <regex> [starting-path]"
+    else
+        path="."
+        if [ $# -gt 1 ]; then
+            path="$2"
+        fi
+
+        grInd "$path" "$1" "CMakeLists.txt"
+    fi
+}   # grIndcm()
 
 # -----------------------------------------------------------------------------
 # Removes from the current tree (or $1 if given), recursively, all files
@@ -364,6 +369,23 @@ clean()
 
     run "find \"$start_dir\" \( -name \"*~\" -o -name \"*.[od]\" -o -name \"*.bak\" \) | xargs -t rm -rf"
 }   # clean()
+
+# -----------------------------------------------------------------------------
+rmbldlib_usage() {
+    echo ""
+    echo "Usage: rmbldlib [options] <name>...     # In root of build area."
+    echo ""
+    echo "Deletes the following patterns (all combinations):"
+    echo "  libs/(Win32|x64)/(Debug|Release)_Static/(lib|include(|/mx))/(|lib)<name>*"
+    echo "  libs/(|mx/)(|lib)<name>*"
+    echo "Prints the name of any successfully removed item."
+    echo ""
+    echo "Options:"
+    echo ""
+    echo "  -h   Print this help."
+    echo "  -c   Run 'cmake -G <generator> -D CMAKE_BUILD_TYPE=<conf> <src>' from cache."
+    echo ""
+}
 
 # -----------------------------------------------------------------------------
 # Removes the build area for the given third party libraries.

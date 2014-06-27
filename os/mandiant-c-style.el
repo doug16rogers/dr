@@ -136,7 +136,7 @@ Suitable for inclusion in `c-offsets-alist'."
   (interactive)
   (make-local-variable 'c-tab-always-indent)
   (setq c-tab-always-indent t)
-  (c-add-style "Google" mandiant-c-style t))
+  (c-add-style "mGoogle" mandiant-c-style t))
 
 ;; (defun mandiant-make-newline-indent ()
 ;;   "Sets up preferred newline behavior. Not set by default. Meant
