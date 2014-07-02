@@ -377,7 +377,7 @@ rmbldlib_usage() {
     echo ""
     echo "Deletes the following patterns (all combinations):"
     echo "  libs/(Win32|x64)/(Debug|Release)_Static/(lib|include(|/mx))/(|lib)<name>*"
-    echo "  libs/(|mx/)(|lib)<name>*"
+    echo "  libs/(|mx/|sfSDK)(|lib)<name>*"
     echo "Prints the name of any successfully removed item."
     echo ""
     echo "Options:"
@@ -413,7 +413,7 @@ rmbldlib() {
                         rm -rf "$dir/$libname"*
                     fi
                 done
-                for dir in libs{,/mx}; do
+                for dir in sfSDK/libs libs{,/mx}; do
                     files=`ls "$dir/$libname"* 2> /dev/null`
                     if [ ! -z "$files" ]; then
                         echo "$dir/$libname*"
