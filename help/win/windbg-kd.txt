@@ -1,0 +1,49 @@
+
+windbg -pn magent.exe       Launch windbg and attach to process named magent.exe.
+windbg -c "command"         Launch windbg and run command.
+windbg -logo logfile.txt    Write all command output to logfile.txt.
+
+vertarget           Target OS version + CPU info. Good in crash dump.
+? @<reg>            Print (evaluate) value of register.
+? @$thread          Print pointer to current thread's _EPROCESS struct.
+? @$thread->Cid     Print current thread's Client_ID struct (UniqueProcess/Thread).
+!running -ti        List threads/stacks running on all processors.
+
+!process 0 0        List all processes running at time of dump.
+!process <cid> 1f   List everything about process with give CID.
+!process 0 1f <imagename>    List everything about process with imagename: !process 0 1f magent.exe
+.process /p /r <procaddr>    Switch into process context for process address and reload symbols for process.
+.thread <threadaddr>         Switch into thread context.
+~<n>s               Switch to processor <n>.
+.reload [/user]     Reload symbols [/user mode symbols only].
+r                   Show all registers.
+
+!sym noisy          Tell the symbol loader to be verbose in its reporting.
+.symopt+0x40        Tell the symbol loader to load anything.
+.reload /f /i <path-to-dll>=<image-base-address>
+.reload /unl <dll>  Reload the unloaded dll.
+
+dq @$thread @$thread+0x198
+                    Print quadwords from @$thread to @$thread+0x198 (including last)
+lm vm <module>      List image info - base address, etc., for DLLs or other modules.
+lm t n              List loaded drivers with memory range
+~#s                 Set context to thread #.
+kv                  List call stack with call arguments.
+~* kv               List call stack for all threads.
+kp, kP              List call stack with named arguments (P = on separate line).
+kn                  List call stack with each frame numbered.
+.frame <n>          Set context to call frame <n> as listed in kn.
+.f-   .f+           Move down/up call stack. Also: .frame @$frame+1
+dv [var*]           Display local variables and parameters [matching var name].
+ub                  Unassemble Backwards.
+uf <sym>            Unassemble Function: uf mrt_wfp!cache_foreach_slot
+.formats <value>    Converts value to a bunch of different representations (hex, decimal, etc.): .formats 08ac
+.writemem <filename> <memory> L?<size>    Write memory to file. The "L?" is 'to avoid built in size checks.'
+
+dt <type> [<addr>]  Dump type info for <type>; show values at <addr>:
+                      dt nt!_IMAGE_SECTION_HEADER fffff800`01000218
+
+Add 1000 hex to the fault offset to get the address that agrees with:
+
+   dumpbin /linenumbers /disasm mrt_tdi.sys > mrt_tdi.sys.lst
+
