@@ -4,6 +4,7 @@
 
 source "$DR_OS_DIR/bash-colors.sh"
 
+color_time="$color_gray"
 color_user="$color_yellow"
 color_host="$color_red"
 color_dir="$color_CYAN"
@@ -14,4 +15,4 @@ prompt_char="$"
 #     prompt_char="#"
 # fi
 
-export PS1="\n$color_user\u$color_reset@$color_host\h$color_reset $color_dir\w$color_reset\n$prompt_char "
+export PS1="\n$color_time\$(date -u +%y%m%d-%H%M%S) $color_user\u$color_reset@$color_host\h$color_reset $color_dir\w$color_reset\n$prompt_char "
