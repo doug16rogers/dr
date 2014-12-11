@@ -27,6 +27,7 @@ gbdr()          # Deletes remote branch: gbdr <remote-repo> <remote-branch>
     else
         run "git push --delete '$1' '$2'"       # Delete branch in external repo.
         run "git branch -d -r '$1/$2'"          # Delete tracking branch if it exists.
+        run "git branch -d '$2'"                # Delete local branch.
     fi
 }
 

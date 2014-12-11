@@ -11,9 +11,22 @@ color_dir="$color_CYAN"
 
 prompt_char="$"
 
-user="`whoami`"
+is_root="0"
 
-if [ $? -eq 0 -a "$user" == "root" ]; then
+if [ "${OS:0:7}" == "Windows" ]; then
+    # See http://stackoverflow.com/questions/4051883/batch-script-how-to-check-for-admin-rights/
+    if fsutil dirty query "$SYSTEMDRIVE" > /dev/null 2>&1 ; then
+        is_root="1"
+        cmd //c title Admin
+    fi
+else
+    user="`whoami`"
+    if [ $? -eq 0 -a "$user" == "root" ]; then
+        is_root="1"
+    fi
+fi
+
+if [ $is_root -eq 1 ]; then
     prompt_char="#"
 fi
 
