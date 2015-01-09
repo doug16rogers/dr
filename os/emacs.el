@@ -324,6 +324,24 @@
                                                         (current-time)))))
 
 ;------------------------------------------------------------------------------
+(defun dr-insert-horizontal-rule-prefixed (prefix-string middle-char suffix-string)
+  "Inserts an indented line of middle-chars after a prefix-string and followed by a suffix-string."
+  (interactive)
+  (beginning-of-line)
+  (insert "\n")
+  (previous-line 1)
+  (indent-according-to-mode)
+  (let ((prefix-string (if prefix-string prefix-string ""))
+        (suffix-string (if suffix-string suffix-string "")))
+    (insert prefix-string)
+    (insert-char middle-char (- 79 (current-column) (length suffix-string)))
+    (insert suffix-string
+    (beginning-of-line)
+    (next-line 1)
+    (indent-according-to-mode))))
+
+;------------------------------------------------------------------------------
+; TODO(dr): Use dr-insert-horizontal-rule-prefixed.
 (defun dr-insert-horizontal-rule ()
   "Inserts an indented line of dashes inside comment characters."
   (interactive)
@@ -339,6 +357,12 @@
   (beginning-of-line)
   (next-line 1)
   (indent-according-to-mode))
+
+;------------------------------------------------------------------------------
+(defun dr-insert-horizontal-rule-stars ()
+  "Inserts an indented line of asterisks inside comment characters."
+  (interactive)
+  (dr-insert-horizontal-rule-prefixed (dr-spaceless-comment-start) ?* (dr-spaceless-comment-end)))
 
 ;------------------------------------------------------------------------------
 (defun dr-insert-buffer-name-base ()
@@ -423,6 +447,26 @@
   (insert " */\n")
   (beginning-of-line)
   (previous-line 7)
+  (end-of-line)
+  (insert " ")
+)
+
+;------------------------------------------------------------------------------
+(defun dr-insert-agent-services-function-header ()
+  "Inserts a doxygen-like function header as used by the Agent Services team at start of line containing point."
+  (interactive)
+  (dr-insert-horizontal-rule-prefixed (dr-spaceless-comment-start) ?* "")
+  (insert " * @brief\n")
+  (insert " *\n")
+  (insert " * @param name - description\n")
+  (insert " * @param name - description\n")
+  (insert " *\n")
+  (insert " * @return an error code from this library or from the Windows API.\n")
+  (insert " * @retval ERROR_SUCCESS on success.\n")
+  (insert " * @retval a Windows error code on Windows API failure.\n")
+  (insert " */\n")
+  (beginning-of-line)
+  (previous-line 9)
   (end-of-line)
   (insert " ")
 )
@@ -798,6 +842,7 @@
 (global-set-key "\C-c>"     'dr-align-to-nonwhite-above)
 (global-set-key "\C-c%"     'dr-match-paren)    ; Like vi's use of '%', but with C-c first.
 (global-set-key "\C-c-"     'dr-insert-horizontal-rule)
+(global-set-key "\C-c*"     'dr-insert-horizontal-rule-stars)
 (global-set-key "\C-c4"     'dr-set-tab-width-4)
 (global-set-key "\C-c8"     'dr-set-tab-width-8)
 (global-set-key "\C-cdA"    'dr-mark-all)
@@ -821,6 +866,7 @@
 (global-set-key "\C-cdx"    'compile)
 (global-set-key "\C-cdX"    'dr-recompile-watch)
 (global-set-key "\C-cdy"    'dr-insert-doxygen-function-header)
+(global-set-key "\C-cdY"    'dr-insert-agent-services-function-header)
 (global-set-key "\C-cdw"    'whitespace-mode)
 (global-set-key "\C-cdW"    'whitespace-cleanup)
 (global-set-key "\C-cf"     'describe-function)
