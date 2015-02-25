@@ -324,6 +324,30 @@
                                                         (current-time)))))
 
 ;------------------------------------------------------------------------------
+(defun dr-insert-horizontal-rule-prefixed (prefix-string middle-char suffix-string)
+  "Inserts an indented line of middle-chars after a prefix-string and followed by a suffix-string."
+  (interactive)
+  (beginning-of-line)
+  (insert "\n")
+  (previous-line 1)
+  (indent-according-to-mode)
+  (let ((prefix (if prefix-string prefix-string ""))
+        (suffix (if suffix-string suffix-string "")))
+    (insert prefix)
+    (insert-char middle-char (- 79 (current-column) (length suffix)))
+    (insert suffix)
+    (beginning-of-line)
+    (next-line 1)
+    (indent-according-to-mode)))
+
+;------------------------------------------------------------------------------
+(defun dr-insert-horizontal-rule-stars ()
+  "Inserts an indented line of asterisks inside comment characters."
+  (interactive)
+  (dr-insert-horizontal-rule-prefixed (dr-spaceless-comment-start) ?* (dr-spaceless-comment-end)))
+
+;------------------------------------------------------------------------------
+; TODO(dr): Use dr-insert-horizontal-rule-prefixed.
 (defun dr-insert-horizontal-rule ()
   "Inserts an indented line of dashes inside comment characters."
   (interactive)
@@ -425,6 +449,37 @@
   (previous-line 7)
   (end-of-line)
   (insert " ")
+)
+
+;------------------------------------------------------------------------------
+(defun dr-insert-agent-services-function-header (&optional success_error_name)
+  "Inserts a doxygen-like function header as used by the Agent Services team at start of line containing point."
+  (interactive)
+  (dr-insert-horizontal-rule)
+  (insert "/**\n")
+;;  (dr-insert-horizontal-rule-prefixed (dr-spaceless-comment-start) ?* "")
+  (insert " * @brief\n")
+  (insert " *\n")
+  (insert " * @param name - description\n")
+  (insert " * @param name - description\n")
+  (insert " *\n")
+  (insert " * @return an error code from this library or from the Windows API.\n")
+  (insert " * @retval ")
+  (insert (if success_error_name success_error_name "ERROR_SUCCESS"))
+  (insert " on success.\n")
+  (insert " * @retval a Windows error code on Windows API failure.\n")
+  (insert " */\n")
+  (beginning-of-line)
+  (previous-line 9)
+  (end-of-line)
+  (insert " ")
+)
+
+;------------------------------------------------------------------------------
+(defun dr-insert-agent-services-driver-function-header ()
+  "Inserts a doxygen-like function header as used by the Agent Services team at start of line containing point."
+  (interactive)
+  (dr-insert-agent-services-function-header "STATUS_SUCCESS")
 )
 
 ;------------------------------------------------------------------------------
@@ -798,6 +853,7 @@
 (global-set-key "\C-c>"     'dr-align-to-nonwhite-above)
 (global-set-key "\C-c%"     'dr-match-paren)    ; Like vi's use of '%', but with C-c first.
 (global-set-key "\C-c-"     'dr-insert-horizontal-rule)
+(global-set-key "\C-c*"     'dr-insert-horizontal-rule-stars)
 (global-set-key "\C-c4"     'dr-set-tab-width-4)
 (global-set-key "\C-c8"     'dr-set-tab-width-8)
 (global-set-key "\C-cdA"    'dr-mark-all)
@@ -821,6 +877,8 @@
 (global-set-key "\C-cdx"    'compile)
 (global-set-key "\C-cdX"    'dr-recompile-watch)
 (global-set-key "\C-cdy"    'dr-insert-doxygen-function-header)
+(global-set-key "\C-cdY"    'dr-insert-agent-services-function-header)
+(global-set-key "\C-cd\C-y" 'dr-insert-agent-services-driver-function-header)
 (global-set-key "\C-cdw"    'whitespace-mode)
 (global-set-key "\C-cdW"    'whitespace-cleanup)
 (global-set-key "\C-cf"     'describe-function)
@@ -941,7 +999,16 @@
 ;(add-to-list 'default-frame-alist '(background-color . "black"))
 ;(add-to-list 'default-frame-alist '(foreground-color . "white"))  ; "wheat"))
 (add-to-list 'default-frame-alist (cons 'width  120))
-(add-to-list 'default-frame-alist (cons 'height  40))
+(add-to-list 'default-frame-alist (cons 'height  48))
 (set-face-foreground 'font-lock-comment-face "red")
-; (custom-set-faces
-; '(default ((t (:inherit nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 58 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
+
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 83 :width normal)))))
