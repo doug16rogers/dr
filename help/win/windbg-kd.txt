@@ -1,7 +1,8 @@
 
-windbg -pn magent.exe       Launch windbg and attach to process named magent.exe.
-windbg -c "command"         Launch windbg and run command.
-windbg -logo logfile.txt    Write all command output to logfile.txt.
+windbg -pn fun.exe              Launch windbg and attach to process fun.exe.
+windbg -c "command ; command"   Launch windbg and run commands.
+windbg -logo logfile.txt        Write all command output to logfile.txt.
+windbg -z dumpfile -y symbolpath -srcpath srcpath -c '!analyze -v ; .f+'
 
 vertarget           Target OS version + CPU info. Good in crash dump.
 ? @<reg>            Print (evaluate) value of register.
@@ -18,7 +19,10 @@ vertarget           Target OS version + CPU info. Good in crash dump.
 .reload [/user]     Reload symbols [/user mode symbols only].
 r                   Show all registers.
 
+.srcpath+ <path>    Append to existings source listing path.
 !sym noisy          Tell the symbol loader to be verbose in its reporting.
+.symfix             Automatically include msdl.microsoft.com/download/symbols.
+.sympath+ <path>    Append to existing symbol path.
 .symopt+0x40        Tell the symbol loader to load anything.
 .reload /f /i <path-to-dll>=<image-base-address>
 .reload /unl <dll>  Reload the unloaded dll.
