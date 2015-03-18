@@ -1,7 +1,7 @@
-(define (ltau) (load "tau.sch"))  ; Easy reloader.
+; (define (ltau) (load "tau.sch"))  ; Easy reloader.
 
-(load "gcf.sch")
-(load "to-hex.sch")
+(load "gcf.sch")        ; For generalized continued fraction code.
+(load "to-base.sch")    ; For converting to a particular base.
 
 ; -----------------------------------------------------------------------------
 ; At https://en.wikipedia.org/wiki/Generalized_continued_fraction this is
@@ -15,5 +15,6 @@
 (define (tau-rational n) (gcf-rational-func n 0 tau-ak-func tau-bk-func))
 (define (tau-float n) (exact->inexact (tau-rational n)))
 
-; This shows the first 324 hex digits of tau (guile < tau.sch):
+; This shows the first 324 hex digits of tau (guile < tau.sch), which are
+; correct:
 (to-hex (tau-rational 512) 1 324)
