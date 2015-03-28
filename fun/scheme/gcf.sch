@@ -27,5 +27,5 @@
 
 (define (gcf-rational-func n b0 ak-func bk-func)
   (let ((AB (gcf-func n b0 ak-func bk-func)))
-    (/ (car (car AB)) (car (cdr AB)))))
+    (/ (car (car AB)) (car (cdr AB)))))     ; Result is A[n] / B[n]
 

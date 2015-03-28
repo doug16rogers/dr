@@ -12,9 +12,15 @@
 (define (sqr n) (* n n))        ; Useful squaring function.
 (define (tau-ak-func i) (if (= i 1) 8 (sqr (- i 1))))  ; a[k] are squares.
 (define (tau-bk-func i) (- (* 2 i) 1))                 ; b[k] are odd numbers.
-(define (tau-rational n) (gcf-rational-func n 0 tau-ak-func tau-bk-func))
-(define (tau-float n) (exact->inexact (tau-rational n)))
+(define (tau-rational-by-gcf n) (gcf-rational-func n 0 tau-ak-func tau-bk-func))
+(define (tau-float-by-gcf n) (exact->inexact (tau-rational-by-gcf-iterations n)))
 
 ; This shows the first 324 hex digits of tau (guile < tau.sch), which are
 ; correct:
-(to-hex (tau-rational 512) 1 324)
+; (to-hex (tau-rational 512) 1 324)
+
+; -----------------------------------------------------------------------------
+; Calculate tau to N digits (in any base) by calculating tau-rational-by-gcf
+; until the first N digits do not change.
+;; (define (tau-rational-digits base digits)
+;;   )
