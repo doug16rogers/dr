@@ -181,11 +181,11 @@ function grind()
     else
         path="$1"
         search="\"$2\""
-        file="-name \"$3\""
+        file="-iname \"$3\""
 
         shift 3
         while [ $# -gt 0 ]; do
-            file="$file -o -name \"$1\""
+            file="$file -o -iname \"$1\""
             shift
         done
 
@@ -193,7 +193,7 @@ function grind()
             GRIND_GREP_OPTS="-n"
         fi
 
-        cmd="find \"$path\" -type f \\( \\( -name .svn -prune \\) -o \\( $file \\) \\) -exec grep $GRIND_GREP_OPTS $search /dev/null {} \\;"
+        cmd="find \"$path\" -type f \\( \\( -iname .svn -prune \\) -o \\( $file \\) \\) -exec grep $GRIND_GREP_OPTS $search /dev/null {} \\;"
         echo $cmd
         eval $cmd
     fi
@@ -209,11 +209,11 @@ function grInd()
     else
         path="$1"
         search="\"$2\""
-        file="-name \"$3\""
+        file="-iname \"$3\""
 
         shift 3
         while [ $# -gt 0 ]; do
-            file="$file -o -name \"$1\""
+            file="$file -o -iname \"$1\""
             shift
         done
 
@@ -221,7 +221,7 @@ function grInd()
             GRIND_GREP_OPTS="-n"
         fi
 
-        cmd="find \"$path\" -type f \\( \\( -name .svn -prune \\) -o \\( $file \\) \\) -exec grep -i $GRIND_GREP_OPTS $search /dev/null {} \\;"
+        cmd="find \"$path\" -type f \\( \\( -iname .svn -prune \\) -o \\( $file \\) \\) -exec grep -i $GRIND_GREP_OPTS $search /dev/null {} \\;"
         echo $cmd
         eval $cmd
     fi
@@ -367,7 +367,7 @@ clean()
         shift
     fi
 
-    run "find \"$start_dir\" \( -name \"*~\" -o -name \"*.[od]\" -o -name \"*.bak\" \) | xargs -t rm -rf"
+    run "find \"$start_dir\" \( -iname \"*~\" -o -iname \"*.[od]\" -o -iname \"*.bak\" \) | xargs -t rm -rf"
 }   # clean()
 
 # -----------------------------------------------------------------------------
