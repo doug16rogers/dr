@@ -131,3 +131,22 @@
 
 (define (nth-root-of-<x^n+y>^m-to-digits-string x n y m radix N)
   (to-base radix (nth-root-of-<x^n+y>^m-to-digits x n y m radix N) -1 N))
+
+(define (find-x^n+y=z-minimize-y best x z n)
+  (let ((x^n (expt x n)))
+    (if (> x^n z)   ; Stop when x^n > z.
+        best
+        (let ((y (- z x^n)))
+          (if (< y (cdr best))
+              (find-x^n+y=z-minimize-y (cons x y) (+ 1 x) z n)
+              (find-x^n+y=z-minimize-y best       (+ 1 x) z n))))))
+; This needs some optimization, like starting at something near log z / n.
+(define (find-x^n+y=z z n)
+  (find-x^n+y=z-minimize-y (cons 0 z) 1 z n))
+
+(define (expt-m/n-to-digits z m n radix N)
+  (let ((xy (find-x^n+y=z z n)))
+    (nth-root-of-<x^n+y>^m-to-digits (car xy) n (cdr xy) m radix N)))
+
+(define (expt-m/n-to-digits-string z m n radix N)
+  (to-base radix (expt-m/n-to-digits z m n radix N) -1 N))

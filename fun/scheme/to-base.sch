@@ -11,7 +11,7 @@
 (define (base-digit-string n) (string (base-digit-char n)))
 (define (to-base-positive-integer-widthless-after-first base x)
   (if (zero? x) ""
-      (let ((digit (modulo x base)))
+      (let ((digit (modulo (+ (abs base) (modulo x base)) (abs base))))
         (string-append (to-base-positive-integer-widthless-after-first base (/ (- x digit) base))
                        (base-digit-string digit)))))
 (define (to-base-positive-integer-widthless base x)
@@ -72,7 +72,7 @@
   (if (>= k digits) s
       (letrec ((times-base (* base num))
                (qr         (let-values (((q r) (floor/ times-base den))) (list q r))))
-        (string-set! s k (base-digit-char (car qr)))
+        (string-set! s k (base-digit-char (modulo (+ (abs base) (car qr)) (abs base))))
         (to-base-fraction-rational-nd base (cadr qr) den s (+ k 1) digits))))
 (define (to-base-fraction-rational base f digits)
   (to-base-fraction-rational-nd base
@@ -121,6 +121,7 @@
 ; Uses to-base for hexadecimal (base 16).
 ; @param n - the number to convert.
 ; @param digits - optional number of digits left of the radix point and
-; number of digits right of the radix points.
+; number of digits right of the radix point. The first value (left of the
+; radix point) can be negative to indicate 'show all digits'.
 (define (to-hex n . digits)
   (apply to-base 16 n digits))

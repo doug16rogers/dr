@@ -47,7 +47,18 @@ uf <sym>            Unassemble Function: uf mrt_wfp!cache_foreach_slot
 dt <type> [<addr>]  Dump type info for <type>; show values at <addr>:
                       dt nt!_IMAGE_SECTION_HEADER fffff800`01000218
 
+bl                  List breakpoints
+be [#], bd [#]      Enable or disable breakpoint.
+bu `mod!SYMBOL`     Set unresolved breakpoint at symbol in module.
+bu `mod!FILE:LINE`  Set unresolved breakpoint on file:line in module.
+bp address          Set breakpoint at address.
+ba [r|w|e] [1|2|4|8] address    Break on memory access of given type/size.
+
+p                   Single-step
+
 Add 1000 hex to the fault offset to get the address that agrees with:
 
    dumpbin /linenumbers /disasm mrt_tdi.sys > mrt_tdi.sys.lst
+
+!verifier 0x3 [module-name]   Give information about memory pools [for module, say FeKern.sys].
 

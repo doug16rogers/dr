@@ -57,7 +57,7 @@ int daysec_get_civil (DAYSEC time,
 // @return 1 on success, 0 otherwise.
 int daysec_from_text(DAYSEC daysec,
                      const char* text,
-                     const DAYSEC_SHORTCUT* shortcuts);  // Ends will NULL name or value.
+                     const DAYSEC_SHORTCUT* shortcuts);  // Ends with NULL name or value.
 
 #if defined (__cplusplus)
 };

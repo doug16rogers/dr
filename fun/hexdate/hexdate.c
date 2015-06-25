@@ -43,13 +43,14 @@ int g_verbose = kDefaultVerbose;
 
 const char* on_off[] = {"off", "on"};
 
-#define kMaxTimes  0x40
+#define kMaxTimes  0x100
 
 const char* time_list[kMaxTimes] = {0};
 size_t      time_count = 0;
 
 // ---------------------------------------------------------------------------
 void Usage(FILE* file) {
+  const DAYSEC_SHORTCUT* dss = NULL;
   fprintf(file, "\n");
   fprintf(file, "Usage: " PROGRAM_NAME " [options] [time...]\n");
   fprintf(file, "\n");
@@ -70,9 +71,9 @@ void Usage(FILE* file) {
   fprintf(file, "  --help, -h        Show this usage information.\n");
   fprintf(file, "  --epoch=<epoch>   Use <epoch> for epoch [%s]:\n", kDefaultEpoch);
   fprintf(file, "                      [YYYY-MM-DDT]hh:mm[:ss][Z]  Time of epoch, ISO 8601; Z=UTC\n");
-  fprintf(file, "                      doug         Doug's birthday (1963-12-31T10:58:00 GMT)\n");
-  fprintf(file, "                      unix         Unix zero time  (1970-01-01T00:00:00 GMT)\n");
-  fprintf(file, "                      y2k          Year 2000       (2000-01-01T00:00:00 GMT)\n");
+  for (dss = &kDateShortcuts[0]; dss->name != NULL; ++dss) {
+    fprintf(file, "                      %-6s (%s)\n", dss->name, dss->value);
+  }
   fprintf(file, "  --format=<format> Display using <format> [%s]:\n", kDefaultFormat);
   fprintf(file, "                      days         DDDD.HHHH       (H=hexons in day).\n");
   fprintf(file, "                      days+        Like 'days', but with hexal display.\n");
@@ -159,7 +160,7 @@ void SetFormat(const char* format) {
   return;
 
 Exception:
-  fprintf(stderr, PROGRAM_NAME ": *** error: I can't handle a format of \"%s\".\n", NullCheck(format));
+  fprintf(stderr, PROGRAM_NAME ": *** error: unknown format \"%s\".\n", NullCheck(format));
   exit(1);
 }   // SetFormat()
 
@@ -188,7 +189,6 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, PROGRAM_NAME ": limited to %d explicit times on command line; continuing.\n", kMaxTimes);
         break;
       }
-
       time_list[time_count++] = argument;
     }
   }

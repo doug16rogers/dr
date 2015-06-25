@@ -1,0 +1,7 @@
+
+My Computer -> Properties
+Advanced
+Startup and Recovery section, click Settings
+Under "System failure" section, select "Complete memory dump" for "Write debugging information"
+Reboot
+
