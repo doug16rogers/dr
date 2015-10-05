@@ -926,14 +926,14 @@
                (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
                (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
                (setq indent-tabs-mode nil)       ; In Unix I never want to use tabs.
-               (setq c-basic-offset 2)))
+               (setq c-basic-offset 4)))
   (add-hook 'c++-mode-hook
             '(lambda ()
                (c-set-style mandiant-c-style)
                (c-set-offset 'inextern-lang 0)   ; Do not indent in extern "C".
                (c-set-offset 'innamespace   0)   ; Do not indent in namespaces.
                (setq indent-tabs-mode nil)       ; In Unix I never want to use tabs.
-               (setq c-basic-offset 2))))
+               (setq c-basic-offset 4))))
 
 (defun add-windows-c-hooks ()
   "Adds C/C++ mode hooks for Unix environments."

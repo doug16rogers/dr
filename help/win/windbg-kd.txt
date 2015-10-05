@@ -4,6 +4,8 @@ windbg -c "command ; command"   Launch windbg and run commands.
 windbg -logo logfile.txt        Write all command output to logfile.txt.
 windbg -z dumpfile -y symbolpath -srcpath srcpath -c '!analyze -v ; .f+'
 
+!analyze -v         Perform analysis of cause of crash / dump.
+!analyze -show 109  List all PatchGuard check codes.
 vertarget           Target OS version + CPU info. Good in crash dump.
 ? @<reg>            Print (evaluate) value of register.
 ? @$thread          Print pointer to current thread's _EPROCESS struct.
@@ -46,6 +48,8 @@ uf <sym>            Unassemble Function: uf mrt_wfp!cache_foreach_slot
 
 dt <type> [<addr>]  Dump type info for <type>; show values at <addr>:
                       dt nt!_IMAGE_SECTION_HEADER fffff800`01000218
+
+g, gH, gN           Go (continue running), Handle exceptions, No exception-handling.
 
 bl                  List breakpoints
 be [#], bd [#]      Enable or disable breakpoint.
