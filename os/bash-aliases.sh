@@ -6,7 +6,7 @@
 alias grepwd="cat $HOME/dr/fun/itasoftware-puzzles/word.lst | grep "
 
 # A lot of git aliases...
-alias g1='git log --format="%ci %Cgreen%h%Creset %Cred(%cn)%Creset %s" --date=local --abbrev-commit'
+alias g1='git log --format="%ci %Cgreen%h%Creset %ct %Cred(%cn)%Creset %s" --date=local --abbrev-commit'
 alias glog='git log --name-status '  # Show files changed with each commit.
 alias gb='git branch -a '            # List all branches, including remotely tracked ones.
 alias gc="git checkout "
