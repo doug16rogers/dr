@@ -23,12 +23,16 @@ gbr()           # Shows remote branches.
 gbdr()          # Deletes remote branch: gbdr <remote-repo> <remote-branch>
 {
     if [ -z "$2" ]; then
-        echo "Usage: gbrmr remote-name remote-branch"
+        echo "Usage: gbdr remote-name remote-branch [-D]"
         echo "       Also deletes local tracking branch."
     else
+        del_opt="-d"
+        if [ "$3" == "-D" ]; then
+            del_opt="-D"
+        fi
         run "git push --delete '$1' '$2'"       # Delete branch in external repo.
-        run "git branch -d -r '$1/$2'"          # Delete tracking branch if it exists.
-        run "git branch -d '$2'"                # Delete local branch.
+        run "git branch $del_opt -r '$1/$2'"    # Delete tracking branch if it exists.
+        run "git branch $del_opt '$2'"          # Delete local branch.
     fi
 }
 
