@@ -18,8 +18,6 @@ svnstn()
     svn status $* | grep "^\\?"
 }
 
-# alias grepwd="cat ~/dr/trunk/amusements/itasoftware-puzzles/word.lst | grep "
-
 if [ -z "$HOME" ]; then
     if [ ! -z "$USERNAME" ]; then
         HOME="/c/Users/$USERNAME"
@@ -37,20 +35,12 @@ source "$DR_OS_DIR/bash-prompt.sh"
 
 # Now load the OS-specific bashrc.
 
-export DR_OS_NAME=`uname -s`
+export DR_OS_NAME=`uname -s | cut -d _ -f 1 | cut -d - -f 1 | tr A-Z a-z`
 
 os_bashrc="$DR_OS_DIR/$DR_OS_NAME/bashrc.sh"
 
 if [ -x "$os_bashrc" ]; then
     source "$os_bashrc"
-fi
-
-# Also try bashrc-OS.sh.
-
-os_bashrc2="$DR_OS_DIR/bashrc-${DR_OS_NAME}.sh"
-
-if [ -x "$os_bashrc2" ]; then
-    source "$os_bashrc2"
 fi
 
 # Now load the site-specific bashrc.
