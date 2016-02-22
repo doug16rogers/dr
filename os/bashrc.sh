@@ -18,7 +18,7 @@ export HISTCONTROL=ignoreboth
 # #    fi
 # }
 
-PROMPT_COMMAND="prompt_command"
+# PROMPT_COMMAND="prompt_command"
 
 # For git, use these if you don't want to run git config.
 # export GIT_AUTHOR_NAME="Doug Rogers"     # git config --global user.name   "Doug Rogers"
