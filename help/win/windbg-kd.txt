@@ -13,6 +13,7 @@ vertarget           Target OS version + CPU info. Good in crash dump.
 ? @$thread->Cid     Print current thread's Client_ID struct (UniqueProcess/Thread).
 !running -ti        List threads/stacks running on all processors.
 
+!dml_proc [addr]    List all processes being debugged.
 !process 0 0        List all processes running at time of dump.
 !process <cid> 1f   List everything about process with give CID.
 !process 0 1f <imagename>    List everything about process with imagename: !process 0 1f magent.exe
@@ -30,7 +31,10 @@ r                   Show all registers.
 .reload /f /i <path-to-dll>=<image-base-address>
 .reload /unl <dll>  Reload the unloaded dll.
 
-dq @$thread @$thread+0x198
+d[d,b,u] <address> [L?count]    Display [count] dwords, bytes, unicode strings
+dq @$thread @$thread+0x198      Display quadwords around $thread
+dl <address>        Display a list
+dv [var*]           Display local variables and parameters [matching var name].
                     Print quadwords from @$thread to @$thread+0x198 (including last)
 lm vm <module>      List image info - base address, etc., for DLLs or other modules.
 lm t n              List loaded drivers with memory range
@@ -41,7 +45,6 @@ kp, kP              List call stack with named arguments (P = on separate line).
 kn                  List call stack with each frame numbered.
 .frame <n>          Set context to call frame <n> as listed in kn.
 .f-   .f+           Move down/up call stack. Also: .frame @$frame+1
-dv [var*]           Display local variables and parameters [matching var name].
 ub                  Unassemble Backwards.
 uf <sym>            Unassemble Function: uf mrt_wfp!cache_foreach_slot
 .formats <value>    Converts value to a bunch of different representations (hex, decimal, etc.): .formats 08ac
