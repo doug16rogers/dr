@@ -214,6 +214,8 @@ static void tm_get_fields(const struct tm* tm,
   *second = tm->tm_sec;
 }   /* tm_get_fields() */
 
+/* ------------------------------------------------------------------------- */
+
 // ---------------------------------------------------------------------------
 // @return 1 on success, 0 otherwise.
 int daysec_from_text(DAYSEC daysec,
@@ -278,7 +280,7 @@ int daysec_from_text(DAYSEC daysec,
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
   if ((sscanf(text, "%d-%u-%u%c%u:%u:%u%c%c",
                    &year, &month, &day, &separator, &hour, &minute, &second, &zone, &dummy) >= 7) &&
-           ((separator == 'T') || (separator == 't') || (separator == ' ')))
+           ((separator == 'T') || (separator == 't') || (separator == ' ') || (separator == ',') || (separator == ';')))
   {
     dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
            year, month, day, hour, minute, second, time_zone_seconds, text);
@@ -298,7 +300,7 @@ int daysec_from_text(DAYSEC daysec,
   }
 
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
-  if (sscanf(text, "%u:%u:%u%c%c", &hour, &minute, &second, &zone, &dummy) >= 3)
+  if (sscanf(text, "%u:%u:%u%c%c", &hour, &minute, &second, &zone, &dummy) >= 2)
   {
     dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
            year, month, day, hour, minute, second, time_zone_seconds, text);

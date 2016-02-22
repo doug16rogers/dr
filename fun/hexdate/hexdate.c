@@ -60,7 +60,8 @@ void Usage(FILE* file) {
   fprintf(file, "hexon time.\n");
   fprintf(file, "\n");
   fprintf(file, "[time] should by given in ISO 8601 form, YYYY-MM-DD[Thh:mm[:ss][Z]]. By default\n");
-  fprintf(file, "the local time zone is used. Append 'Z' to specify UTC.\n");
+  fprintf(file, "the local time zone is used. Append 'Z' to specify UTC. [time] may also include\n");
+  fprintf(file, "just the time of day, hh:mm[:ss][Z] in which case the current date is used.\n");
   fprintf(file, "\n");
   fprintf(file, "If [time] is not given then the current time is converted and displayed.\n");
   fprintf(file, "\n");
