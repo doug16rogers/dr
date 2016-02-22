@@ -2,7 +2,8 @@
 #include <Windows.h>
 #pragma warning(disable: 4996)  // *sigh* VS2013 warns even with the #define's below.
 #define snprintf _snprintf
-#define sscanf   sscanf_s
+// I don't use sscanf_s() because it requires a buffer size parameter for
+// 'c' and 's' formats.
 #endif
 
 #include <assert.h>
@@ -28,9 +29,6 @@ extern int g_verbose;   // This is in hexdate.c. @todo(dr) Put this elsewhere.
     printf("%s:%u: ", __FILE__, __LINE__);      \
     printf(__VA_ARGS__);                        \
   } while (0)
-
-#undef dPrint
-#define dPrint(...)   do { } while (0)
 
 typedef void (*DAYSEC_BINARY_OPERATION)(DAYSEC result, const DAYSEC left, const DAYSEC right);
 
