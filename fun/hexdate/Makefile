@@ -3,7 +3,7 @@ TARGET = hexdate
 CFLAGS = -Wall -Werror -g
 CC = gcc
 
-OBJS = hexon.o daysec.o
+OBJS = daysec.o ezlog.o hexon.o
 LIBS = -lm
 
 $(TARGET): $(TARGET).o $(OBJS)

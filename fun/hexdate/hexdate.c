@@ -16,6 +16,7 @@
 #include <math.h>
 
 #include "daysec.h"
+#include "ezlog.h"
 #include "hexon.h"
 
 #define PROGRAM_NAME "hexdate"
@@ -44,7 +45,6 @@ const DAYSEC_SHORTCUT kDateShortcuts[] = {
 //
 struct DAYSEC_STRUCT epoch;
 const char* output_format = kDefaultFormat;
-int g_verbose = kDefaultVerbose;
 
 const char* on_off[] = {"off", "on"};
 
@@ -92,21 +92,6 @@ void Usage(FILE* file) {
   exit(1);
 }   // Usage()
 
-/* ------------------------------------------------------------------------- */
-/**
- * Print a formatted message if verbose is enabled.
- */
-void VPrint(const char* format, ...) {
-  char text[0x100] = "";
-  va_list va;
-  if (g_verbose) {
-    va_start(va, format);
-    vsnprintf(text, sizeof(text), format, va);
-    va_end(va);
-    printf("%s", text);
-  }
-}   /* VPrint() */
-
 // ---------------------------------------------------------------------------
 //
 // Returns 1 if the actual matches the expected up to the length of the
@@ -118,8 +103,7 @@ int strequ(const char* actual, const char* expected) {
   if ((actual == NULL) || (expected == NULL)) return 0;
   if ((*actual == 0)   || (*expected == 0))   return 0;
 
-  while (*actual && *expected)
-  {
+  while (*actual && *expected) {
     if (*actual++ != *expected++) return 0;
   }
 
@@ -184,7 +168,7 @@ int main(int argc, char* argv[]) {
     if ((strcmp(argument, "--help") == 0) || (strcmp (argument, "-h") == 0)) Usage(stdout);
     else if (strequ(argument, "--epoch=" )) SetEpoch(strchr(argument, '=') + 1);
     else if (strequ(argument, "--format=")) SetFormat(strchr(argument, '=') + 1);
-    else if (strequ(argument, "--verbose")) g_verbose = 1;
+    else if (strequ(argument, "--verbose")) ezlog_set_level(NULL, EZLOG_LEVEL_DEBUG);
     else if ('-' == argument[0]) {
       fprintf(stderr, PROGRAM_NAME ": *** error: unknown option \"%s\".\n\n", argument);
       Usage(stderr);
@@ -213,23 +197,20 @@ int main(int argc, char* argv[]) {
       Usage(stderr);
     }
 
-    if (i > 0) {
-        VPrint("\n");
-    }
-    VPrint("converting time: %s\n", time_list[i]);
-    VPrint("days.seconds source time : %10lu.%05lu (hex 0x%lx/0x%05lx.\n",
+    EZLOGD("converting time: %s", time_list[i]);
+    EZLOGD("days.seconds source time : %10lu.%05lu (hex 0x%lx/0x%05lx.",
            daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
-    VPrint("days.seconds epoch time  : %10lu.%05lu (hex 0x%lx/0x%05lx.\n",
+    EZLOGD("days.seconds epoch time  : %10lu.%05lu (hex 0x%lx/0x%05lx.",
            epoch.day, (long) epoch.sec, epoch.day, (long) epoch.sec);
 
     daysec_sub(&daysec, &daysec, &epoch);
 
-    VPrint("days.seconds since epoch : %10lu.%05lu (hex 0x%lx/0x%05lx.\n",
+    EZLOGD("days.seconds since epoch : %10lu.%05lu (hex 0x%lx/0x%05lx.",
            daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
 
     Hexon_Set_Day_Second(&hexon, daysec.day, daysec.sec);
 
-    VPrint("decimal hexon (double): %20.6f.\n", hexon.hexon);
+    EZLOGD("decimal hexon (double): %20.6f.", hexon.hexon);
 
     if (!Hexon_Print(stdout, output_format, &hexon)) {
       fprintf(stderr, PROGRAM_NAME ": *** error: could not print using format \"%s\".\n", NullCheck(output_format));

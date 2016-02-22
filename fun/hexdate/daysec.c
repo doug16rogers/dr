@@ -17,18 +17,11 @@
 #endif
 
 #include "daysec.h"
-
-extern int g_verbose;   // This is in hexdate.c. @todo(dr) Put this elsewhere.
+#include "ezlog.h"
 
 #define SECONDS_PER_DAY  86400
 #define ZONE_SECONDS_MIN (-12*60*60)
 #define ZONE_SECONDS_MAX (+12*60*60)
-
-#define dPrint(...) \
-  if (g_verbose) {                              \
-    printf("%s:%u: ", __FILE__, __LINE__);      \
-    printf(__VA_ARGS__);                        \
-  } while (0)
 
 typedef void (*DAYSEC_BINARY_OPERATION)(DAYSEC result, const DAYSEC left, const DAYSEC right);
 
@@ -146,7 +139,7 @@ int daysec_set_civil (DAYSEC time,
     days++;
   }
 
-  dPrint("%d-%02u-%02uT%02u:%02u:%02u %7d (leap=%s)\n",
+  EZLOGD("%d-%02u-%02uT%02u:%02u:%02u %7d (leap=%s)",
          year, month, day, hour, minute, second, time_zone_seconds_west,
          is_leap_year ? "yes" : "no");
 
@@ -238,7 +231,7 @@ int daysec_from_text(DAYSEC daysec,
     return 0;
   }
 
-  dPrint("text=\"%s\"\n", text);
+  EZLOGD("text=\"%s\"", text);
   int year = 0;
   int month = 0;
   int day = 0;
@@ -263,7 +256,7 @@ int daysec_from_text(DAYSEC daysec,
     }
   }
 
-  dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+  EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
          year, month, day, hour, minute, second, time_zone_seconds, text);
 
   // Set fields to local time first.
@@ -291,7 +284,7 @@ int daysec_from_text(DAYSEC daysec,
     text = now_time;
   }
 
-  dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+  EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
          year, month, day, hour, minute, second, time_zone_seconds, text);
 
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
@@ -299,7 +292,7 @@ int daysec_from_text(DAYSEC daysec,
               &year, &month, &day, &separator, &hour, &minute, &second, &zone, &dummy) >= 7) &&
       ((separator == 'T') || (separator == 't') || (separator == ' ') || (separator == ',') || (separator == ';')))
   {
-    dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+    EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
            year, month, day, hour, minute, second, time_zone_seconds, text);
     time_zone_seconds = (tolower(zone) == 'z') ? 0 : time_zone_seconds;
     return daysec_set_civil(daysec, time_zone_seconds, year, month, day, hour, minute, second);
@@ -310,7 +303,7 @@ int daysec_from_text(DAYSEC daysec,
               &year, &month, &day, &separator, &hour, &minute, &second, &zone, &dummy) >= 6) &&
       ((separator == 'T') || (separator == 't') || (separator == ' ')))
   {
-    dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+    EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
            year, month, day, hour, minute, second, time_zone_seconds, text);
     time_zone_seconds = (tolower(zone) == 'z') ? 0 : time_zone_seconds;
     return daysec_set_civil(daysec, time_zone_seconds, year, month, day, hour, minute, second);
@@ -319,7 +312,7 @@ int daysec_from_text(DAYSEC daysec,
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
   if (sscanf(text, "%u:%u:%u%c%c", &hour, &minute, &second, &zone, &dummy) >= 2)
   {
-    dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+    EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
            year, month, day, hour, minute, second, time_zone_seconds, text);
     time_zone_seconds = (tolower(zone) == 'z') ? 0 : time_zone_seconds;
     return daysec_set_civil(daysec, time_zone_seconds, year, month, day, hour, minute, second);
@@ -328,7 +321,7 @@ int daysec_from_text(DAYSEC daysec,
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
   if (sscanf(text, "%u:%u%c%c", &hour, &minute, &zone, &dummy) >= 2)
   {
-    dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+    EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
            year, month, day, hour, minute, second, time_zone_seconds, text);
     time_zone_seconds = (tolower(zone) == 'z') ? 0 : time_zone_seconds;
     return daysec_set_civil(daysec, time_zone_seconds, year, month, day, hour, minute, second);
@@ -337,7 +330,7 @@ int daysec_from_text(DAYSEC daysec,
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
   if (sscanf(text, "%d-%u-%u%c", &year, &month, &day, &dummy) == 3)
   {
-    dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+    EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
            year, month, day, hour, minute, second, time_zone_seconds, text);
     return daysec_set_civil(daysec, 0 /* GMT */, year, month, day, hour, minute, second);
   }
@@ -345,12 +338,12 @@ int daysec_from_text(DAYSEC daysec,
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
   if (sscanf(text, "%u-%u%c", &month, &day, &dummy) == 2)
   {
-    dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+    EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
            year, month, day, hour, minute, second, time_zone_seconds, text);
     return daysec_set_civil(daysec, 0 /* GMT */, year, month, day, hour, minute, second);
   }
 
-  dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
+  EZLOGD("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"",
          year, month, day, hour, minute, second, time_zone_seconds, text);
   return 0;
 }   // daysec_from_text()

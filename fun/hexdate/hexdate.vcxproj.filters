@@ -24,12 +24,18 @@
     <ClCompile Include="hexon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ezlog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="daysec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hexon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ezlog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

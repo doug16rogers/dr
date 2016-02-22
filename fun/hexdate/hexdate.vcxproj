@@ -72,11 +72,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="daysec.c" />
+    <ClCompile Include="ezlog.c" />
     <ClCompile Include="hexdate.c" />
     <ClCompile Include="hexon.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="daysec.h" />
+    <ClInclude Include="ezlog.h" />
     <ClInclude Include="hexon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
