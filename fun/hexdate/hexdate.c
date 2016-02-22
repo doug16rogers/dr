@@ -6,8 +6,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef WIN32
+#include <Windows.h>
+#include <time.h>
+#else
 #include <sys/time.h>
 #include <unistd.h>
+#endif
 #include <math.h>
 
 #include "daysec.h"
@@ -167,16 +172,14 @@ Exception:
 
 // ---------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
-  int i;
-  struct timeval           time;
+  size_t i = 0;
   struct HEXON_TIME_STRUCT hexon;
   struct DAYSEC_STRUCT     daysec;
 
-  gettimeofday(&time, NULL);
   SetEpoch(kDefaultEpoch);
   SetFormat(kDefaultFormat);
 
-  for (i = 1; i < argc; i++) {
+  for (i = 1; i < (size_t) argc; i++) {
     char* argument = argv[i];
     if ((strcmp(argument, "--help") == 0) || (strcmp (argument, "-h") == 0)) Usage(stdout);
     else if (strequ(argument, "--epoch=" )) SetEpoch(strchr(argument, '=') + 1);
@@ -210,21 +213,23 @@ int main(int argc, char* argv[]) {
       Usage(stderr);
     }
 
-    VPrint("Unix time    (seconds.microseconds): %llu.%06lu (hex 0x%llx/0x%05lx.\n",
-           (long long) time.tv_sec, (long) time.tv_usec, (long long) time.tv_sec, (long) time.tv_usec);
-    VPrint("Unix daysec  (days.seconds): %lu.%05lu (hex 0x%lx/0x%05lx.\n",
-             daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
-    VPrint("Epoch daysec (days.seconds): %lu.%05lu (hex 0x%lx/0x%05lx.\n",
+    if (i > 0) {
+        VPrint("\n");
+    }
+    VPrint("converting time: %s\n", time_list[i]);
+    VPrint("days.seconds source time : %10lu.%05lu (hex 0x%lx/0x%05lx.\n",
+           daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
+    VPrint("days.seconds epoch time  : %10lu.%05lu (hex 0x%lx/0x%05lx.\n",
            epoch.day, (long) epoch.sec, epoch.day, (long) epoch.sec);
 
     daysec_sub(&daysec, &daysec, &epoch);
 
-    VPrint("Daysec since epoch  (days.seconds): %lu.%05lu (hex 0x%lx/0x%05lx.\n",
+    VPrint("days.seconds since epoch : %10lu.%05lu (hex 0x%lx/0x%05lx.\n",
            daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
 
     Hexon_Set_Day_Second(&hexon, daysec.day, daysec.sec);
 
-    VPrint("Decimal hexon = %20.6f.\n", hexon.hexon);
+    VPrint("decimal hexon (double): %20.6f.\n", hexon.hexon);
 
     if (!Hexon_Print(stdout, output_format, &hexon)) {
       fprintf(stderr, PROGRAM_NAME ": *** error: could not print using format \"%s\".\n", NullCheck(output_format));

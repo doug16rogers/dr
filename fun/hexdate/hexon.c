@@ -1,3 +1,7 @@
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>

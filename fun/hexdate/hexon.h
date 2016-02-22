@@ -2,7 +2,11 @@
 #define __hexon_h__
 
 #include <stdio.h>        // For FILE.
+#ifdef WIN32
+#include <time.h>
+#else
 #include <sys/time.h>     // For struct timeval.
+#endif
 
 #define HEXONS_PER_DAY      (0x10000)
 #define HEXONS_PER_SECOND   ((double) HEXONS_PER_DAY / 86400.0)

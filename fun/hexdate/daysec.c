@@ -1,17 +1,30 @@
+#ifdef WIN32
+#include <Windows.h>
+#pragma warning(disable: 4996)  // *sigh* VS2013 warns even with the #define's below.
+#define snprintf _snprintf
+#define sscanf   sscanf_s
+#endif
+
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>      // For NULL.
 #include <string.h>
+#include <time.h>
+
+#ifndef WIN32
 #include <sys/time.h>
+#endif
 
 #include "daysec.h"
+
+extern int g_verbose;   // This is in hexdate.c. @todo(dr) Put this elsewhere.
 
 #define SECONDS_PER_DAY  86400
 #define ZONE_SECONDS_MIN (-12*60*60)
 #define ZONE_SECONDS_MAX (+12*60*60)
 
 #define dPrint(...) \
-  do {                                          \
+  if (g_verbose) {                              \
     printf("%s:%u: ", __FILE__, __LINE__);      \
     printf(__VA_ARGS__);                        \
   } while (0)
@@ -256,14 +269,20 @@ int daysec_from_text(DAYSEC daysec,
          year, month, day, hour, minute, second, time_zone_seconds, text);
 
   // Set fields to local time first.
-  struct tm tm;
+  struct tm tm = {0};
   time_t now = 0;
   time(&now);
+#ifdef WIN32
+  localtime_s(&tm, &now);
+  _get_timezone(&time_zone_seconds);
+  tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
+#else
   if (NULL != localtime_r(&now, &tm))
   {
-    time_zone_seconds = - (int) tm.tm_gmtoff;
-    tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
+      time_zone_seconds = -(int)tm.tm_gmtoff;
+      tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
   }
+#endif
 
   // Special shortcut for current time.
   if (0 == strcmp("now", text))
@@ -279,8 +298,8 @@ int daysec_from_text(DAYSEC daysec,
 
   tm_get_fields(&tm, &year, &month, &day, &hour, &minute, &second);
   if ((sscanf(text, "%d-%u-%u%c%u:%u:%u%c%c",
-                   &year, &month, &day, &separator, &hour, &minute, &second, &zone, &dummy) >= 7) &&
-           ((separator == 'T') || (separator == 't') || (separator == ' ') || (separator == ',') || (separator == ';')))
+              &year, &month, &day, &separator, &hour, &minute, &second, &zone, &dummy) >= 7) &&
+      ((separator == 'T') || (separator == 't') || (separator == ' ') || (separator == ',') || (separator == ';')))
   {
     dPrint("%04d-%02u-%02uT%02u:%02u:%02u %7d text=\"%s\"\n",
            year, month, day, hour, minute, second, time_zone_seconds, text);
