@@ -8,12 +8,17 @@ alias grepwd="cat $HOME/dr/fun/itasoftware-puzzles/word.lst | grep "
 # A lot of git aliases...
 alias g1='git log --format="%ci %Cgreen%h%Creset %ct %Cred(%cn)%Creset %s" --date=local --abbrev-commit'
 alias glog='git log --name-status '  # Show files changed with each commit.
-alias gb='git branch -a '            # List all branches, including remotely tracked ones.
+alias gb='git branch '               # List all local branches.
+alias gb1='git branch | grep "^[*]"' # List currently checked out branch.
+alias gba='git branch -a'            # List all branches, including remotely tracked ones.
 alias gc="git checkout "
 alias gd='git diff '
+alias gi="git branch | grep '^[*]'; git describe; git remote -v | grep -v push; g1 -3 | cat"
 alias gs='git status '
 alias gf='git show --pretty="format:" --name-only '   # Show files for a commit.
 alias gbd='git branch -d '
+alias grc='git rebase --continue '
+alias gmt='git mergetool -y '
 
 gbr()           # Shows remote branches.
 {

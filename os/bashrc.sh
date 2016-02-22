@@ -6,6 +6,20 @@ export EDITOR=emacs
 export CLICOLOR=1
 export HISTCONTROL=ignoreboth
 
+# # This is to merge history from all running shells:
+# export HISTSIZE=$[1024 * 1024]
+# export HISTFILESIZE=$[16 * 1024 * 1024]
+
+# #LAST_HISTORY_WRITE=$SECONDS
+# prompt_command() {
+# #    if [ $(($SECONDS - $LAST_HISTORY_WRITE)) -gt 60 ]; then
+#         history -a && history -c && history -r
+# #        LAST_HISTORY_WRITE=$SECONDS
+# #    fi
+# }
+
+PROMPT_COMMAND="prompt_command"
+
 # For git, use these if you don't want to run git config.
 # export GIT_AUTHOR_NAME="Doug Rogers"     # git config --global user.name   "Doug Rogers"
 # export GIT_AUTHOR_EMAIL="dr@noname.com"  # git config --global user.email  "dr@noname.com"
