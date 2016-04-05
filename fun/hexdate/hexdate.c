@@ -64,9 +64,11 @@ void Usage(FILE* file) {
   fprintf(file, "longer in duration than a civil second. Note that there are no time zones in\n");
   fprintf(file, "hexon time.\n");
   fprintf(file, "\n");
-  fprintf(file, "[time] should by given in ISO 8601 form, YYYY-MM-DD[Thh:mm[:ss][Z]]. By default\n");
-  fprintf(file, "the local time zone is used. Append 'Z' to specify UTC. [time] may also include\n");
-  fprintf(file, "just the time of day, hh:mm[:ss][Z] in which case the current date is used.\n");
+  fprintf(file, "[time] should by given in ISO 8601 form, [[YY]YY-]MM-DD[Thh:mm[:ss][Z]]. By\n");
+  fprintf(file, "default the local time zone is used. Append 'Z' to specify UTC. If [time]\n");
+  fprintf(file, "includes just the time of day, hh:mm[:ss][Z], then the current date is used. If\n");
+  fprintf(file, "[time] includes just a date then the current time of day will be used for the\n");
+  fprintf(file, "time of day portion of [time].\n");
   fprintf(file, "\n");
   fprintf(file, "If [time] is not given then the current time is converted and displayed.\n");
   fprintf(file, "\n");
@@ -91,6 +93,12 @@ void Usage(FILE* file) {
   fprintf(file, "\n");
   exit(1);
 }   // Usage()
+
+// ---------------------------------------------------------------------------
+void UsageReference(FILE* file) {
+  fprintf(file, "Use '%s --help' for usage information.\n", PROGRAM_NAME);
+  exit(1);
+}   /* UsageReference() */
 
 // ---------------------------------------------------------------------------
 //
@@ -131,7 +139,7 @@ void SetUnixTime(DAYSEC time, const struct timeval* tv) {
 void SetEpoch(const char* epoch_text) {
   if (!daysec_from_text(&epoch, epoch_text, kDateShortcuts)) {
     fprintf(stderr, PROGRAM_NAME ": *** error: invalid time for epoch \"%s\".\n", NullCheck(epoch_text));
-    Usage(stderr);
+    UsageReference(stderr);
   }
 }   // SetEpoch()
 
@@ -194,9 +202,8 @@ int main(int argc, char* argv[]) {
   for (i = 0; i < time_count; i++) {
     if (!daysec_from_text(&daysec, time_list[i], kDateShortcuts)) {
       fprintf(stderr, PROGRAM_NAME ": *** error: invalid time \"%s\".\n", NullCheck(time_list[i]));
-      Usage(stderr);
+      UsageReference(stderr);
     }
-
     EZLOGD("converting time: %s", time_list[i]);
     EZLOGD("days.seconds source time : %10lu.%05lu (hex 0x%lx/0x%05lx.",
            daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
