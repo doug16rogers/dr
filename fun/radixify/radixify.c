@@ -78,6 +78,8 @@ const SpecialDigits kSpecials[] = {
     { 'x', "0123456789abcdef", "hexadecimal lower case" },
     { 'X', "0123456789ABCDEF", "hexadecimal upper case" },
     { 'k', "!@#$%^&*()~`_-+={[}]|\\:;”’<,>.?/", "karnamian" },
+    /* @todo(dr) Provide Unicode support. */
+    { 'F', "/E@A:SIU+DRJNFCKTZLWHYPQOBG\"MXV#", "Ferranti Mark 1 [MSB first, +=\xC2\xBD/#=\xC2\xA3]" },
 };
 
 /**
@@ -309,7 +311,12 @@ void SetDigitsOrExit(InputOutputDigits which, const char* digits) {
                 if (digits[i] == digits[j]) {
                     PrintUsageError("Digit '%c' is repeated in %s digit set.", digits[i],
                                     (kInputDigits == which) ? "input" : "output");
-                } else if ((kInputDigits == which) && (tolower(digits[i]) == tolower(digits[i]))) {
+                } else if ((kInputDigits == which) &&
+                           !g_case_sensitive &&
+                           (tolower(digits[j]) == tolower(digits[i]))) {
+                    PrintVerbose("Setting case sensitivity because %s digit [%d]='%c' and [%d]='%c'.",
+                                 (kInputDigits == which) ? "input" : "output",
+                                 j, digits[j], i, digits[i]);
                     g_case_sensitive = 1;       /* Only useful for input. */
                 }
             }
