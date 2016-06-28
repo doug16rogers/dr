@@ -39,17 +39,18 @@ if [ -z "$HOME" ]; then
 fi
 
 export DR_DIR="$HOME/dr"
-export PATH="$PATH:$DR_DIR/bin"
-
+export DR_BIN="$DR_DIR/bin"
 export DR_OS_DIR="$DR_DIR/os"
 
+# This needs to be set before bash-path.sh.
+export DR_OS_NAME=`uname -s | cut -d _ -f 1 | cut -d - -f 1 | tr A-Z a-z`
+
+source "$DR_OS_DIR/bash-path.sh"
 source "$DR_OS_DIR/bash-functions.sh"
 source "$DR_OS_DIR/bash-aliases.sh"
 source "$DR_OS_DIR/bash-prompt.sh"
 
-# Now load the OS-specific bashrc.
-
-export DR_OS_NAME=`uname -s | cut -d _ -f 1 | cut -d - -f 1 | tr A-Z a-z`
+# Load the OS-specific bashrc.
 
 os_bashrc="$DR_OS_DIR/$DR_OS_NAME/bashrc.sh"
 
@@ -57,7 +58,7 @@ if [ -x "$os_bashrc" ]; then
     source "$os_bashrc"
 fi
 
-# Now load the site-specific bashrc.
+# Load the site-specific bashrc.
 
 site_file="$HOME/.dr/site"
 

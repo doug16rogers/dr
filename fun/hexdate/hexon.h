@@ -40,12 +40,15 @@ void Hexon_Set_Day_Second (HEXON_TIME   time,
 //
 
 // ---------------------------------------------------------------------------
-int  Hexon_Print (FILE*            file,
-                  const char*      format,
-                  const HEXON_TIME time);
+int Hexon_Print (FILE*            file,
+                 const char*      format,
+                 int              newline,
+                 const HEXON_TIME time);
 //
 // Prints the hexon to the given file stream with the given format. Right
 // now only a limited number of formats are supported. See the C source.
+//
+// The 'newline' setting is used only for single-line formats.
 //
 
 

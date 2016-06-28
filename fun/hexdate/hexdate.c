@@ -53,6 +53,8 @@ const char* on_off[] = {"off", "on"};
 const char* time_list[kMaxTimes] = {0};
 size_t      time_count = 0;
 
+int g_newline = 1;
+
 // ---------------------------------------------------------------------------
 void Usage(FILE* file) {
   const DAYSEC_SHORTCUT* dss = NULL;
@@ -77,6 +79,7 @@ void Usage(FILE* file) {
   fprintf(file, "\n");
   fprintf(file, "Options:\n");
   fprintf(file, "  --help, -h        Show this usage information.\n");
+  fprintf(file, "  -n                Do not print a newline with single-line formats.\n");
   fprintf(file, "  --epoch=<epoch>   Use <epoch> for epoch [%s]:\n", kDefaultEpoch);
   fprintf(file, "                      [YYYY-MM-DDT]hh:mm[:ss][Z]  Time of epoch, ISO 8601; Z=UTC\n");
   for (dss = &kDateShortcuts[0]; dss->name != NULL; ++dss) {
@@ -174,6 +177,7 @@ int main(int argc, char* argv[]) {
   for (i = 1; i < (size_t) argc; i++) {
     char* argument = argv[i];
     if ((strcmp(argument, "--help") == 0) || (strcmp (argument, "-h") == 0)) Usage(stdout);
+    else if (strequ(argument, "-n" )) g_newline = 0;
     else if (strequ(argument, "--epoch=" )) SetEpoch(strchr(argument, '=') + 1);
     else if (strequ(argument, "--format=")) SetFormat(strchr(argument, '=') + 1);
     else if (strequ(argument, "--verbose")) ezlog_set_level(NULL, EZLOG_LEVEL_DEBUG);
@@ -219,7 +223,7 @@ int main(int argc, char* argv[]) {
 
     EZLOGD("decimal hexon (double): %20.6f.", hexon.hexon);
 
-    if (!Hexon_Print(stdout, output_format, &hexon)) {
+    if (!Hexon_Print(stdout, output_format, g_newline, &hexon)) {
       fprintf(stderr, PROGRAM_NAME ": *** error: could not print using format \"%s\".\n", NullCheck(output_format));
       return 1;
     }

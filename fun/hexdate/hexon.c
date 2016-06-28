@@ -294,6 +294,7 @@ void Hexal_Diamond_Print (FILE* file, const char* text)
 // ---------------------------------------------------------------------------
 int Hexon_Print (FILE*            file,
                  const char*      format,
+                 int              newline,
                  const HEXON_TIME time)
 {
   unsigned long hexons   = (unsigned long) floor (time->hexon);
@@ -303,7 +304,7 @@ int Hexon_Print (FILE*            file,
   if (format == NULL) goto Exception;
   else if (strcmp (format, "days"  ) == 0)
   {
-    fprintf (file, "%04lX.%04lX\n", hexons / HEXONS_PER_DAY, hexons % HEXONS_PER_DAY);
+    fprintf (file, "%04lX.%04lX%s", hexons / HEXONS_PER_DAY, hexons % HEXONS_PER_DAY, newline ? "\n" : "");
   }
   else if (strcmp (format, "days+" ) == 0)
   {
@@ -317,7 +318,7 @@ int Hexon_Print (FILE*            file,
   }
   else if (strcmp (format, "hexons") == 0)
   {
-    fprintf (file, "%08lX.%04lX\n", hexons, hexicles);
+    fprintf (file, "%08lX.%04lX%s", hexons, hexicles, newline ? "\n" : "");
   }
   else if (strcmp (format, "hexons+") == 0)
   {
