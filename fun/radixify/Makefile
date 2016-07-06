@@ -3,7 +3,14 @@ TARGET = radixify
 CC = gcc
 CFLAGS = -Wall -Werror -g -I/opt/local/include
 
+osname := $(shell uname -s)
+mname := $(shell uname -m)
+ifeq ($(osname),Darwin)
 LDFLAGS = /opt/local/lib/libgmp.a
+endif
+ifeq ($(osname),Linux)
+LDFLAGS = /usr/lib/$(mname)-linux-gnu/libgmp.a
+endif
 
 OBJS = \
 	$(TARGET).o \
