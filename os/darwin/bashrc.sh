@@ -1,5 +1,6 @@
 #!/bin/bash
 
+alias ldd="otool -L "
 alias md5sum="md5 -r "
 
 eject() {

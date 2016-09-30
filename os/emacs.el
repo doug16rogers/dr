@@ -21,6 +21,9 @@
 ; (dr-load "armasm-mode.el")
 ; (dr-load "smart-tabs-mode.el")
 
+; For now while I'm using Prolog and not Perl.
+(setq auto-mode-alist (cons '("\.pl$" . prolog-mode)    auto-mode-alist))
+
 ; (setq auto-mode-alist (cons '("\\.S"                   . armasm-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(spec\\|body\\).a$" . ada-mode)    auto-mode-alist))
 
@@ -1133,6 +1136,7 @@
 (global-set-key "\C-cg"     'goto-line)
 (global-set-key "\C-cl"     'dr-toggle-line-move-visual)
 (global-set-key "\C-cN"     'dr-insert-previous-function-name)
+(global-set-key "\C-co"     'overwrite-mode)
 (global-set-key "\C-cp"     'dr-insert-c-debug-line)
 (global-set-key "\C-cq"     'dr-quote-c-line)
 (global-set-key "\C-ct"     'dr-insert-c-struct-typedef)
@@ -1218,6 +1222,7 @@
 (add-hook 'lisp-mode-hook       'hs-minor-mode)
 (add-hook 'perl-mode-hook       'hs-minor-mode)
 
+(require 'package)
 (custom-set-variables
  '(auto-save-interval 1000)
  '(c-basic-offset 4)
@@ -1226,7 +1231,9 @@
  '(indent-tabs-mode nil)     ; In Unix I never want to use tabs. Use t (not nil) for tabs.
  '(fill-column 77)
  '(hide-ifdef-read-only 1)
- '(python-indent 4))
+ '(python-indent 4)
+ '(package-archives (quote (("gnu" . "http://elpa.gnu.org/packages/")
+                            ("melpa-stable" . "http://stable.melpa.org/packages/")))))
 
 (prefer-coding-system 'utf-8)
 

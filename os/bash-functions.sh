@@ -446,4 +446,23 @@ rmbldlib() {
             eval $cmd
         fi
     fi
-}
+}   # rmbldlib()
+
+# -----------------------------------------------------------------------------
+# Calculates the parallel resistance of a N resistors.
+respar() {
+    if [ -z "$1" ]; then
+        echo "calculate the combined parallel resistance of N resistors."
+        echo "usage: respar <R1> ... [RN]"
+        exit 1
+    else
+        r=$1
+        shift
+        while [ $# -gt 0 ]; do
+            s=$1
+            shift
+            r=$[ r * s / (r + s) ]
+        done
+        echo $r
+    fi
+}   # respar()
