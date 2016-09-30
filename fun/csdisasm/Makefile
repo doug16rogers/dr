@@ -9,7 +9,8 @@ all: $(TARGET)
 
 $(TARGET): $(TARGET).o Makefile
 	$(CC) $(CFLAGS) -o $@ $< -L/opt/local/lib -lcapstone
-	cat meterpreter.hex | ./$(TARGET) -x -arch=x86
+#	$(CC) $(CFLAGS) -o $@ $< /opt/local/lib/libcapstone.a   # This works, too, just 12x larger.
+	cat meterpreter.hex | ./$(TARGET) -x -arch=x86-32
 
 .PHONY: clean
 clean:

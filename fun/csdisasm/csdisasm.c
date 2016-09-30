@@ -77,10 +77,29 @@ typedef struct _ArchEntry {
  * List of supported architectures.
  */
 const ArchEntry kArchList[] = {
-    { CS_ARCH_X86,   CS_MODE_32,  "x86",     "Intel x86 32-bit" },
-    { CS_ARCH_X86,   CS_MODE_64,  "x64",     "Intel x86 64-bit" },
-    { CS_ARCH_ARM,   CS_MODE_ARM, "arm",     "ARM32, Thumb and Thumb-2" },
-    { CS_ARCH_ARM64, CS_MODE_ARM, "arm64",   "ARM64" },
+    { CS_ARCH_X86,   CS_MODE_32,     "x86-32",  "Intel x86 32-bit" },
+    { CS_ARCH_X86,   CS_MODE_64,     "x86-64",  "Intel x86 64-bit" },
+    { CS_ARCH_X86,   CS_MODE_16,     "x86-16",  "Intel x86 16-bit" },
+
+    { CS_ARCH_ARM,   CS_MODE_ARM,    "arm-32",      "ARM32" },
+    { CS_ARCH_ARM64, CS_MODE_ARM,    "arm-64",      "ARM64" },
+    { CS_ARCH_ARM,   CS_MODE_THUMB,  "arm-thumb",   "ARM Thumb and Thumb-2" },
+    { CS_ARCH_ARM,   CS_MODE_MCLASS, "arm-cortex",  "ARM M-Cortex" },
+    { CS_ARCH_ARM,   CS_MODE_V8,     "arm-v8",      "ARM V8 encodings" },
+
+    { CS_ARCH_MIPS,  CS_MODE_MIPS32, "mips-32",     "MIPS 32-bit" },
+    { CS_ARCH_MIPS,  CS_MODE_MIPS64, "mips-64",     "MIPS 64-bit" },
+    { CS_ARCH_MIPS,  CS_MODE_MIPS3,  "mips-iii",    "MIPS III" },
+    { CS_ARCH_MIPS,  CS_MODE_MICRO,  "mips-micro",  "MicroMIPS" },
+
+    { CS_ARCH_PPC,   CS_MODE_32,   "ppc",     "PowerPC 32-bit" },
+
+    { CS_ARCH_SPARC, CS_MODE_32,    "sparc-32",   "SPARC 32-bit" },
+    { CS_ARCH_SPARC, CS_MODE_V9,    "sparc-v9",   "SPARC V9" },
+
+    { CS_ARCH_SYSZ,  0,  "sysz",    "SystemZ" },
+
+    { CS_ARCH_XCORE, 0,  "xcore",   "X-Core" },
 };
 
 /**
@@ -124,7 +143,7 @@ void Usage(FILE* file, int exit_code) {
             "    -a:rch=arch                 Architecture. [%s]\n"
             , kArchList[kDefaultArch].name);
     for (size_t i = 0; i < kArchListCount; ++i) {
-        fprintf(file, "           %-8s %s\n", kArchList[i].name, kArchList[i].description);
+        fprintf(file, "           %-14s %s\n", kArchList[i].name, kArchList[i].description);
     }
     fprintf(file,
             "\n"
@@ -327,7 +346,7 @@ int ParseOptions(int argc, char* argv[]) {
             if (NULL == val) {
                 PrintUsageError("no architecture given in -arch=...");
             }
-            for (size_t i = 0; i < kArchListCount; ++i) {
+            for (i = 0; i < kArchListCount; ++i) {
                 if (0 == strcasecmp(val, kArchList[i].name)) {
                     g_arch = i;
                     break;
