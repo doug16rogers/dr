@@ -9,8 +9,7 @@ LIBS = -lm
 $(TARGET): $(TARGET).o $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-.PHONY:	xhexclock
-
+.PHONY:	clean
 clean:
 	rm -f core *.o *~ $(TARGET) xhexclock
 
