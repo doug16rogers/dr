@@ -1,7 +1,15 @@
 TARGET = radixify
 
+ifeq ($HOSTNAME,drogers-mbp)
+GMP_INCLUDE = -I/opt/local/include
+GMP_LIB = -I/opt/local/lib/libgmp.a
+else
+GMP_INCLUDE =
+GMP_LIB = /usr/lib/x86_64-linux-gnu/libgmp.a
+endif
+
 CC = gcc
-CFLAGS = -Wall -Werror -g -I/opt/local/include
+CFLAGS = -Wall -Werror -g $(GMP_INCLUDE)
 
 osname := $(shell uname -s)
 mname := $(shell uname -m)
