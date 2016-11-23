@@ -249,7 +249,7 @@ function grindc()
             path="$2"
         fi
 
-        grind "$path" "$1" "*.c" "*.c++" "*.cpp" "*.cc"
+        grind "$path" "$1" "*.c" "*.c++" "*.cpp" "*.cc" "*.cs"
     fi
 }   # grindc()
 
@@ -265,7 +265,7 @@ function grIndc()
             path="$2"
         fi
 
-        grInd "$path" "$1" "*.c" "*.c++" "*.cpp" "*.cc"
+        grInd "$path" "$1" "*.c" "*.c++" "*.cpp" "*.cc" "*.cs"
     fi
 }   # grIndc()
 
