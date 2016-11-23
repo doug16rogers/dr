@@ -1,12 +1,25 @@
-/* Copyright (c) 2016 FireEye Incorporated. All rights reserved. */
+/* Copyright (c) 2016 Raytheon. All rights reserved. */
+
+#ifdef _MSC_BUILD
+#include <Windows.h>
+#endif
 
 #include <assert.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _MSC_BUILD
+#include <capstone.h>
+#define strcasecmp   strcmpi
+#define ssize_t      long
+#define __attribute__(_x)
+#pragma warning(disable: 4996)      // For fopen(), sscanf(), strcmpi().
+#else
 #include <capstone/capstone.h>
+#endif
 
 /**
  * Default name of this program.
@@ -47,6 +60,17 @@ int g_error_no_input = kDefaultErrorNoInput;
  * Architecture to use when disassembling.
  */
 int g_hex_input = kDefaultHexInput;
+
+/**
+ * Default setting for the start address.
+ */
+#define kDefaultStartAddress 0
+
+/**
+ * Address to use for the first index (before the ':') when printing the
+ * disassembly.
+ */
+uint64_t g_start_address = kDefaultStartAddress;
 
 /**
  * Output file stream. By default use stdout.
@@ -149,6 +173,10 @@ void Usage(FILE* file, int exit_code) {
             "\n"
             "    -[no-]error-no-input         Whether to mark no input as an error. [%s-error-no-input]\n"
             , kDefaultErrorNoInput ? "" : "-no");
+    fprintf(file,
+            "\n"
+            "    -s:tart:-address=<hex>       Address of first instruction. [%08llX]\n"
+            , (uint64_t) kDefaultStartAddress);
     fprintf(file,
             "\n"
             "    -[no-]hex, -x               Convert input from hexadecimal ASCII. [%s-hex]\n"
@@ -359,6 +387,13 @@ int ParseOptions(int argc, char* argv[]) {
         } else if (IsFlagOption(arg, &g_error_no_input, "error-no-input")) {
         } else if (IsFlagOption(arg, &g_hex_input, "hex")) {
         } else if (IsFlagOption(arg, &g_hex_input, "x")) {
+        } else if (IsOption(arg, &val, "s:tart:-address")) {
+            if (NULL == val) {
+                PrintUsageError("no start address given in -start-address=...");
+            }
+            if (sscanf(val, "%llX", &g_start_address) != 1) {
+                PrintUsageError("invalid -start-address=%s", val);
+            }
         } else if (IsFlagOption(arg, &g_verbose, "v:erbose")) {
         } else {
             PrintUsageError("invalid option \"%s\"", arg);
@@ -426,7 +461,7 @@ size_t UnhexBufferInPlace(char* data, size_t size) {
 void PrintInstruction(FILE* file, cs_insn* ins) {
     assert(NULL != file);
     assert(NULL != ins);
-    fprintf(file, "%06X:\t", (unsigned) ins->address);
+    fprintf(file, "%06llX:\t", (uint64_t) ins->address);
     for (size_t i = 0; i < 16; ++i) {
         if (i < ins->size) {
             fprintf(file, "%02X", ins->bytes[i]);
@@ -458,7 +493,7 @@ size_t PrintDisassembly(FILE* file, uint8_t* buffer, size_t size) {
         PrintError("cs_open() returned error %d", cs_result);
         return 0;
     }
-    instruction_count = cs_disasm(handle, (const uint8_t*) buffer, size, 0, 0, &instruction);
+    instruction_count = cs_disasm(handle, (const uint8_t*) buffer, size, g_start_address, 0, &instruction);
     PrintVerbose("cs_disasm() returned instruction_count=%u.", (unsigned) instruction_count);
     if (0 == instruction_count) {
         cs_close(&handle);
@@ -490,29 +525,30 @@ int main(int argc, char* argv[]) {
     size_t buffer_bytes = 0;
     g_program = NamePartOfPath(argv[0]);
     argc = ParseOptions(argc, argv);  /* Remove options; leave program name and arguments. */
+    g_out_file = (NULL == g_out_file) ? stdout : g_out_file;
     buffer = malloc(kMaxBufferBytes + 1);
     if (NULL == buffer) {
         PrintError("could not allocate buffer");
         return 1;
     }
     if (1 == argc) {
-        ssize_t bytes = fread(buffer, 1, kMaxBufferBytes, stdin);
-        if (bytes < 0) {
+        size_t bytes = fread(buffer, 1, kMaxBufferBytes, stdin);
+        if (bytes == 0) {
             PrintError("could not read from stdin");
             return 2;
         }
         buffer_bytes = bytes;
     } else {
         size_t i = 1;
-        for (i = 1; (i < argc) && (buffer_bytes < kMaxBufferBytes); ++i) {
+        for (i = 1; (i < (size_t) argc) && (buffer_bytes < kMaxBufferBytes); ++i) {
             FILE* file = fopen(argv[i], "rb");
-            ssize_t bytes = 0;
+            size_t bytes = 0;
             if (NULL == file) {
                 PrintError("could not open \"%s\"", argv[i]);
                 return 2;
             }
             bytes = fread(&buffer[buffer_bytes], 1, kMaxBufferBytes - buffer_bytes, file);
-            if (bytes < 0) {
+            if (bytes == 0) {
                 PrintError("could not read from \"%s\"", argv[i]);
                 fclose(file);
                 return 2;
@@ -522,7 +558,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
-        if (i < argc) {
+        if (i < (size_t) argc) {
             PrintError("buffer overflow reading \"%s\"; size limit is %d bytes", argv[i], (int) kMaxBufferBytes);
             return 3;
         }

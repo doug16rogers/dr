@@ -21,13 +21,23 @@ const char* g_program = kProgram;
  * Whether to show composites.
  */
 #define kDefaultShowComposite 0
-int g_show_composite = 0;
+int g_show_composite = kDefaultShowComposite;
 
 /**
  * Whether to show primes.
  */
 #define kDefaultShowPrime 0
-int g_show_prime = 0;
+int g_show_prime = kDefaultShowPrime;
+
+/**
+ * Base to use for conversion. 0 means that the value can contain 0x/0X
+ * (hexadecimal), 0b (binary) or leading 0 (octal).
+ */
+#define kDefaultBase 0
+int g_base = kDefaultBase;
+
+#define kBaseMin 2
+#define kBaseMax 62;
 
 /**
  * Default value for verbose setting.
@@ -70,6 +80,10 @@ void Usage(FILE* file, int exit_code) {
     fprintf(file,
             "\n"
             "    -h:elp                      Show this usage information.\n");
+    fprintf(file,
+            "\n"
+            "    -base=<base>                Use <base>; 0 = automatic 0/0x/0b [%d]\n"
+            , kDefaultBase);
     fprintf(file,
             "\n"
             "    -[no-][show-]c:omposite:s   Show arguments that are composite. [%s-show-composites]\n"
@@ -205,6 +219,25 @@ int IsFlagOption(const char* input, int* flag_value_ptr, const char* descriptor)
 }   /* IsFlagOption() */
 
 /* ------------------------------------------------------------------------- */
+int IsIntOption(const char* input, int* int_value_ptr, const char* descriptor, int default_value) {
+    int int_value = default_value;
+    int rval = 0;
+    const char* opt_value = NULL;
+    assert(NULL != input);
+    assert(NULL != descriptor);
+    if ('-' == *input) {
+        rval = IsOption(input, &opt_value, descriptor);
+        if (rval && (NULL != opt_value) && (0 != opt_value[0])) {
+            rval = (1 == sscanf(opt_value, "%d", &int_value));
+        }
+    }
+    if (rval && (NULL != int_value_ptr)) {
+        *int_value_ptr = int_value;
+    }
+    return rval;
+}   /* IsIntOption() */
+
+/* ------------------------------------------------------------------------- */
 /**
  * Parse options from the command line, removing them from @a argv[].
  *
@@ -237,6 +270,7 @@ int ParseOptions(int argc, char* argv[]) {
             end_of_options = 1;
         } else if (IsOption(arg, NULL, "h:elp")) {
             Usage(stdout, 0);
+        } else if (IsIntOption(arg, &g_base, "base", kDefaultBase)) {
         } else if (IsFlagOption(arg, &g_show_composite, "c:omposite:s")) {
         } else if (IsFlagOption(arg, &g_show_composite, "show-c:omposite:s")) {
         } else if (IsFlagOption(arg, &g_show_prime, "p:rime:s")) {
@@ -330,8 +364,8 @@ int main(int argc, char* argv[]) {
         char* arg = argv[i];
         mpz_t n;
         mpz_init(n);
-        if (0 != mpz_set_str(n, arg, 10)) {
-            PrintUsageError("invalid decimal number \"%s\".", arg);
+        if (0 != mpz_set_str(n, arg, g_base)) {
+            PrintUsageError("invalid integer number \"%s\".", arg);
         }
         if (IsPrime(n)) {
             if (g_verbose) {
