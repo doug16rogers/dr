@@ -33,7 +33,7 @@ fi
 if [ -x "$DR_DIR/bin/hexdate" ]; then
     prompt_date='$(hexdate -n --epoch=doug; date -u "+ %y%m%d-%H%M%S")'
 else
-    prompt_date='$(date -u "+%y%m%d-%H%M%S")'
+    prompt_date='`date -u "+%y%m%d-%H%M%S"`'
 fi
 
 export PS1="\n$color_time${prompt_date} $color_user\u$color_reset@$color_host\h$color_reset $color_dir\w$color_reset\n$prompt_char "
