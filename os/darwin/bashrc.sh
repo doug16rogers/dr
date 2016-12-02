@@ -3,6 +3,8 @@
 alias ldd="otool -L "
 alias md5sum="md5 -r "
 
+alias gdb='echo "This is an alias for lldb..."; lldb '
+
 eject() {
     if [ -z "$1" ]; then
         echo "usage: eject <volume>..."

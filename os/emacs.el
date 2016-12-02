@@ -18,6 +18,8 @@
 
 (dr-load "google-c-style.el")
 (dr-load "mandiant-c-style.el")
+(if (not (fboundp 'lua-mode))
+    (dr-load "lua-mode.el"))
 ; (dr-load "armasm-mode.el")
 ; (dr-load "smart-tabs-mode.el")
 
@@ -28,7 +30,7 @@
 (setq auto-mode-alist (cons '("\.\\(spec\\|body\\).a$" . ada-mode)    auto-mode-alist))
 
 
-;(setq auto-mode-alist (cons '("\\.lua"                 . lua-mode)    auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.lua"                 . lua-mode)    auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(4th\\|forth\\)$"   . forth-mode)  auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.max"                 . maxima-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.sch\\(\\|eme\\)$"     . scheme-mode) auto-mode-alist))
