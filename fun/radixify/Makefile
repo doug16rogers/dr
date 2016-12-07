@@ -1,23 +1,21 @@
 TARGET = radixify
 
-ifeq ($HOSTNAME,drogers-mbp)
-GMP_INCLUDE = -I/opt/local/include
-GMP_LIB = -I/opt/local/lib/libgmp.a
-else
-GMP_INCLUDE =
-GMP_LIB = /usr/lib/x86_64-linux-gnu/libgmp.a
-endif
-
 CC = gcc
-CFLAGS = -Wall -Werror -g $(GMP_INCLUDE)
+CFLAGS = -Wall -Werror -g -I/opt/local/include
 
-osname := $(shell uname -s)
-mname := $(shell uname -m)
-ifeq ($(osname),Darwin)
+uname_s := $(shell uname -s)
+uname_m := $(shell uname -m)
+ifeq ($(uname_s),Darwin)
 LDFLAGS = /opt/local/lib/libgmp.a
 endif
-ifeq ($(osname),Linux)
-LDFLAGS = /usr/lib/$(mname)-linux-gnu/libgmp.a
+ifeq ($(uname_s),Linux)
+ifeq ($(uname_m),x86_64)
+LDFLAGS = /usr/lib/$(uname_m)-linux-gnu/libgmp.a
+else
+# Weird that it shows up as i686 in 'uname -m' and 'uname -p' but the library
+# is installed in /usr/lib/i386-linux-gnu.
+LDFLAGS = /usr/lib/i386-linux-gnu/libgmp.a
+endif
 endif
 
 OBJS = \
