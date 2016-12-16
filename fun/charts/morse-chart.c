@@ -28,7 +28,7 @@ char kMorseChart[] =
     "  A · =       N = ·       1 · = = = =   . · = · = · =    <AA> · = · =           New line            \n"
     "  B = · · ·   O = = =     2 · · = = =   ? · · = = · ·    <AR> · = · = ·         New page            \n"
     "  C = · = ·   P · = = ·   3 · · · = =   ; = · = · = ·    <AS> · = · · ·         Wait (&)            \n"
-    "  D = · ·     Q = · = ·   4 · · · · =   ! = · = · = =    <BT> = · · · =         New paragraph       \n"
+    "  D = · ·     Q = = · =   4 · · · · =   ! = · = · = =    <BT> = · · · =         New paragraph       \n"
     "  E ·         R · = ·     5 · · · · ·   , = = · · = =    <CT> = · = · =         Attention           \n"
     "  F · · = ·   S · · ·     6 = · · · ·   : = = = · · ·    <HH> · · · · · · · ·   Error/????          \n"
     "  G = = ·     T =         7 = = · · ·   \" · = · · = ·     <K> = · =             Any station reply   \n"
