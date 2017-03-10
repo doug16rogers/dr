@@ -45,6 +45,10 @@ export DR_OS_DIR="$DR_DIR/os"
 # This needs to be set before bash-path.sh.
 export DR_OS_NAME=`uname -s | cut -d _ -f 1 | cut -d - -f 1 | tr A-Z a-z`
 
+if [ ${DR_OS_NAME:0:5} == "mingw" ]; then
+    export DR_OS_NAME="mingw"
+fi
+
 source "$DR_OS_DIR/bash-path.sh"
 source "$DR_OS_DIR/bash-functions.sh"
 source "$DR_OS_DIR/bash-aliases.sh"
