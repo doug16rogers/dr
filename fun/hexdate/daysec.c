@@ -1,9 +1,5 @@
 #ifdef WIN32
 #include <Windows.h>
-#pragma warning(disable: 4996)  // *sigh* VS2013 warns even with the #define's below.
-#define snprintf _snprintf
-// I don't use sscanf_s() because it requires a buffer size parameter for
-// 'c' and 's' formats.
 #endif
 
 #include <assert.h>
@@ -14,6 +10,13 @@
 
 #ifndef WIN32
 #include <sys/time.h>
+#else
+#pragma warning(disable: 4996)  // *sigh* VS2013 warns even with the #define's below.
+#undef snprintf
+#define snprintf _snprintf
+#define strcasecmp stricmp
+// I don't use sscanf_s() because it requires a buffer size parameter for
+// 'c' and 's' formats.
 #endif
 
 #include "daysec.h"
