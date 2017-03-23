@@ -51,6 +51,7 @@ unuse_ada_compiler() {
 use_ada_compiler
 build 'ada'     'gnatmake --version'  'gnatmake -o ada-hello ada-hello'
 unuse_ada_compiler
+build 'bf'      './bf.sh --version'   './bf.sh bf-hello bf-hello.bf'
 build 'c'       'gcc --version'       'gcc -o c-hello c-hello.c'
 build 'c++'     'g++ --version'       'g++ -o c++-hello c++-hello.c++'
 use_ada_compiler

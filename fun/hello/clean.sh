@@ -6,5 +6,5 @@ run () {
     eval "$cmd"
 }
 
-run rm -f "*-hello" "*.o" "*.ali" "*.hi" "*~" "*.native" "*.log"
+run rm -f "*-hello" "*.o" "*.ali" "*.hi" "*~" "*.native" "*.log" "*.bf.c"
 run rm -rf _build

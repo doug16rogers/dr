@@ -19,7 +19,14 @@
 (dr-load "google-c-style.el")
 (dr-load "mandiant-c-style.el")
 (if (not (fboundp 'lua-mode))
-    (dr-load "lua-mode.el"))
+    (progn
+      (dr-load "lua-mode.el")
+      (setq auto-mode-alist (cons '("\\.lua" . lua-mode) auto-mode-alist))))
+(if (not (fboundp 'terra-mode))
+    (progn
+      (dr-load "terra-mode.el")
+      (setq auto-mode-alist (cons '("\\.\\(t\\|terra\\)$" . terra-mode) auto-mode-alist))))
+
 ; (dr-load "armasm-mode.el")
 ; (dr-load "smart-tabs-mode.el")
 
@@ -29,8 +36,6 @@
 ; (setq auto-mode-alist (cons '("\\.S"                   . armasm-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(spec\\|body\\).a$" . ada-mode)    auto-mode-alist))
 
-
-(setq auto-mode-alist (cons '("\\.lua"                 . lua-mode)    auto-mode-alist))
 (setq auto-mode-alist (cons '("\.\\(4th\\|forth\\)$"   . forth-mode)  auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.max"                 . maxima-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.sch\\(\\|eme\\)$"     . scheme-mode) auto-mode-alist))
@@ -293,7 +298,7 @@
 (defun dr-insert-company-copyright ()
   "Inserts a company copyright at top of the current buffer."
   (interactive)
-  (dr-insert-copyright "FireEye Incorporated"))
+  (dr-insert-copyright "Raytheon"))
 
 ;------------------------------------------------------------------------------
 (defun dr-insert-rogers-copyright ()
@@ -1153,6 +1158,11 @@
 (global-set-key "\C-xg"     'dr-compile-gb-capture)
 (global-set-key '[M-up]     (lambda () (interactive) (scroll-up 1)))
 (global-set-key '[M-down]   (lambda () (interactive) (scroll-down 1)))
+
+; Move between adjacent buffers.
+(global-set-key [(control meta n)] 'next-buffer)
+(global-set-key [(control meta p)] 'previous-buffer)
+(global-set-key (kbd "C-M-_") 'mode-line-other-buffer)  ; Actually C-M--, but it uses _ for the key name.
 
 (fset 'hex-char-convert
    [?\C-d ?\C-d ?\C-  ?\C-f ?\C-w ?\C-f ?\C-y])
