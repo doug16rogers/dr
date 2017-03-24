@@ -17,11 +17,18 @@ shift
 c_file="$exe.bf.c"
 
 cat <<EOF > "$c_file"
+#include <signal.h>
 #include <stdio.h>
-unsigned char data[0x10000];
-unsigned char* dp = data;
+#include <stdlib.h>
+unsigned char data[0x20000];
+unsigned char* dp = &data[sizeof(data)/2];;
+
+void sig_handler(int sig) {
+    exit(1);
+}
 
 int main(int argc, char* argv[]) {
+    signal(SIGSEGV, sig_handler);
 EOF
 
 while [ $# -gt 0 ]; do
