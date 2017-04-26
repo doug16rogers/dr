@@ -1,14 +1,10 @@
 #!/bin/bash
 
-# Prints all uncapitalized English words that match a phone number.
+# Prints all uncapitalized English words that match a phone number, also
+# breaking it into 2 or 3 words.
 
-# Use --exact to limit the search to words that have the same length
-# as the digits. Otherwise any words that contain matching digits
-# will be printed. For example, without --exact, 4357 will match
-# "help", "helpful", "unhelpful", etc.
-
-# Any non-digit letters are passed through to the regular expression, so you
-# may emulate --exact with '^<digits>$'.
+# Use --inexact to search for words that might be longer than the pattern of
+# digits. Note that --inexact does not apply to multi-word searches.
 
 # This will match 'o' for zero and 'i' for one.
 
@@ -23,11 +19,11 @@ letters[7]="pqrs"
 letters[8]="tuv"
 letters[9]="wxyz"
 
-exact=0
+inexact=0
 
-if [ "$1" = "--exact" ]; then
+if [ "$1" = "--inexact" ]; then
     shift
-    exact=1
+    inexact=1
 fi
 
 number="$*"
@@ -65,13 +61,16 @@ done
 
 re=`echo "${regex[@]}" | sed 's/ //g'`
 
-if [ $exact -eq 1 ]; then
+if [ $inexact -eq 0 ]; then
     re="^$re\$"
 fi
 
 # Run the full number through the grepper.
 echo "# regex=$re"
-grep "$re" "$HOME/dr/fun/itasoftware-puzzles/word.lst"
+words=(`grep "$re" "$HOME/dr/fun/itasoftware-puzzles/word.lst"`)
+if [ ${#words[@]} -ne 0 ]; then
+    echo "(${words[@]})"
+fi
 
 n=${#regex[@]}
 
