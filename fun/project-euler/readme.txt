@@ -1,7 +1,7 @@
 
 See http://projecteuler.net.
+
 Username: doug_rogers
-Password: dreuler
 
 To run, first untar projecteuler.net.tar.gz.
 
