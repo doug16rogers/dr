@@ -1,7 +1,7 @@
-TARGETS = ascii-chart morse-chart
+TARGETS = ascii-chart morse-chart element-chart
 
 CC = gcc
-CFLAGS = -Wall -Werror -O3
+CFLAGS = -Wall -Werror -O2 -g
 
 all: $(TARGETS)
 
@@ -10,6 +10,12 @@ ascii-chart: ascii-chart.c Makefile
 
 morse-chart: morse-chart.c Makefile
 	$(CC) -o $@ $(CFLAGS) $<
+
+element-chart: element-chart.c text_canvas.c Makefile
+	$(CC) -o $@ $(CFLAGS) $< text_canvas.c
+
+unit_test: unit_test.c text_canvas_test.c text_canvas.c cut.c
+	$(CC) -o $@ $(CFLAGS) $^
 
 .PHONY: clean
 clean:
