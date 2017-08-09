@@ -54,7 +54,7 @@ char* run_file;         // name for executing program
 
 #define NUMBER_OF_UNITS 0xFFFFFFFFUL
 
-char file_name[0x80] = "";
+char file_name[0x200] = "";
 
 #define DEFAULT_LOWER 0
 
@@ -364,7 +364,11 @@ RETURN_CODES Load_Argument(
    switch (*argument)
    {
       case '-':
-         return Load_Option(++argument);
+         if (0 != argument[1])
+         {
+            return Load_Option(++argument);
+         }
+         break;
 
       case '@':
          return Load_Argument_File(++argument);
@@ -623,30 +627,21 @@ int main(
       return return_code; //----------------------------------> return!
    }
 
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //!!!!
-   //!!!!  You may wish to display help when no arguments are provided...
-   //!!!!
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                        //!!!!
-   if (file_name[0] == 0)               //!!!!
-   {                                    //!!!!
-      printf("no input file given\n");
-      Usage();                          //!!!!
-      return commandline_error;         //!!!!
-   }                                    //!!!!
-
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //!!!!
-   //!!!!  Insert your application's code here...
-   //!!!!
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-   FILE* file = fopen(file_name, "rb");
-   if (file == NULL)
+   FILE* file = NULL;
+   
+   if ((file_name[0] == 0) || (0 == strcmp(file_name, "-")))
    {
-      printf("couldn't open \"%s\"\n", file_name);
-      return could_not_open_file;
+       file = stdin;
+       strncpy(file_name, "<stdin>", sizeof(file_name));
+   }
+   else
+   {
+       FILE* file = fopen(file_name, "rb");
+       if (file == NULL)
+       {
+           printf("couldn't open \"%s\"\n", file_name);
+           return could_not_open_file;
+       }
    }
 
    if (file_offset != 0UL)
@@ -707,8 +702,9 @@ void Usage(void)
    printf(
 
       "\n"
-      "Usage: %s [options] <file>\n"
-      "Where <file> is the file to dump.\n"
+      "Usage: %s [options] [file]\n"
+      "\n"
+      "Where <file> is the file to dump. If no file is given, stdin is used.\n"
       "\n"
       "Options must begin with '-' (defaults in []):\n"
       "   @<file>    read more arguments and options from <file>\n"
