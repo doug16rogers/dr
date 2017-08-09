@@ -6,7 +6,7 @@
 
 --        {20,48,52}, {24,45,51}, {30,40,50}
 
--- For which value of p 1000, is the number of solutions maximised?
+-- For which value of p <= 1000, is the number of solutions maximised?
 
 -------------------------------------------------------------------------------
 -- Notes:
@@ -17,24 +17,49 @@
 
 require'nt'
 
-local LIMIT = 999
+args = { ... }
+
+LIMIT = 1000
+
+if #args >= 1 then
+   LIMIT = tonumber(args[1])
+end
+
+function printf(fmt,...)
+   local s = string.format(fmt, ...)
+   print(s)
+   return s
+end
+
 local list = {}
+local max_count = 0
+local perimeter_at_max = 0
 
-for trip in nt.pythagorean_triples() do
-   local trip_sum = nt.sum(trip)
+function array2_to_string(aa)
+   t = {}
+   for _, a in ipairs(aa) do
+      t[#t+1] = nt.array_to_string(a)
+   end
+   return table.concat(t, ', ')
+end
 
-   if trip_sum > LIMIT then
+for triple in nt.pythagorean_triples(false, 'perimeter') do
+   local perimeter = nt.sum(triple)
+
+   if perimeter > LIMIT then
       break
    end
 
-   for k = 1, LIMIT / trip_sum do
-      local sum = k * trip_sum
+   if not list[perimeter] then
+      list[perimeter] = {}
+   end
 
-      if not list[sum] then
-         list[sum] = {}
-      end
-
-      list[sum][#list[sum]+1] = { k * trip[1], k * trip[2], k * trip[3] }
-      print(sum, nt.array_to_string(list[sum][#list[sum]]))
+   perimeter_list = list[perimeter]
+   perimeter_list[#perimeter_list + 1] = triple
+   if #perimeter_list > max_count then
+      max_count = #perimeter_list
+      perimeter_at_max = perimeter
+      print(max_count, perimeter_at_max, array2_to_string(perimeter_list))
    end
 end   -- for each pythagorean triple
+   
