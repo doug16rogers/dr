@@ -6,11 +6,24 @@
 
 # Compiled Dynamic libraries
 *.so
+*.dSYM
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
+
+# WDK and Visual Studio directories and files.
+*.err
+build*.log
+*.wrn
+objchk*
+objfre*
+Debug
+Release
+x64
+*.vcxproj.user
+*.VC.*
 
 # Backup files
 *~

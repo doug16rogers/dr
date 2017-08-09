@@ -4,6 +4,7 @@
 # Use ^R rather than the annoying default, ^A.
 escape ^Rr
 startup_message off
+defscrollback 10000
 
 # For some reason these don't work:
 # bufferfile /home/drogers/tmp/screen-clipboard

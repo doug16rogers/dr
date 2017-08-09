@@ -1,0 +1,15 @@
+# Local targets - copied binaries.
+addcr
+*-chart
+bingrep
+csdisasm
+hex
+hex2bin
+hexdate
+hexflash
+nobin
+nocr
+nonul
+phone-grepwd.sh
+radixify
+wd-*

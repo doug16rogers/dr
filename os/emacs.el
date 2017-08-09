@@ -40,6 +40,8 @@
 (setq auto-mode-alist (cons '("\\.max"                 . maxima-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\.sch\\(\\|eme\\)$"     . scheme-mode) auto-mode-alist))
 
+(setq load-path (cons (concat (dr-home) "/dr/elisp") load-path))
+
 ; (setq load-path (cons  "/usr/local/share/maxima/5.9.0/emacs" load-path ))
 ; (autoload 'maxima      "maxima"      "Running Maxima interactively" t)
 ; (autoload 'maxima-mode "maxima"      "Maxima editing mode" t)
@@ -51,6 +53,12 @@
 ; (setq auto-mode-alist (cons '("Makefile\..*$" . makefile-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("[Mm]akefile\..*$" . makefile-gmake-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.mak[e]*$" . makefile-gmake-mode) auto-mode-alist))
+
+(package-initialize)
+; (require 'f)
+; (require 'let-alist)
+; (require 's)
+; (require 'elm-mode)
 
 ; Some of these functions come from other sources, but most are original.
 
@@ -952,6 +960,12 @@
   (untabify (point-min) (point-max)))
 
 ;------------------------------------------------------------------------------
+(defun dr-disable-indent-tabs-mode ()
+  "Set 'indent-tabs-mode to nil."
+  (interactive)
+  (setq 'indent-tabs-mode nil))
+
+;------------------------------------------------------------------------------
 (defun dr-revert-buffer-now ()
   "Reverts the buffer immediately without confirming."
   (interactive)
@@ -1124,6 +1138,7 @@
 (global-set-key "\C-cd\C-h" 'dr-hex-upcase-region)
 (global-set-key "\C-cd\M-h" 'dr-hex-downcase-region)
 (global-set-key "\C-cdi"    'indent-region)
+(global-set-key "\C-cd\C-i" 'dr-disable-indent-tabs-mode)
 (global-set-key "\C-cdI"    'dr-indent-all)
 (global-set-key "\C-cdm"    'dr-insert-C-main)
 (global-set-key "\C-cdM"    'dr-insert-C-main-program)
@@ -1131,6 +1146,7 @@
 (global-set-key "\C-cdp"    'dr-insert-cplusplus-guard)
 (global-set-key "\C-cdr"    'dr-insert-rogers-copyright)
 (global-set-key "\C-cdu"    'dr-undo-camel-case)
+(global-set-key "\C-cdU"    'dr-untabify-entire-buffer)
 (global-set-key "\C-cd\C-u" 'dr-camel-case)
 (global-set-key "\C-cdx"    'compile)
 (global-set-key "\C-cdX"    'dr-recompile-watch)

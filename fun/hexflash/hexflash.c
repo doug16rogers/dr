@@ -10,11 +10,15 @@
 #define DEFAULT_B_FIRST 0x8
 #define DEFAULT_B_LAST  0xF
 
+#define DEFAULT_ANY_ORDER  0
+
 int a_first = DEFAULT_A_FIRST;
 int a_last  = DEFAULT_A_LAST;
 
 int b_first = DEFAULT_B_FIRST;
 int b_last  = DEFAULT_B_LAST;
+
+int any_order = DEFAULT_ANY_ORDER;
 
 // ---------------------------------------------------------------------------
 void Usage (int exit_code)
@@ -27,6 +31,7 @@ void Usage (int exit_code)
   printf ("  -b<range>   Range for second multiplicand [%X%X]\n",
           DEFAULT_B_FIRST, DEFAULT_B_LAST);
   printf ("  -h          Show usage information.\n");
+  printf ("  -o          Print 'a x b' or 'b x a' randomly. [%s]\n", DEFAULT_ANY_ORDER ? "yes" : "no");
   printf ("  -s<hex>     Hexadecimal random seed [randomized on time]\n");
   printf ("\n");
   printf ("Ranges are <F:L> where 'F' and 'L' are the first and last hex values\n");
@@ -101,6 +106,10 @@ void Load_Arguments (int argc, char* argv[])
       }
       break;
 
+    case 'o':
+        any_order = 1;
+        break;
+
     case 'h':
       Usage (1);
       break;
@@ -129,6 +138,11 @@ int main (int argc, char* argv[])
     int b = b_first + (rand() % (b_last + 1 - b_first));
     int c;
 
+    if (any_order && ((rand() % 10) < 5)) {
+        a ^= b;
+        b ^= a;
+        a ^= b;
+    }
     printf ("  %X x %X  = ", a, b);
     if (scanf ("%x", &c) != 1) break;
 
