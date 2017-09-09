@@ -7,10 +7,14 @@ CFLAGS = -Wall -Werror -g -I/opt/local/include
 
 all: $(TARGET)
 
+.PHONY: install
+install: $(TARGET)
+	cp $^ $(DR_BIN)/
+
 $(TARGET): $(TARGET).o Makefile
 	$(CC) $(CFLAGS) -o $@ $< -L/opt/local/lib -lcapstone
 #	$(CC) $(CFLAGS) -o $@ $< /opt/local/lib/libcapstone.a   # This works, too, just 12x larger.
-	cat meterpreter.hex | ./$(TARGET) -x -arch=x86-32
+#	cat meterpreter.hex | ./$(TARGET) -x -arch=x86-32
 
 .PHONY: clean
 clean:

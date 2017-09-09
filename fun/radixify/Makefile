@@ -27,6 +27,10 @@ OBJS = \
 
 all: $(TARGET) test
 
+.PHONY: install
+install: $(TARGET)
+	cp $^ $(DR_BIN)/
+
 $(TARGET): $(OBJS) Makefile
 	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 

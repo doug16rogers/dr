@@ -5,6 +5,10 @@ CFLAGS = -Wall -Werror -g
 
 all: $(TARGETS)
 
+.PHONY: install
+install: $(TARGETS)
+	cp $^ $(DR_BIN)/
+
 addcr: addcr.c
 	$(CC) -o $@ $(CFLAGS) $^
 

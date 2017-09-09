@@ -5,6 +5,7 @@
 #endif
 
 #include <assert.h>
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -175,7 +176,7 @@ void Usage(FILE* file, int exit_code) {
             , kDefaultErrorNoInput ? "" : "-no");
     fprintf(file,
             "\n"
-            "    -s:tart:-address=<hex>       Address of first instruction. [%08llX]\n"
+            "    -s:tart:-address=<hex>       Address of first instruction. [%08" PRIX64 "]\n"
             , (uint64_t) kDefaultStartAddress);
     fprintf(file,
             "\n"
@@ -391,7 +392,7 @@ int ParseOptions(int argc, char* argv[]) {
             if (NULL == val) {
                 PrintUsageError("no start address given in -start-address=...");
             }
-            if (sscanf(val, "%llX", &g_start_address) != 1) {
+            if (sscanf(val, "%" PRIX64, &g_start_address) != 1) {
                 PrintUsageError("invalid -start-address=%s", val);
             }
         } else if (IsFlagOption(arg, &g_verbose, "v:erbose")) {
@@ -461,7 +462,7 @@ size_t UnhexBufferInPlace(char* data, size_t size) {
 void PrintInstruction(FILE* file, cs_insn* ins) {
     assert(NULL != file);
     assert(NULL != ins);
-    fprintf(file, "%06llX:\t", (uint64_t) ins->address);
+    fprintf(file, "%06" PRIX64 ":\t", (uint64_t) ins->address);
     for (size_t i = 0; i < 16; ++i) {
         if (i < ins->size) {
             fprintf(file, "%02X", ins->bytes[i]);

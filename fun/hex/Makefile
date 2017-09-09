@@ -1,13 +1,19 @@
-TARGET = hex
+TARGETS = hex
 CFLAGS = -g -Wall -Werror
 
 CXX = g++
 CC = gcc
 
-$(TARGET) : $(TARGET).cc
+all: $(TARGETS)
+
+.PHONY: install
+install: $(TARGETS)
+	cp $^ $(DR_BIN)/
+
+$(TARGETS) : $(TARGETS).cc
 	$(CXX) -o $@ $(CFLAGS) $<
 
 .PHONY: clean
 clean:
-	rm -f *~ *.o $(TARGET)
-	rm -rf $(TARGET).dSYM
+	rm -f *~ *.o $(TARGETS)
+	rm -rf $(TARGETS).dSYM
