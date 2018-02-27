@@ -118,8 +118,9 @@ void morse_print(FILE* out, const char* s) {
 /* ------------------------------------------------------------------------- */
 int main(int argc, char* argv[]) {
     int ch = 0;
+    int result = 1;     /* Kluge to make it work with write() return. */
     if (1 == argc) {
-        write(1, kMorseChart, sizeof(kMorseChart) - 1);
+        result = write(1, kMorseChart, sizeof(kMorseChart) - 1);
     } else if ((2 == argc) && ((0 == strcmp("-h", argv[1])) || (0 == strcmp("--help", argv[1])))) {
         printf("\n"
                "    Usage: morse-chart [- | -h | --help | <string-to-convert>... ]\n"
@@ -146,5 +147,5 @@ int main(int argc, char* argv[]) {
             printf("\n");
         }
     }
-    return 0;
+    return (result > 0) ? 0 : 1;
 }   /* main() */

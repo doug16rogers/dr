@@ -5,6 +5,10 @@ CFLAGS = -Wall -Werror -O2 -g
 
 all: $(TARGETS)
 
+.PHONY: install
+install: $(TARGETS)
+	cp $^ $(DR_BIN)/
+
 ascii-chart: ascii-chart.c Makefile
 	$(CC) -o $@ $(CFLAGS) $<
 

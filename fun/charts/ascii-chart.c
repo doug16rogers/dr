@@ -19,6 +19,6 @@ char kAsciiChart[] =
     "15.0F-SI   31.1F-US   47.2F-'/'  63.3F-'?'  79.4F-'O'  95.5F-'_' 111.6F-'o' 127.7F-DEL\n";
 
 int main() {
-    write(1, kAsciiChart, sizeof(kAsciiChart) - 1);
-    return 0;
+    int result = write(1, kAsciiChart, sizeof(kAsciiChart) - 1);
+    return (result > 0) ? 0 : 1;
 }
