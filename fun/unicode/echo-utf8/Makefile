@@ -10,8 +10,18 @@ all: $(TARGET)
 %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
+.PHONY: install
+install: $(TARGET)
+	cp $^ $(DR_BIN)/
+
 $(TARGET): $(TARGET).o
 	$(CC) -o $@ $^
 
+.PHONY: test
 test: $(TARGET)
 	$(TARGET) 59 6f 75 20 68 6f 6c 64 20 41 2660 20 31 30 2661 2e
+
+.PHONY: clean
+clean:
+	rm -f $(TARGET) *.o *~
+

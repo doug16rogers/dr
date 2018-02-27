@@ -103,6 +103,39 @@ unsigned int unicode2utf8(unsigned char* target, unsigned long unicode) {
 }   /* unicode2utf8() */
 
 /* ------------------------------------------------------------------------- */
+int handle_unicode(unsigned char* buffer, size_t buffer_size, unsigned int* buffer_count, unsigned long unicode) {
+    if (*buffer_count + MAX_UTF8_ENCODED_LENGTH >= buffer_size) {
+        fprintf(stderr, "%s: buffer overflow\n", PROGRAM);
+        return 0;
+    }
+    unsigned char* utf8 = &buffer[*buffer_count];
+    unsigned long bytes = unicode2utf8(utf8, unicode);
+    if (g_verbose) {
+        switch (bytes) {
+        case 0:
+            fprintf(stderr, "%s: U+%08lX => %lu bytes (invalid)\n", PROGRAM, unicode, bytes);
+            break;
+        case 1:
+            fprintf(stderr, "%s: U+%08lX => %lu byte (ASCII) => %02X\n", PROGRAM, unicode, bytes, utf8[0]);
+            break;
+        default:
+            fprintf(stderr, "%s: U+%08lX => %lu bytes =>", PROGRAM, unicode, bytes);
+            for (unsigned i = 0; i < bytes; ++i) {
+                fprintf(stderr, " %02X", utf8[i]);
+            }
+            fprintf(stderr, "\n");
+            break;
+        }
+    }
+    if (bytes == 0) {
+        return 0;
+    } else {
+        *buffer_count += bytes;
+        return 1;
+    }
+}   /* handle_unicode() */
+
+/* ------------------------------------------------------------------------- */
 int parse_arguments(int argc, char* argv[]) {
     while (1) {
         int c = getopt(argc, argv, "hv");
@@ -143,40 +176,27 @@ int main(int argc, char* argv[]) {
     unsigned long        unicode = 0;
     int                  i = 0;
     int                  return_code = 0;
-    static unsigned char utf8_buffer[0x200];
-    unsigned char*       utf8 = &utf8_buffer[0];
+    static unsigned char utf8_buffer[0x2000] = {0};
     unsigned int         total_bytes = 0;
-    unsigned int         bytes = 0;
 
     argc = parse_arguments(argc, argv);
     if (1 == argc) {
-        fprintf(stderr, "%s: reading from stdin not yet supported\n", PROGRAM);
-        exit(2);
-    }
-    bzero(utf8_buffer, sizeof(utf8_buffer));
-    for (i = 1; i < argc; i++) {
-        if (sscanf(argv[i], "%lx", &unicode) != 1) {
-            fprintf(stderr, "%s: invalid hexadecimal unicode value '%s' (arg %u)\n", PROGRAM, argv[i], i);
-            usage(stderr, 2);
-        } else if ((total_bytes + MAX_UTF8_ENCODED_LENGTH) < sizeof(utf8_buffer)) {
-            bytes = unicode2utf8(utf8, unicode);
-            if (g_verbose) {
-                fprintf(stderr, "%s: U+%08lX => %u bytes: %02X %02X %02X %02X %02X %02X\n",
-                        PROGRAM, unicode, bytes,
-                        (int) utf8[0], (int) utf8[1], (int) utf8[2],
-                        (int) utf8[3], (int) utf8[4], (int) utf8[5]);
-            }
-            if (bytes == 0) {
-                return_code |= 0x02;
-            } else {
-                total_bytes += bytes;
-                utf8 += bytes;
+        while (1 == fscanf(stdin, "%lx", &unicode)) {
+            if (!handle_unicode(utf8_buffer, sizeof(utf8_buffer), &total_bytes, unicode)) {
+                return_code = 1;
+                break;
             }
         }
-        else {
-            fprintf(stderr, "%s: buffer overflow.\n", PROGRAM);
-            break;
-        }
+    } else {
+        for (i = 1; i < argc; i++) {
+            if (sscanf(argv[i], "%lx", &unicode) != 1) {
+                fprintf(stderr, "%s: invalid hexadecimal unicode value '%s' (arg %u)\n", PROGRAM, argv[i], i);
+                usage(stderr, 2);
+            } else if (!handle_unicode(utf8_buffer, sizeof(utf8_buffer), &total_bytes, unicode)) {
+                return_code = 1;
+                break;
+            }
+        }   /* Else not reading from stdin. */
     }    /* For each argument. */
     fwrite(utf8_buffer, 1, total_bytes, stdout);
     fwrite("\n", 1, 1, stdout);
