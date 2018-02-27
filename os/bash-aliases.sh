@@ -8,6 +8,11 @@ alias grepwd="cat $HOME/dr/fun/itasoftware-puzzles/word.lst | grep "
 # To fully encrypt a 7zip archive, including the headers: 7ze <archive> <dir/files>...
 alias 7ze="7z a -r -p -mhe=on "
 
+# Shredding should include zeroing at the end. Note that this probably
+# doesn't matter on a flash drive since I don't think it actually writes 0s
+# in place (though it *could*!).
+alias shredusb="shred -n0 -z --remove "
+
 # A lot of git aliases...
 alias g1='git log --format="%ci %Cgreen%h%Creset %Cred(%cn)%Creset %s" --date=local --abbrev-commit'
 alias glog='git log --name-status '  # Show files changed with each commit.
