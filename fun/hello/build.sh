@@ -60,6 +60,7 @@ unuse_ada_compiler
 build 'go'      'go version'          'go build go-hello.go'
 build 'haskell' 'ghc --version'       'ghc -o haskell-hello haskell-hello.hs'
 build 'lua'     'lua -v'              'true' 'lua lua-hello.lua'
+build 'nim'     'nim -v'              'nim c nim_hello.nim' './nim_hello'
 build 'ocaml'   'ocamlbuild -version' 'ocamlbuild -no-links -no-hygiene ocaml-hello.native' '_build/ocaml-hello.native'
 build 'scheme'  'guile --version'     'true' 'guile scheme-hello.scm'
 build 'sh'      'bash --version'      'true' 'bash sh-hello.sh'
