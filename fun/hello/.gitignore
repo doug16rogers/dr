@@ -1,0 +1,12 @@
+# Build detritus:
+*.log
+
+# Local targets:
+_build*
+*.bf.c
+nimcache*
+*.ali
+*.hi
+*-hello
+*_hello
+
