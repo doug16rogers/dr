@@ -15,19 +15,19 @@ function mcd()
 
 log()
 {
-    if [ -z "$LOG_FILE" ] ; then
+    if [[ -z "$LOG_FILE" ]] ; then
         LOG_FILE=/tmp/build.log
     fi
 
-    if [ -z "$PROC_NAME" ] ; then
+    if [[ -z "$PROC_NAME" ]] ; then
         name=""
     else
         name=" $PROC_NAME"
     fi
 
-    if [ "$LOG_ELAPSED_TIME" = "yes" ] ; then
+    if [[ "$LOG_ELAPSED_TIME" = "yes" ]] ; then
         timestamp=`elapsed`
-    elif [ ! -z "$LOG_TIME_FORMAT" ] ; then
+    elif [[ ! -z "$LOG_TIME_FORMAT" ]] ; then
         timestamp=`date "$LOG_TIME_FORMAT"`
     else
         LOG_TIME_FORMAT="+%Y-%m-%d %H:%M:%S"
@@ -77,7 +77,7 @@ setdefault()
     cmd="echo \$$var"
     val="`eval $cmd`"
 
-    if [ -z "$val" ]; then
+    if [[ -z "$val" ]]; then
         eval $var="$2"
     fi
 }
@@ -90,7 +90,7 @@ run()
 {
     cmd="$*"
 
-    if [ -z "$LOG_FILE" ] ; then
+    if [[ -z "$LOG_FILE" ]] ; then
         echo "$cmd"
         eval "$cmd"
     else
@@ -112,7 +112,7 @@ run_exit_on_error()
     run "$*"
     result=$?
 
-    if [ $result -ne 0 ]; then
+    if [[ $result -ne 0 ]]; then
         exit $result
     fi
 
@@ -129,7 +129,7 @@ elapsed_start=`date "+%s"`
 
 elapsed()
 {
-    if [ -z "$1" ]; then
+    if [[ -z "$1" ]]; then
         start=$elapsed_start
     else
         start=$1
@@ -154,7 +154,7 @@ noint()
 
 # -----------------------------------------------------------------------------
 gradd() {
-    if [ $# -ne 1 ]; then
+    if [[ $# -ne 1 ]]; then
         echo ""
         echo "Usage: gradd <git-account-name>"
         echo ""
@@ -182,11 +182,56 @@ gradd() {
 }
 
 # -----------------------------------------------------------------------------
+grorig() {
+    if [[ -z "$#" ]]; then
+        grorig .
+    fi
+    if [[ "$1" == "-h" ]]; then
+        echo ""
+        echo "Usage: grorig [dir...]"
+        echo ""
+        echo "Runs 'git remote -v | grep ^origin | head -1' on each argument, or on '.' if"
+        echo "no argument is given."
+        echo ""
+        echo "   -h      Show this help"
+        echo "   -v      Show verbose information"
+        echo ""
+    else
+        verbose=0
+        if [[ -z "$1" ]]; then
+            grorig '.'
+        else
+            while [[ $# -gt 0 ]]; do
+                dir="$1"
+                shift
+                if [[ "$dir" == "-v" ]]; then
+                    verbose=1
+                    continue
+                fi
+                if [[ -d "$dir" ]]; then
+                    printf "%-20s" "$dir: "
+                    cmd="(cd '$dir'; git remote -v | grep ^origin | head -1 2> /dev/null)"
+                    if [[ $verbose -ne 0 ]]; then
+                        echo "grorig: cmd=\"$cmd\""
+                    fi
+                    eval "$cmd"
+                    if [[ $? -ne 0 ]]; then
+                        echo "not git repo"
+                    fi
+                elif [[ $verbose -ne 0 ]]; then
+                    echo "grorig: '$dir' is not a directory."
+                fi
+            done
+        fi
+    fi
+}
+
+# -----------------------------------------------------------------------------
 # grep-find
 # Note that this ignores .svn directories.
 function grind()
 {
-    if [ $# -lt 3 ]; then
+    if [[ $# -lt 3 ]]; then
 	echo "Usage: [GRIND_GREP_OPTS=''] grind path search-pattern file-pattern..."
     else
         path="$1"
@@ -194,12 +239,12 @@ function grind()
         file="-iname \"$3\""
 
         shift 3
-        while [ $# -gt 0 ]; do
+        while [[ $# -gt 0 ]]; do
             file="$file -o -iname \"$1\""
             shift
         done
 
-        if [ -z "$GRIND_GREP_OPTS" ]; then
+        if [[ -z "$GRIND_GREP_OPTS" ]]; then
             GRIND_GREP_OPTS="-n"
         fi
 
@@ -214,7 +259,7 @@ function grind()
 # Note that this ignores .svn directories.
 function grInd()
 {
-    if [ $# -lt 3 ]; then
+    if [[ $# -lt 3 ]]; then
 	echo "Usage: [GRIND_GREP_OPTS=''] grInd path search-pattern file-pattern..."
     else
         path="$1"
@@ -222,12 +267,12 @@ function grInd()
         file="-iname \"$3\""
 
         shift 3
-        while [ $# -gt 0 ]; do
+        while [[ $# -gt 0 ]]; do
             file="$file -o -iname \"$1\""
             shift
         done
 
-        if [ -z "$GRIND_GREP_OPTS" ]; then
+        if [[ -z "$GRIND_GREP_OPTS" ]]; then
             GRIND_GREP_OPTS="-n"
         fi
 
@@ -241,11 +286,11 @@ function grInd()
 # grep-find on C/C++ source files.
 function grindc()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grindc <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -257,11 +302,11 @@ function grindc()
 # grep-find on C/C++ source files, case insensitive.
 function grIndc()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grIndc <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -273,11 +318,11 @@ function grIndc()
 # grep-find on C/C++ header files.
 function grindh()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grindh <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -289,11 +334,11 @@ function grindh()
 # grep-find on C/C++ header files, case insensitive.
 function grIndh()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grIndh <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -305,11 +350,11 @@ function grIndh()
 # grep-find on C/C++ source or header files.
 function grindch()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grindch <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -321,11 +366,11 @@ function grindch()
 # grep-find on C/C++ source or header files, case insensitive.
 function grIndch()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grIndch <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -337,11 +382,11 @@ function grIndch()
 # grep-find on CMakeLists.txt.
 function grindcm()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grindcm <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -353,11 +398,11 @@ function grindcm()
 # grep-find on CMakeLists.txt, case-insensitive.
 function grIndcm()
 {
-    if [ $# -lt 1 -o $# -gt 2 ]; then
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
         echo "Usage: grIndcm <regex> [starting-path]"
     else
         path="."
-        if [ $# -gt 1 ]; then
+        if [[ $# -gt 1 ]]; then
             path="$2"
         fi
 
@@ -372,7 +417,7 @@ clean()
 {
     start_dir="."
 
-    if [ ! -z "$1" ]; then
+    if [[ ! -z "$1" ]]; then
         start_dir="$1"
         shift
     fi
@@ -401,31 +446,31 @@ rmbldlib_usage() {
 # Removes the build area for the given third party libraries.
 rmbldlib() {
     run_cmake=""
-    if [ -z "$1" ]; then
+    if [[ -z "$1" ]]; then
         rmbldlib_usage
         return
     fi
 
-    while [ $# -gt 0 ]; do
+    while [[ $# -gt 0 ]]; do
         name="$1"
         shift
-        if [ "$name" == "-h" ]; then
+        if [[ "$name" == "-h" ]]; then
             rmbldlib_usage
             return
-        elif [ "$name" == "-c" ]; then
+        elif [[ "$name" == "-c" ]]; then
             run_cmake="yes"
         else
             for libname in "$name" "lib$name"; do
                 for dir in libs/{Win32,x64}/{Debug,Release}_Static/{lib,include{,/mx}}; do
                     files=`ls "$dir/$libname"* 2> /dev/null`
-                    if [ ! -z "$files" ]; then
+                    if [[ ! -z "$files" ]]; then
                         echo "$dir/$libname*"
                         rm -rf "$dir/$libname"*
                     fi
                 done
                 for dir in sfSDK/libs libs{,/mx}; do
                     files=`ls "$dir/$libname"* 2> /dev/null`
-                    if [ ! -z "$files" ]; then
+                    if [[ ! -z "$files" ]]; then
                         echo "$dir/$libname*"
                         rm -rf "$dir/$libname"*
                     fi
@@ -434,11 +479,11 @@ rmbldlib() {
         fi
     done
 
-    if [ ! -z "$run_cmake" ]; then
+    if [[ ! -z "$run_cmake" ]]; then
         src=`grep '^CMAKE_HOME_DIRECTORY' CMakeCache.txt | sed -e 's+^.*=C:+/c+' 2> /dev/null`
         gen=`grep '^CMAKE_GENERATOR' CMakeCache.txt | sed -e 's+^.*=++' 2> /dev/null`
         typ=`grep '^CMAKE_BUILD_TYPE' CMakeCache.txt | sed -e 's+^.*=++' 2> /dev/null`
-        if [ -z "$src" -o -z "$gen" -o -z "$typ" ]; then
+        if [[ -z "$src" || -z "$gen" || -z "$typ" ]]; then
             echo "rmbldlib: could not determine CMAKE_HOME_DIRECTORY or CMAKE_BUILD_TYPE."
         else
             cmd="cmake -G \"$gen\" -D \"CMAKE_BUILD_TYPE=$typ\" \"$src\""
@@ -451,14 +496,14 @@ rmbldlib() {
 # -----------------------------------------------------------------------------
 # Calculates the parallel resistance of a N resistors.
 respar() {
-    if [ -z "$1" ]; then
+    if [[ -z "$1" ]]; then
         echo "calculate the combined parallel resistance of N resistors."
         echo "usage: respar <R1> ... [RN]"
         exit 1
     else
         r=$1
         shift
-        while [ $# -gt 0 ]; do
+        while [[ $# -gt 0 ]]; do
             s=$1
             shift
             r=$[ r * s / (r + s) ]

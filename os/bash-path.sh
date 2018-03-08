@@ -14,3 +14,5 @@ for dir in \
         export PATH="$dir:$PATH"
     fi
 done
+
+export PATH="$PATH:$HOME/opt/bin"
