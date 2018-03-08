@@ -3,6 +3,7 @@ addcr
 *-chart
 bingrep
 csdisasm
+echo-utf8
 hex
 hex2bin
 hexdate
