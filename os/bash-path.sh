@@ -6,6 +6,8 @@ else
     export PATH="$DR_DIR/bin:$PATH"
 fi
 
+export PATH="$PATH:$HOME/opt/bin"
+
 for dir in \
    /opt/local/bin \
    "$DR_OS_DIR/$DR_OS_NAME/bin" \
@@ -14,5 +16,3 @@ for dir in \
         export PATH="$dir:$PATH"
     fi
 done
-
-export PATH="$PATH:$HOME/opt/bin"
