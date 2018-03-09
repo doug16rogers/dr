@@ -1,11 +1,31 @@
 #!/bin/bash
 
-fundir=$DR_DIR/fun
+if [[ -z "$DR_DIR" ]]; then
+    export DR_DIR="$HOME/dr"
+fi
 
-sudo apt install libcapstone-dev        # for csdisasm
-sudo apt install libgmp-dev             # for radixify
+if [[ -z "$DR_BIN" ]]; then
+    export DR_BIN="$DR_DIR/bin"
+fi
 
-for fun in bintools charts csdisasm hex hexdate radixify unicode/echo-utf8; do
-    echo "make -C '$fundir/$fun' install"
-    make -C $fundir/$fun install
+fundir="$DR_DIR/fun"
+
+# Install packages needed to build apps:
+#   csdisasm: libcapstone-dev
+#   radixify: libgmp-dev
+
+for pkg in libcapstone-dev libgmp-dev; do
+    if (dpkg -l "$pkg" 2> /dev/null | grep "$pkg" > /dev/null 2>&1); then
+        echo "'$pkg' already installed."
+    else
+        echo "Need to install package '$pkg'..."
+        sudo apt install "$pkg"
+    fi
+done
+
+# Build apps:
+
+for app in bintools charts csdisasm hex hexdate radixify unicode/echo-utf8 wtools; do
+    echo "make -C '$fundir/$app' install"
+    make -C $fundir/$app install
 done

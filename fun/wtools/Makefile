@@ -45,6 +45,10 @@ wd-shift-test: wd-shift Makefile
 	echo     "howdy\nworlds" | ./$< -s=18 > test.out; \
 	    echo "dyhow\nworlds" | diff -u - test.out
 
+.PHONY: install
+install: $(TARGETS) wd-scrabble.sh
+	cp $^ $(DR_BIN)/
+
 .PHONY:	clean
 clean:
 	rm -f core *.o *~ test.out $(TARGETS)
