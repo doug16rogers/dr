@@ -48,6 +48,6 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    fprintf(stderr, "%s: wrote %lu bytes.\n", PROGRAM, bytes_out);
+    fprintf(stderr, "%s: wrote %lu bytes.\n", PROGRAM, (long unsigned) bytes_out);
     return return_code;
 }   /* main() */
