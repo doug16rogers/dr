@@ -267,7 +267,8 @@ void HandleOutputNumber(mpz_t number) {
         str_reverse(str);
     }
     mpz_clear(n);
-    printf("%s\n", str_data(str));
+    fwrite(str_data(str), 1, str_len(str), stdout);
+    fputc('\n', stdout);
     str_delete(str);
 }   /* HandleOutputNumber() */
 
