@@ -12,7 +12,7 @@ all: $(TARGET)
 
 .PHONY: install
 install: $(TARGET)
-	cp $^ $(DR_BIN)/
+	cp $^ echo-utf8-esperanto.sh $(DR_BIN)/
 
 $(TARGET): $(TARGET).o
 	$(CC) -o $@ $^
