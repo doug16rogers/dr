@@ -4,17 +4,17 @@
 
 #include "str.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define kStrInitSize    (0x0100)
 
-static char g_shared_string[kStrInitSize] = "";
-
 struct str_s {
     char* data;
     int len;
     int size;
+    int error;
 };
 
 /* ------------------------------------------------------------------------- */
@@ -24,12 +24,19 @@ void str_delete(str_t str) {
 
 /* ------------------------------------------------------------------------- */
 static str_t str_new_size(int size) {
-    str_t str = malloc(sizeof(struct str_s) + size);
+    assert(size > 0);
+    str_t str = malloc(sizeof(struct str_s));
     if (NULL != str) {
-        str->data = (char*) &str[1];
-        str->len = 0;
-        str->size = size;
-        str->data[0] = 0;
+        str->data = malloc(size);
+        if (NULL == str->data) {
+            free(str);
+            str = NULL;
+        } else {
+            str->len = 0;
+            str->size = size;
+            str->error = 0;
+            str->data[0] = 0;
+        }
     }
     return str;
 }   /* str_new_size() */
@@ -46,11 +53,7 @@ str_t str_new_string(const char* initial_string) {
 
 /* ------------------------------------------------------------------------- */
 char* str_data(str_t str) {
-    if (NULL == str) {
-        return g_shared_string;
-    } else {
-        return str->data;
-    }
+    return (NULL == str) ? NULL : str->data;
 }   /* str_data() */
 
 /* ------------------------------------------------------------------------- */
@@ -60,24 +63,26 @@ int str_len(str_t str) {
 
 /* ------------------------------------------------------------------------- */
 str_t str_append_char(str_t str, char c) {
-    if (NULL == str) {
+    if ((NULL == str) || (str->error)) {
         return str;
     }
     if ((str->len + 1) >= str->size) {
-        int new_full_size = str->size + str->size + sizeof(struct str_s);
-        if (new_full_size > (str->size + sizeof(struct str_s))) {
-            str_t new_str = malloc(new_full_size);
-            if (NULL == new_str) {
-                str->len--;         /* If we've run out of memory, overwrite previous char. */
-            } else {
-                memcpy(new_str, str, str->size + sizeof(struct str_s));
-                free(str);
-                str = new_str;
-                str->size += str->size;
-            }
-        } else {
+        char* new_data = NULL;
+        int new_size = str->size + str->size;
+        if (new_size <= str->size) {
             /* Integer overflow. We can't double our size again. */
+            str->error = 1;
+            return str;
         }
+        new_data = malloc(new_size);
+        if (NULL == new_data) {
+            str->error = 1;
+            return str;
+        }
+        memcpy(new_data, str->data, str->size);
+        free(str->data);
+        str->size = new_size;
+        str->data = new_data;
     }
     str->data[str->len++] = c;
     str->data[str->len] = 0;
@@ -86,11 +91,11 @@ str_t str_append_char(str_t str, char c) {
 
 /* ------------------------------------------------------------------------- */
 str_t str_append_string(str_t str, const char* s) {
-    if ((NULL != str) && (NULL != s)) {
+    if (!str_error(str) && (NULL != s)) {
         /*
          * @todo(dr) Yeah, uh, this could be optimized.
          */
-        for (; *s; ++s) {
+        for (; *s && !str_error(str); ++s) {
             str_append_char(str, *s);
         }
     }
@@ -99,7 +104,7 @@ str_t str_append_string(str_t str, const char* s) {
 
 /* ------------------------------------------------------------------------- */
 str_t str_reverse(str_t str) {
-    if (NULL != str) {
+    if (!str_error(str)) {
         const int kHalfLen = str->len / 2;
         char* data = str->data;
         char b;
@@ -113,3 +118,8 @@ str_t str_reverse(str_t str) {
     }
     return str;
 }   /* str_reverse() */
+
+/* ------------------------------------------------------------------------- */
+int str_error(str_t str) {
+    return (NULL == str) || str->error;
+}   /* str_error() */

@@ -19,4 +19,6 @@ str_t str_append_string(str_t str, const char* s);
 
 str_t str_reverse(str_t str);
 
+int str_error(str_t str);       /* whether an error has occurred; no more processing is allowed */
+
 #endif  // RADIXIFY_STR_H_
