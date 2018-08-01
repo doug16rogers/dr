@@ -2,32 +2,24 @@
 
 #include <assert.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <gmp.h>
 
+#include "sieve.h"
+
 /**
  * Default name of this program.
  */
-#define kProgram "isprimes"
+#define kProgram "factor"
 
 /**
  * Name of this program; this may be modified by argv[0] in main().
  */
 const char* g_program = kProgram;
-
-/**
- * Whether to show composites.
- */
-#define kDefaultShowComposite 0
-int g_show_composite = kDefaultShowComposite;
-
-/**
- * Whether to show primes.
- */
-#define kDefaultShowPrime 0
-int g_show_prime = kDefaultShowPrime;
 
 /**
  * Base to use for conversion. 0 means that the value can contain 0x/0X
@@ -48,6 +40,11 @@ int g_base = kDefaultBase;
  * Whether or not to emit verbose messages.
  */
 int g_verbose = 0;
+
+/**
+ * Maximum value supported by sieve package - uint64_t.
+ */
+unsigned long kMaxSieveNumber = 0xFFFFFFFFFFFFFFFFull;
 
 /* ------------------------------------------------------------------------- */
 /**
@@ -86,14 +83,6 @@ void Usage(FILE* file, int exit_code) {
             , kDefaultBase);
     fprintf(file,
             "\n"
-            "    -[no-][show-]c:omposite:s   Show arguments that are composite. [%s-show-composites]\n"
-            , kDefaultShowComposite ? "" : "-no");
-    fprintf(file,
-            "\n"
-            "    -[no-][show-]p:rime:s       Show arguments that are primes. [%s-show-primes]\n"
-            , kDefaultShowPrime ? "" : "-no");
-    fprintf(file,
-            "\n"
             "    -[no-]v:erbose              Print verbose (debug) messages. [%s-verbose]\n"
             , kDefaultVerbose ? "" : "-no");
     exit(exit_code);
@@ -113,6 +102,21 @@ void PrintUsageError(const char* format, ...) {
     fprintf(stderr, "%s: Use '%s --help' for usage information.\n", g_program, g_program);
     exit(1);
 }   /* PrintUsageError() */
+
+/* ------------------------------------------------------------------------- */
+/**
+ * Print a message to stderr if g_verbose is set.
+ */
+void PrintVerbose(int level, const char* format, ...) {
+    if (g_verbose >= level) {
+        char text[0x0100] = "";
+        va_list va;
+        va_start(va, format);
+        vsnprintf(text, sizeof(text), format, va);
+        va_end(va);
+        fprintf(stderr, "%s: %s\n", g_program, text);
+    }
+}   /* PrintVerbose() */
 
 /* ------------------------------------------------------------------------- */
 /**
@@ -270,12 +274,9 @@ int ParseOptions(int argc, char* argv[]) {
             end_of_options = 1;
         } else if (IsOption(arg, NULL, "h:elp")) {
             Usage(stdout, 0);
-        } else if (IsIntOption(arg, &g_base, "base", kDefaultBase)) {
-        } else if (IsFlagOption(arg, &g_show_composite, "c:omposite:s")) {
-        } else if (IsFlagOption(arg, &g_show_composite, "show-c:omposite:s")) {
-        } else if (IsFlagOption(arg, &g_show_prime, "p:rime:s")) {
-        } else if (IsFlagOption(arg, &g_show_prime, "show-p:rime:s")) {
-        } else if (IsFlagOption(arg, &g_verbose, "v:erbose")) {
+        } else if (IsIntOption(arg, &g_base, "b:ase", kDefaultBase)) {
+        } else if (IsOption(arg, NULL, "v:erbose")) {
+            g_verbose++;
         } else {
             PrintUsageError("invalid option \"%s\"", arg);
         }
@@ -302,7 +303,7 @@ int ParseOptions(int argc, char* argv[]) {
 /**
  * Test for primality using GMP's probable prime function.
  */
-int IsPrime(const mpz_t n) {
+int ProbablyPrime(const mpz_t n) {
     /*
      * mpz_probab_prime_p() says that the probability of the number being a
      * prime is P = 4^(-reps), or 1/(4^reps). I'm not sure whether the
@@ -319,14 +320,12 @@ int IsPrime(const mpz_t n) {
     reps = (reps < 0) ? kMaxReps : reps;
     if (g_verbose) {
         char* n_text = mpz_get_str(NULL, 10, n);
-        printf("testing primality of n=%s\n", n_text);
+        PrintVerbose(2, "  testing primality of n=%s with mpz_probab_prime_p()", n_text);
         free(n_text);
     }
     while (1) {
         result = mpz_probab_prime_p(n, reps);
-        if (g_verbose) {
-            printf("  mpz_probab_prime_p(n, reps=%d) -> %d\n", reps, result);
-        }
+        PrintVerbose(2, "  mpz_probab_prime_p(n, reps=%d) -> %d", reps, result);
         switch (result) {
         case 0: return 0;       /* Definitely composite. */
         case 2: return 1;       /* Definitely prime. */
@@ -341,7 +340,110 @@ int IsPrime(const mpz_t n) {
             break;
         }
     }   /* while getting a 'probably prime' result. */
-}   /* IsPrime() */
+}   /* ProbablyPrime() */
+
+/* ------------------------------------------------------------------------- */
+void handle_ui(unsigned long un) {
+    uint64_t uq = 0;
+    PrintVerbose(1, "  handling %lu as uint64_t", un);
+    switch (un) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+        printf("%lu ", (unsigned long) un);
+        return;
+    default:
+        break;
+    }
+    while (un != 1) {
+        uq = sieve_least_prime_factor(un);
+        printf("%lu ", (unsigned long) uq);
+        un /= uq;
+        if (un != 1) {
+            PrintVerbose(1, "  factor %lu; now n=%lu", uq, un);
+        }
+    }
+}   /* handle_ui() */
+
+/* ------------------------------------------------------------------------- */
+void handle_number(const char* s) {
+    mpz_t n;
+    mpz_t q;
+    mpz_t r;
+    unsigned long d = 0;
+    assert(sizeof(unsigned long) >= 8);
+
+    mpz_init(n);
+    mpz_init(q);
+    mpz_init(r);
+    if (0 != mpz_set_str(n, s, g_base)) {
+        PrintUsageError("invalid integer number \"%s\".", s);
+    }
+    if (g_verbose >= 1) {
+        fprintf(stderr, "loaded decimal n=");
+        mpz_out_str(stderr, 10, n);
+        fprintf(stderr, "\n");
+    }
+    
+    if (mpz_sgn(n) < 0) {
+        printf("-1 ");
+        mpz_neg(r, n);
+        mpz_set(n, r);
+        mpz_clear(r);
+    }
+
+    if (mpz_cmp_ui(n, kMaxSieveNumber) <= 0) {
+        handle_ui(mpz_get_ui(n));
+        goto done;
+    }
+    
+    /* If the value is a uint64_t, then just use sieve.h services. */
+    /* Try 2 first. */
+    for (d = 2; (d < 0x100000000ull) && (mpz_cmp_ui(n, d * d) >= 0); d += 2) {
+        if (mpz_cmp_ui(n, kMaxSieveNumber) <= 0) {
+            handle_ui(mpz_get_ui(n));
+            goto done;
+        }
+        if (sieve_is_prime(d)) {
+            PrintVerbose(2, "  trying small prime d=%lu", d);
+            unsigned long ur = mpz_tdiv_q_ui(q, n, d);
+            if (g_verbose >= 2) {
+                fprintf(stderr, "  q=");
+                mpz_out_str(stderr, 10, q);
+                fprintf(stderr, ", ur=%lu\n", ur);
+            }
+            if (ur == 0) {
+                printf("%lu ", d);
+                if (mpz_cmp_ui(q, 1) == 0) {
+                    break;
+                }
+                mpz_swap(n, q);
+                if (g_verbose >= 1) {
+                    fprintf(stderr, "  factor %lu; now n=", d);
+                    mpz_out_str(stderr, 10, n);
+                    fprintf(stderr, "\n");
+                }
+                d -= 2;     /* Try this prime again; works for both 2 and odd. */
+            }
+//            mpz_clear(q);
+        }
+        if (2 == d) {
+            d = 1;         /* Get into the odd numbers now. */
+        }
+    }
+    if (mpz_cmp_ui(n, 1) != 0) {
+        mpz_out_str(stdout, g_base, n);
+        if (!ProbablyPrime(n)) {
+            printf("?");
+        }
+    }
+done:
+    mpz_clear(n);
+    mpz_clear(q);
+    mpz_clear(r);
+    printf("\n");
+}   /* handle_number() */
 
 /* ------------------------------------------------------------------------- */
 /**
@@ -357,33 +459,22 @@ int main(int argc, char* argv[]) {
     g_program = NamePartOfPath(argv[0]);
     argc = ParseOptions(argc, argv);  /* Remove options; leave program name and arguments. */
     if (argc < 2) {
-        Usage(stderr, 1);
-    }
-    int is_prime = 1;
-    for (int i = 1; i < argc; i++) {
-        char* arg = argv[i];
-        mpz_t n;
-        mpz_init(n);
-        if (0 != mpz_set_str(n, arg, g_base)) {
-            PrintUsageError("invalid integer number \"%s\".", arg);
+        for (;;) {
+            char* line = NULL;
+            size_t len = 0;
+            if (getline(&line, &len, stdin) <= 0) {
+                break;
+            }
+            if ((len > 0) && (line[len - 1] == '\n')) {
+                line[len - 1] = 0;
+            }
+            handle_number(line);
+            free(line);
         }
-        if (IsPrime(n)) {
-            if (g_verbose) {
-                printf("%s is prime\n", arg);
-            }
-            if (g_show_prime) {
-                printf("%s\n", arg);
-            }
-        } else {
-            is_prime = 0;
-            if (g_verbose) {
-                printf("%s is composite\n", arg);
-            }
-            if (g_show_composite) {
-                printf("%s\n", arg);
-            }
+    } else {
+        for (int i = 1; i < argc; i++) {
+            handle_number(argv[i]);
         }
-        mpz_clear(n);
     }
-    return is_prime ? 0 : 1;
+    return 0;
 }   /* main() */

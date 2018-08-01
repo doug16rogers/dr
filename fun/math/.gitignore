@@ -1,2 +1,11 @@
 # Local targets
 isprime
+factor
+mksieve
+sizeof
+all-sieve-primes
+all-sieve-primes.txt
+sieve-1K.c
+sieve-4G.c
+test.out
+perm
