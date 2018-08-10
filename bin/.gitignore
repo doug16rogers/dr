@@ -14,3 +14,6 @@ nonul
 phone-grepwd.sh
 radixify
 wd-*
+factor
+isprime
+perm
