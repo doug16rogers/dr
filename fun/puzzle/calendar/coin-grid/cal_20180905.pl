@@ -1,17 +1,17 @@
-% Use: GLOBALSZ=850000 LOCALSZ=524288 TRAILSZ=524288 gprolog --consult-file cal_20160926.pl
+% Use: GLOBALSZ=850000 LOCALSZ=524288 TRAILSZ=524288 gprolog --consult-file cal_20180905.pl
 %      | ?- grid_valid(G).
-%      G = [[5,10,10,25,10],[5,10,0,25,10],[5,25,5,0,0],[5,10,25,5,10],[10,10,10,25,5]] ? 
+% It took ~60s on an MBP but it did find the solution:
+% G = [[5,10,25,0,10],[10,10,25,10,10],[5,0,25,5,10],[0,10,10,5,10],[10,5,10,10,0]] ?
 
-% No solutions in the original puzzle printed on the front of the page.
-cg_preset([[-1, -1, -1, 25, -1],
-%          [-1,  0, -1, -1, -1],     % Puzzle had this errant 0 location in 2nd row. Clearly wrong - forward diagonal.
-           [-1, -1,  0, -1, -1],     % Answer on back of page showed a star (0) in this (correct) location.
-           [ 5, -1,  5, -1, -1],
-           [-1, -1, -1,  5, -1],
-           [10, -1, -1, 25,  5]]).
-cg_row_sum([60,50,35,55,60]).
-cg_col_sum([30,65,50,80,35]).
-cg_diag_sum([30,60]).
+% -1 means undefined - that's the puzzle!
+cg_preset([[ 5, -1, 25,  0, -1],
+           [-1, 10, 25, -1, -1],
+           [-1, -1, -1, -1, 10],
+           [-1, 10, -1,  5, -1],
+           [-1, -1, -1, -1, -1]]).
+cg_row_sum([50,65,45,35,35]).
+cg_col_sum([30,35,95,30,40]).
+cg_diag_sum([45,65]).
 
 coin_valid(0).
 coin_valid(5).
@@ -60,7 +60,7 @@ transpose(M, T) :- transpose5(M, T).
 % If there is no preset then any valid coin matches.
 coin_valid_with_preset(Coin, -1) :- coin_valid(Coin).
 % No need to check coin_valid() since presumably the preset it correct.
-coin_valid_with_preset(Coin, Preset) :- Coin = Preset.
+coin_valid_with_preset(Coin, Preset) :- Coin is Preset.
 
 coin_n_valid_with_preset(N, L, PresetList, Coin) :-
     nth(N, L, Coin),
@@ -127,3 +127,4 @@ grid_valid(G) :-
     diags_valid(G),     % Faster with this not at the end.
     rows_valid(G),
     cols_valid(G).
+
