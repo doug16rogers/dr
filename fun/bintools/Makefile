@@ -1,4 +1,4 @@
-TARGETS = addcr nonul nocr nobin
+TARGETS = addcr nonul nocr nobin ccount
 
 CC = gcc
 CFLAGS = -Wall -Werror -g
@@ -10,6 +10,9 @@ install: $(TARGETS)
 	cp $^ $(DR_BIN)/
 
 addcr: addcr.c
+	$(CC) -o $@ $(CFLAGS) $^
+
+ccount: ccount.c
 	$(CC) -o $@ $(CFLAGS) $^
 
 nonul: nonul.c
