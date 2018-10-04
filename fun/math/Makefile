@@ -50,6 +50,10 @@ test-perm: perm Makefile
 	./perm 0123 | diff - perm-0123.txt
 	./perm 012345 | diff - perm-012345.txt
 
+.PHONY: install
+install:
+	cp -f $(TARGETS) $(DR_BIN)
+
 .PHONY: clean
 clean:
 	rm -f *.o *~ $(TARGETS) all-sieve-primes sieve-4G.c sieve-1K.c
