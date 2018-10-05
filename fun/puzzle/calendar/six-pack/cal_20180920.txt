@@ -1,0 +1,36 @@
+SIX-PACK
+
+Fill in each cell of this grid with a number from 1 through 6 so that each
+row, each column, and each outlined region contains six different
+numbers. We've placed a few numbers to get you started. A starting hint
+appears upside down at the bottom of the answer page.
+
+  +---+---+---+---+---+---+
+  |           |     3     |
+  +---+   +   +---+---+   +
+  | 1 |       |   |   |   |
+  +   +   +---+   +   +   +
+  |   |   |     2 | 5 |   |
+  +   +---+   +---+   +   +
+  |     6 | 1 |   |   |   |
+  +   +---+   +   +   +---+
+  |   |       |   |     1 |
+  +   +---+---+   +---+   +
+  |   | 4             |   |
+  +---+---+---+---+---+---+
+
+Solution:
+
+  +---+---+---+---+---+---+
+  | 6   2   4 | 1   3   5 |
+  +---+   +   +---+---+   +
+  | 1 | 3   5 | 4 | 6 | 2 |
+  +   +   +---+   +   +   +
+  | 4 | 1 | 3   2 | 5 | 6 |
+  +   +---+   +---+   +   +
+  | 3   6 | 1 | 5 | 2 | 4 |
+  +   +---+   +   +   +---+
+  | 2 | 5   6 | 3 | 4   1 |
+  +   +---+---+   +---+   +
+  | 5 | 4   2   6   1 | 3 |
+  +---+---+---+---+---+---+

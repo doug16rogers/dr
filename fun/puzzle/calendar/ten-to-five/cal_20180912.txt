@@ -1,0 +1,36 @@
+TEN TO FIVE
+
+Starting on a letter in the longest row,
+spell out a ten-letter word going from
+letter to adjacent letter - horizontally,
+vertically, or diagonally - as you use every
+letter in the grid once. Then rearrange that
+ten-letter word into two 5-letter words
+that begin and end with the letters shown
+in rows at the bottom.
+
+
+         -+---+
+          | O |
+      +---+---+---+
+      | T | P | N |
+  +---+---+---+---+---+
+  | E | N | I | O | M |
+  +---+---+---+---+---+
+          | T |
+          +---+
+
+  +---+---+---+---+---+
+  | O |   |   |   | N |
+  +---+---+---+---+---+
+
+  +---+---+---+---+---+
+  | T |   |   |   | T |
+  +---+---+---+---+---+
+
+Solution:
+
+   OMNIPOTENT
+   ONION
+   TEMPT
+

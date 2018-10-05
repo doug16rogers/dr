@@ -1,0 +1,34 @@
+GIMME FIVE
+
+A pentomino is a tile made of five
+squares joined edge to edge.
+Divide this grid into five pentominoes,
+each containing the five letters
+A, B, C, D, and E. The regions
+will not all have the same shape.
+
+  +-------------------+
+  | B   C   B   E   B |
+  |                   |
+  | E   D   E   C   A |
+  |                   |
+  | D   E   A   D   C |
+  |                   |
+  | A   A   E   A   C |
+  |                   |
+  | B   D   C   D   B |
+  +-------------------+
+
+Solution:
+
+  +-------+---+-------+
+  | B   C | B | E   B |
+  |   +---+   +---+   |
+  | E | D   E   C | A |
+  |   +---+   +---+   |
+  | D | E | A | D   C |
+  |   |   +---+-------+
+  | A | A | E   A   C |
+  +---+   +---+       |
+  | B   D   C | D   B |
+  +-----------+-------+

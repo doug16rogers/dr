@@ -1,0 +1,40 @@
+REVOLVERS
+
+Revolve each column of letters up or down to form a common English word
+reading across each row. When a column revolves, all the letters move up or
+down in order. If revolving up, the letter at the top of a column wraps
+around to the bottom. If revolving down, the bottom letter wraps around to
+the top. Deciding how far to revolve in each column is for you to
+determine. What are the four words?
+
+  +---+---+---+---+---+---+
+  | F | E | C | A | U | O |
+  +---+---+---+---+---+---+
+  | H | M | U | O | C | H |
+  +---+---+---+---+---+---+
+  | I | O | L | R | C | M |
+  +---+---+---+---+---+---+
+  | R | O | P | I | T | T |
+  +---+---+---+---+---+---+
+
+  +---+---+---+---+---+---+
+  | F |   |   |   |   |   |
+  +---+---+---+---+---+---+
+  | H |   |   |   |   |   |
+  +---+---+---+---+---+---+
+  | I |   |   |   |   |   |
+  +---+---+---+---+---+---+
+  | R |   |   |   |   |   |
+  +---+---+---+---+---+---+
+
+Solution:
+
+  +---+---+---+---+---+---+
+  | F | O | U | R | T | H |
+  +---+---+---+---+---+---+
+  | H | E | L | I | U | M |
+  +---+---+---+---+---+---+
+  | I | M | P | A | C | T |
+  +---+---+---+---+---+---+
+  | R | O | C | O | C | O |
+  +---+---+---+---+---+---+

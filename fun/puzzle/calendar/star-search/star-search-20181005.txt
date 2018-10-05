@@ -1,0 +1,20 @@
+
+STAR SEARCH
+
+Place stars in six cells of this grid so that every row, every column, and
+every outlined region contains exactly one start. Stars must never be located
+in adjacent cells, not even diagonally.
+
+    #########################
+    #   |   |   |   |   |   #
+    #---+---+---#############
+    #   |   |   #   |   #   #
+    #---+---#############---#
+    #   |   #   |   |   #   #
+    #####################---#
+    #   |   |   #   |   |   #
+    #---#####################
+    #   #   |   |   |   |   #
+    #####---+---+---+---+---#
+    #   |   |   |   |   |   #
+    #########################

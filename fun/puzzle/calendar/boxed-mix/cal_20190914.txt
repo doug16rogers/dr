@@ -1,0 +1,42 @@
+BOXED MIX
+
+Unscramble the six words and enter them into the grid in some order so
+that the same words read across and down. One letter has been placed
+to get you started.
+
+  B L A H E R
+  C A N C E T
+  C R Y R U S
+  D E S T L Y
+  G A R N E E
+  G H A S S E
+
+  +---+---+---+---+---+---+
+  |   |   |   | H |   |   |
+  +---+---+---+---+---+---+
+  |   |   |   |   |   |   |
+  +---+---+---+---+---+---+
+  |   |   |   |   |   |   |
+  +---+---+---+---+---+---+
+  |   |   |   |   |   |   |
+  +---+---+---+---+---+---+
+  |   |   |   |   |   |   |
+  +---+---+---+---+---+---+
+  |   |   |   |   |   |   |
+  +---+---+---+---+---+---+
+
+Solution:
+
+  +---+---+---+---+---+---+
+  | G | A | S | H | E | S |
+  +---+---+---+---+---+---+
+  | A | C | C | E | N | T |
+  +---+---+---+---+---+---+
+  | S | C | U | R | R | Y |
+  +---+---+---+---+---+---+
+  | H | E | R | B | A | L |
+  +---+---+---+---+---+---+
+  | E | N | R | A | G | E |
+  +---+---+---+---+---+---+
+  | S | T | Y | L | E | D |
+  +---+---+---+---+---+---+

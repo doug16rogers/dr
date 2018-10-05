@@ -1,0 +1,29 @@
+Form six 9-letter words by combining two of the 3-letter blocks
+shown below (right) with each ending in the grid. All blocks will
+be used. If you do it correctly, two of the vertical columns will
+spell a common two-word phrase.
+
++---+---+---+---+---+---+---+---+---+   +---+---+---+   +---+---+---+
+|   |   |   +   |   |   + A | T | H |   | H | O | R |   | W | B | O |
++---+---+---+---+---+---+---+---+---+   +---+---+---+   +---+---+---+
+|   |   |   +   |   |   + G | N | E |   | E | O | P |   | M | P | A |
++---+---+---+---+---+---+---+---+---+   +---+---+---+   +---+---+---+
+|   |   |   +   |   |   + I | T | Y |   | P | R | O |   | S | A | T |
++---+---+---+---+---+---+---+---+---+   +---+---+---+   +---+---+---+
+|   |   |   +   |   |   + I | T | E |   | E | L | L |   | O | S | T |
++---+---+---+---+---+---+---+---+---+   +---+---+---+   +---+---+---+
+|   |   |   +   |   |   + U | N | D |   | C | H | A |   | S | N | O |
++---+---+---+---+---+---+---+---+---+   +---+---+---+   +---+---+---+
+|   |   |   +   |   |   + E | A | D |   | O | F | R |   | A | U | T |
++---+---+---+---+---+---+---+---+---+   +---+---+---+   +---+---+---+
+
+Solution:
+
+  OSTEOPATH
+  CHAMPAGNE
+  AUTHORITY
+  SATELLITE
+  SNOWBOUND
+  PROOFREAD
+
+  Phrase: TATTOO PARLOR

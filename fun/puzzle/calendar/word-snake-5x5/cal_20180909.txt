@@ -1,0 +1,14 @@
+Go from letter to letter horizontally,
+vertically, or diangonally in this grid
+to trace a continuous closed path that does
+not cross itself. The path uses all 25 letters
+and spells out five common five-letter
+words that begin with consecutive letters of
+the alphabet. What are the five words?
+
+  N F I A I
+  L U T U L
+  A E Q R O
+  I T D A Y
+  R E U S L
+
