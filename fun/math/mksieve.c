@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -57,7 +58,7 @@ int main(int argc, char* argv[]) {
     uint64_t divisor = 1;
     uint64_t words = 0;
     if (argc > 1) {
-        if ((1 != sscanf(argv[1], "%llu", &max_n)) || (max_n < 8ULL) || (max_n > 0x100000000ULL)) {
+        if ((1 != sscanf(argv[1], "%" SCNu64, &max_n)) || (max_n < 8ULL) || (max_n > 0x100000000ULL)) {
             fprintf(stderr, "%s: invalid max N \"%s\"\n", kProgram, argv[2]);
             return 1;
         }
@@ -65,7 +66,7 @@ int main(int argc, char* argv[]) {
     words = (max_n + WORD_BITS - 1) / WORD_BITS / 2;            /* Odds only. */
     sieve = calloc(WORD_BITS / 8, words);
     if (NULL == sieve) {
-        fprintf(stderr, "%s: could not allocate %llux%u bytes for sieve\n", kProgram, words, WORD_BITS);
+        fprintf(stderr, "%s: could not allocate %" PRIx64 "%u bytes for sieve\n", kProgram, words, WORD_BITS);
         return 1;
     }
 
@@ -88,7 +89,7 @@ int main(int argc, char* argv[]) {
     printf("const uint64_t kSieveTable[0x%08llX] = {\n", (unsigned long long) words);
 #define WORDS_PER_LINE 4
     for (i = 0; i < words; i++) {
-        printf("0x%016llX,", sieve[i]);
+        printf("0x%" PRIX64 ",", sieve[i]);
         if ((i % WORDS_PER_LINE) == (WORDS_PER_LINE - 1)) {
             printf("\n");
         }

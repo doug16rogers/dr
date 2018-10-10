@@ -52,7 +52,7 @@ test-perm: perm Makefile
 
 .PHONY: install
 install:
-	cp -f $(TARGETS) $(DR_BIN)
+	cp -f isprime factor perm $(DR_BIN)
 
 .PHONY: clean
 clean:

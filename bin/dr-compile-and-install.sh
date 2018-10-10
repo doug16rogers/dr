@@ -25,7 +25,7 @@ done
 
 # Build apps:
 
-for app in bintools charts csdisasm hex hexdate radixify unicode/echo-utf8 wtools; do
+for app in bintools charts csdisasm hex hexdate math radixify unicode/echo-utf8 wtools; do
     echo "make -C '$fundir/$app' install"
     make -C $fundir/$app install
 done
