@@ -31,3 +31,6 @@ x64
 
 # Mac OS X desktop file.
 .DS_Store
+
+# Windows executables.
+*.exe

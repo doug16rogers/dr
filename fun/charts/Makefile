@@ -3,6 +3,9 @@ TARGETS = ascii-chart morse-chart element-chart
 CC = gcc
 CFLAGS = -Wall -Werror -O2 -g
 
+%.o: %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
 all: $(TARGETS)
 
 .PHONY: install
@@ -12,11 +15,11 @@ install: $(TARGETS)
 ascii-chart: ascii-chart.c Makefile
 	$(CC) -o $@ $(CFLAGS) $<
 
-morse-chart: morse-chart.c Makefile
-	$(CC) -o $@ $(CFLAGS) $<
+morse-chart: morse-chart.o text_canvas.o
+	$(CC) -o $@ $(CFLAGS) $^
 
-element-chart: element-chart.c text_canvas.c Makefile
-	$(CC) -o $@ $(CFLAGS) $< text_canvas.c
+element-chart: element-chart.o text_canvas.o
+	$(CC) -o $@ $(CFLAGS) $^
 
 unit_test: unit_test.c text_canvas_test.c text_canvas.c cut.c
 	$(CC) -o $@ $(CFLAGS) $^
