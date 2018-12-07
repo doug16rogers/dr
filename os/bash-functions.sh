@@ -1,14 +1,6 @@
 # Useful (ba)sh functions. 
 
 # -----------------------------------------------------------------------------
-# mkdir-chdir
-function mcd()
-{
-    mkdir -p "$1"
-    cd "$1"
-}
-
-# -----------------------------------------------------------------------------
 # Puts the message (all arguments) to $LOG_FILE and to stdout.
 # If set, uses PROC_NAME, LOG_ELAPSED_TIME, and LOG_TIME_FORMAT.
 # See the code for details. It ain't that hard.
@@ -143,14 +135,19 @@ elapsed()
 }
 
 # -----------------------------------------------------------------------------
-# Runs a command with SIGINT untrapped by the shell.
-
-noint()
+# Removes from the current tree (or $1 if given), recursively, all files
+# matching: *~ *.o *.bak
+clean()
 {
-    trap '' 2
-    eval "$*"
-    trap 2
-}
+    start_dir="."
+
+    if [[ ! -z "$1" ]]; then
+        start_dir="$1"
+        shift
+    fi
+
+    run "find \"$start_dir\" \( -iname \"*~\" -o -iname \"*.[od]\" -o -iname \"*.bak\" \) | xargs -t rm -rf"
+}   # clean()
 
 # -----------------------------------------------------------------------------
 gradd() {
@@ -411,19 +408,40 @@ function grIndcm()
 }   # grIndcm()
 
 # -----------------------------------------------------------------------------
-# Removes from the current tree (or $1 if given), recursively, all files
-# matching: *~ *.o *.bak
-clean()
+# ls -ltr <args>... | tail <any-#-args>
+lsl() {
+    ls_args=( )
+    tail_arg="-20"
+    for arg in $@; do
+        case $arg in
+            -[0-9]*)
+                tail_arg=$arg
+                ;;
+            *)
+                ls_args=($ls_args "$arg")
+                ;;
+        esac
+    done
+    ls -ltr $ls_args | tail $tail_arg
+}
+
+# -----------------------------------------------------------------------------
+# mkdir-chdir
+function mcd()
 {
-    start_dir="."
+    mkdir -p "$1"
+    cd "$1"
+}
 
-    if [[ ! -z "$1" ]]; then
-        start_dir="$1"
-        shift
-    fi
+# -----------------------------------------------------------------------------
+# Runs a command with SIGINT untrapped by the shell.
 
-    run "find \"$start_dir\" \( -iname \"*~\" -o -iname \"*.[od]\" -o -iname \"*.bak\" \) | xargs -t rm -rf"
-}   # clean()
+noint()
+{
+    trap '' 2
+    eval "$*"
+    trap 2
+}
 
 # -----------------------------------------------------------------------------
 rmbldlib_usage() {
