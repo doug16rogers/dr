@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         Usage(stderr, 1);
     }
-    int pattern_found = 0;
+    int any_pattern_found = 0;
     char line[0x0400];
     while (NULL != fgets(line, sizeof(line), stdin)) {
         size_t wlen = strlen(line);
@@ -169,6 +169,7 @@ int main(int argc, char* argv[]) {
         }
         if (wlen > 0) {
             int pattern_i = 1;
+            int pattern_found = 0;
             for (pattern_i = 1; !pattern_found && (pattern_i < argc); ++pattern_i) {
                 char* pattern = argv[pattern_i];
                 size_t plen = strlen(pattern);
@@ -179,11 +180,12 @@ int main(int argc, char* argv[]) {
                     if (PatternMatches(line, wlen, pattern)) {
                         printf("%s\n", line);
                         pattern_found = 1;
+                        any_pattern_found = 1;
                     }
                 }
             }
         }
     }
-    return pattern_found ? 0 : 5;
+    return any_pattern_found ? 0 : 5;
 }   /* main() */
 
