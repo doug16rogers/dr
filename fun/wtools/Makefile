@@ -1,4 +1,4 @@
-TARGETS = wd-match wd-shift
+TARGETS = wd-match wd-in wd-shift
 
 CFLAGS = -Wall -Werror -g
 CC = gcc
@@ -14,6 +14,9 @@ test: $(addsuffix -test,$(TARGETS))
 wd-match: wd-match.o $(OBJS) Makefile
 	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
 
+wd-in: wd-in.o $(OBJS) Makefile
+	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
+
 wd-shift: wd-shift.o $(OBJS) Makefile
 	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
 
@@ -23,6 +26,13 @@ wd-match-test: wd-match Makefile
             echo Makefile | diff -u - test.out
 	echo "Makefile\nwd-match\na\nb\ntestrant\n" | ./$< -s cdefgdab > test.out ; \
             echo Makefile | diff -u - test.out
+
+.PHONY: wd-in-test
+wd-in-test: wd-in Makefile
+	echo "Never\nYou\nMind" | ./$< iMdn > test.out ; \
+            echo Mind | diff -u - test.out
+	echo "Never\nYou\nMind" | ./$< Mdn. > test.out ; \
+            echo Mind | diff -u - test.out
 
 .PHONY: wd-shift-test
 wd-shift-test: wd-shift Makefile

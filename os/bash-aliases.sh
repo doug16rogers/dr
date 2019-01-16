@@ -15,12 +15,14 @@ alias shredusb="shred -n0 -z --remove "
 
 # A lot of git aliases...
 alias g1='git log --format="%ci %Cgreen%h%Creset %Cred(%cn)%Creset %s" --date=local --abbrev-commit'
+alias g1m='g1 master...'
 alias glog='git log --name-status '  # Show files changed with each commit.
 alias gb='git branch '               # List all local branches.
 alias gb1='git branch | grep "^[*]"' # List currently checked out branch.
 alias gba='git branch -a'            # List all branches, including remotely tracked ones.
 alias gc="git checkout "
-alias gd='git diff '
+alias gd='git diff '                 # Diff since the named commit.
+alias gdno='gd --name-only '         # Only the files change over the range of commits.
 alias gi="git branch | grep '^[*]'; git describe; git remote -v | grep -v push; g1 -3 | cat"
 alias gs='git status '
 alias gf='git show --pretty="format:" --name-only '   # Show files for a commit.
@@ -28,20 +30,32 @@ alias gbd='git branch -d '
 alias grc='git rebase --continue '
 alias gmt='git mergetool -y '
 
-gbr()           # Shows remote branches.
-{
+gd1() {         # Show changes just in the named commits, one at a time.
+    while [[ $# -gt 0 ]]; do
+        gd $1{^,}
+        shift
+    done
+}
+
+gdno1() {       # Show files changed in the named commits, one at a time.
+    while [[ $# -gt 0 ]]; do
+        gdno $1{^,}
+        shift
+    done
+}
+
+gbr() {         # Shows remote branches.
     run "git ls-remote $* | grep heads/ | sed -e 's:^.*heads/::'"
 }
 
-gbdr()          # Deletes remote branch: gbdr <remote-repo> <remote-branch>
-{
+gbdr() {        # Deletes remote branch: gbdr <remote-repo> <remote-branch>
     del_opt="-d"
-    if [ "$1" == "-D" ]; then
+    if [[ "$1" == "-D" ]]; then
         del_opt="-D"
         shift
     fi
 
-    if [ -z "$2" ]; then
+    if [[ -z "$2" ]]; then
         echo "Usage: gbdr [-D] remote-name branch..."
         echo "    Also deletes local tracking branch. Use '-D' to delete unmerged branches."
         echo "    Examples:"
@@ -50,7 +64,7 @@ gbdr()          # Deletes remote branch: gbdr <remote-repo> <remote-branch>
     else
         remote="$1"
         shift
-        while [ $# -gt 0 ]; do
+        while [[ $# -gt 0 ]]; do
             branch="$1"
             shift
             run "git push --delete '$remote' '$branch'"      # Delete branch in external repo.
@@ -64,7 +78,6 @@ gbdr()          # Deletes remote branch: gbdr <remote-repo> <remote-branch>
 
 alias svnst="svn status -q "
 
-svnstn()
-{
+svnstn() {
     run "svn status $* | grep '^[?]'"
 }
