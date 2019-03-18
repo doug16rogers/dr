@@ -1,5 +1,5 @@
-/* Copyright (c) 2018 Doug Rogers under the terms of the MIT License. */
-/* See http://www.opensource.org/licenses/mit-license.html.. */
+/* Copyright (c) 2018-2019 Doug Rogers under the Zero Clause BSD License. */
+/* You are free to do whatever you want with this software. See LICENSE.txt. */
 
 #include <ctype.h>
 #include <errno.h>

@@ -1,3 +1,6 @@
+/* Copyright (c) 2000-2019 Doug Rogers under the Zero Clause BSD License. */
+/* You are free to do whatever you want with this software. See LICENSE.txt. */
+
 #ifndef __go_board_h__
 #define __go_board_h__
 // -----------------------------------------------------------------------

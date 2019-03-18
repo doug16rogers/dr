@@ -2,6 +2,8 @@
 
 # Sets some helpful aliases.
 
+alias tc="transmission-cli 2> /dev/null "
+
 # alias ls="ls --color=auto "    # Doesn't work in MacOS.
 alias grepwd="cat $HOME/dr/fun/itasoftware-puzzles/word.lst | grep "
 
@@ -12,6 +14,9 @@ alias 7ze="7z a -r -p -mhe=on "
 # doesn't matter on a flash drive since I don't think it actually writes 0s
 # in place (though it *could*!).
 alias shredusb="shred -n0 -z --remove "
+
+# Open any file using its default application.
+alias launch="xdg-open 2> /dev/null "
 
 # A lot of git aliases...
 alias g1='git log --format="%ci %Cgreen%h%Creset %Cred(%cn)%Creset %s" --date=local --abbrev-commit'

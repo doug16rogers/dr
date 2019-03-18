@@ -1,4 +1,5 @@
-/* Copyright (c) 2015 FireEye Incorporated. All rights reserved. */
+/* Copyright (c) 2015-2019 Doug Rogers under the Zero Clause BSD License. */
+/* You are free to do whatever you want with this software. See LICENSE.txt. */
 
 /*
  * This program calculates, displays and checks the checksum of a Vehicle

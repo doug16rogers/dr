@@ -1,10 +1,5 @@
-; Copyright (c) 2010 Doug Rogers under the terms of the MIT License.
-; See http://www.opensource.org/licenses/mit-license.html..
-; $Id$
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; File name: ` ~/.emacs '
-;;; ---------------------
+; Copyright (c) 2012-2019 Doug Rogers under the Zero Clause BSD License.
+; You are free to do whatever you want with this software. See LICENSE.txt.
 
 (setq inhibit-splash-screen t)  ;; OMG that thing is annoying.
 
@@ -250,43 +245,6 @@
   (if (> (length comment-end) 0)
       (dr-insert-space-comment-end)))
 
-; -----------------------------------------------------------------------------
-(defun dr-insert-echo360-copyright ()
-  "Inserts Echo360's copyright notice."
-  (goto-char 1)
-  (insert "\n")
-  (forward-line -1)
-  (dr-insert-comment-line "*************************************************************************")
-  (dr-insert-comment-line "                     _          _____  __    ___                         ")
-  (dr-insert-comment-line "            ___  ___| |__   ___|___ / / /_  / _ \\                        ")
-  (dr-insert-comment-line "           / _ \\/ __| '_ \\ / _ \\ |_ \\| '_ \\| | | |                       ")
-  (dr-insert-comment-line "          (  __/ (__| | | | (_) |__) | (_) | |_| |                       ")
-  (dr-insert-comment-line "           \\___|\\___|_| |_|\\___/____/ \\___/ \\___/.com                    ")
-  (dr-insert-comment-line "                                                                         ")
-  (dr-insert-comment-line "*************************************************************************")
-  (dr-insert-comment-line " C O P Y R I G H T   A N D   C O N F I D E N T I A L I T Y   N O T I C E ")
-  (dr-insert-comment-line "*************************************************************************")
-  (dr-insert-comment-line "                                                                         ")
-  (dr-insert-comment-start-space)
-  (insert              "     Copyright (c) ")
-  (insert (format-time-string "%Y" (current-time)))
-  (insert                                     " Echo360, Inc.  All rights reserved.              ")
-  (dr-insert-space-comment-end)
-  (insert "\n")
-  (dr-insert-comment-line "                                                                         ")
-  (dr-insert-comment-line "     This software contains valuable confidential and proprietary        ")
-  (dr-insert-comment-line "     information of Echo360, Inc. and is subject to applicable           ")
-  (dr-insert-comment-line "     licensing agreements.  Unauthorized reproduction, transmission      ")
-  (dr-insert-comment-line "     or distribution of this file and its contents is a violation        ")
-  (dr-insert-comment-line "     of applicable laws.                                                 ")
-  (dr-insert-comment-line "                                                                         ")
-  (dr-insert-comment-line "*************************************************************************")
-  (insert "\n")                  ; Empty line.
-  (dr-insert-comment-start-space)
-  (insert "$Id$" comment-end "\n")
-  (insert "\n"))
-
-; -----------------------------------------------------------------------------
 (defun dr-insert-copyright (name)
   "Inserts a copyright notice for the given argument."
   (goto-char 1)
@@ -319,15 +277,11 @@
   (dr-insert-comment-start-space)
   (insert "Copyright (c) ")
   (insert (format-time-string "%Y" (current-time)))
-  (insert " Doug Rogers under the terms of the MIT License.")
+  (insert " Doug Rogers under the Zero Clause BSD License.")
   (insert comment-end)
   (insert "\n")
   (dr-insert-comment-start-space)
-  (insert "See http://www.opensource.org/licenses/mit-license.html..")
-  (insert comment-end)
-  (insert "\n")
-  (dr-insert-comment-start-space)
-  (insert "$Id$")
+  (insert "You are free to do whatever you want with this software. See LICENSE.txt.")
   (insert comment-end)
   (insert "\n"))
 
@@ -1186,8 +1140,6 @@
 (put 'upcase-region   'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-; (custom-set-faces)  ; What is this?
-
 ; (defconst dr-c-style "ellemtel")
 (defconst dr-c-style "linux")
 
@@ -1252,8 +1204,10 @@
 
 (require 'package)
 (custom-set-variables
+ '(column-number-mode t)
  '(auto-save-interval 1000)
  '(c-basic-offset 4)
+ '(sh-basic-offset 4)
  '(sh-indentation 4)
  '(c-label-minimum-indentation (quote -))
  '(indent-tabs-mode nil)     ; In Unix I never want to use tabs. Use t (not nil) for tabs.
@@ -1268,30 +1222,16 @@
 (customize-set-variable 'whitespace-line-column 120)
 (customize-set-variable 'whitespace-style '(trailing lines-tail face tabs tab-mark))
 
-; Taken from "~/.gnu-emacs-custom":
-
-;; (custom-set-faces
-;;   ;; custom-set-faces was added by Custom.
-;;   ;; If you edit it by hand, you could mess it up, so be careful.
-;;   ;; Your init file should contain only one such instance.
-;;   ;; If there is more than one, they won't work right.
-;;  '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 68 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
-
-; This works but seems to override the comment foreground color, even with the
-; last line added. But using 
-;(add-to-list 'default-frame-alist '(background-color . "black"))
-;(add-to-list 'default-frame-alist '(foreground-color . "white"))  ; "wheat"))
-(add-to-list 'default-frame-alist (cons 'width  120))
-(add-to-list 'default-frame-alist (cons 'height  48))
 (set-face-foreground 'font-lock-comment-face "red")
 
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Monospace" :foundry "outline" :slant normal :weight normal :height 83 :width normal)))))
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 90 :width normal)))))
+
+; Taken from the unaccepted answer at:
+; https://stackoverflow.com/questions/92971/how-do-i-set-the-size-of-emacs-window:
+(if (display-graphic-p)
+    (set-frame-size (selected-frame) 120 64))
+
+; Old method that doesn't work well with graphical display:
+;(add-to-list 'default-frame-alist (cons 'width  120))
+;(add-to-list 'default-frame-alist (cons 'height  64))

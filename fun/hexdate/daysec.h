@@ -1,3 +1,6 @@
+/* Copyright (c) 2010-2019 Doug Rogers under the Zero Clause BSD License. */
+/* You are free to do whatever you want with this software. See LICENSE.txt. */
+
 #ifndef __daysec_h__
 #define __daysec_h__
 

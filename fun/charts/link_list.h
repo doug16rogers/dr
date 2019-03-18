@@ -1,4 +1,5 @@
-/* Copyright (c) 2016 Doug Rogers. Use at your own discretion and risk. */
+/* Copyright (c) 2010-2019 Doug Rogers under the Zero Clause BSD License. */
+/* You are free to do whatever you want with this software. See LICENSE.txt. */
 
 #ifndef UTILS_LINK_LIST_H_
 #define UTILS_LINK_LIST_H_

@@ -1,6 +1,5 @@
-// Copyright (c) 2014 Doug Rogers under the terms of the MIT License.
-// See http://www.opensource.org/licenses/mit-license.html..
-// $Id$
+/* Copyright (c) 2010-2019 Doug Rogers under the Zero Clause BSD License. */
+/* You are free to do whatever you want with this software. See LICENSE.txt. */
 
 #include <stdarg.h>
 #include <stdio.h>

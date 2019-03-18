@@ -1,12 +1,5 @@
-/****************************************************************************
-** $Id: main.cpp 4 2008-02-09 06:21:41Z dkrogers $
-**
-** Copyright (C) 1992-1998 Troll Tech AS.  All rights reserved.
-**
-** This file is part of an example program for Qt.  This example
-** program may be used, distributed and modified without limitation.
-**
-*****************************************************************************/
+// Copyright (c) 2008-2019 Doug Rogers under the Zero Clause BSD License.
+// You are free to do whatever you want with this software. See LICENSE.txt.
 
 #include "analog_hexal_clock.h"
 #include <qapplication.h>

@@ -1,3 +1,6 @@
+// Copyright (c) 2008-2019 Doug Rogers under the Zero Clause BSD License.
+// You are free to do whatever you want with this software. See LICENSE.txt.
+
 #include "digital_hexal_clock.hpp"
 #include "hexal_segment_display.hpp"
 #include <qtimer.h>

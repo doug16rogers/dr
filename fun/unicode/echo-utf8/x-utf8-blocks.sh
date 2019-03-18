@@ -1,5 +1,8 @@
 #! /bin/bash
 
+# Copyright (c) 2012-2019 Doug Rogers under the Zero Clause BSD License.
+# You are free to do whatever you want with this software. See LICENSE.txt.
+
 x0=20
 x1=2596
 x2=2597
