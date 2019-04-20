@@ -1129,6 +1129,15 @@
 (global-set-key '[M-up]     (lambda () (interactive) (scroll-up 1)))
 (global-set-key '[M-down]   (lambda () (interactive) (scroll-down 1)))
 
+(global-set-key '[S-up]    'windmove-up)
+(global-set-key '[S-down]  'windmove-down)
+(global-set-key '[S-left]  'windmove-left)
+(global-set-key '[S-right] 'windmove-right)
+(global-set-key '[S-C-up]    'enlarge-window)
+(global-set-key '[S-C-down]  'shrink-window)
+(global-set-key '[S-C-left]  'shrink-window-horizontally)
+(global-set-key '[S-C-right] 'enlarge-window-horizontally)
+
 ; Move between adjacent buffers.
 (global-set-key [(control meta n)] 'next-buffer)
 (global-set-key [(control meta p)] 'previous-buffer)
