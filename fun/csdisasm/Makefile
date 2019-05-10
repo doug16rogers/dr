@@ -5,8 +5,11 @@
 
 TARGET = csdisasm
 
+# OPT_DIR=/usr/local
+OPT_DIR=$(HOME)/opt
+
 CC = gcc
-CFLAGS = -Wall -Werror -g -I/opt/local/include
+CFLAGS = -Wall -Werror -g -I$(OPT_DIR)/include
 
 all: $(TARGET)
 
@@ -15,7 +18,7 @@ install: $(TARGET)
 	cp $^ $(DR_BIN)/
 
 $(TARGET): $(TARGET).o Makefile
-	$(CC) $(CFLAGS) -o $@ $< -L/opt/local/lib -lcapstone
+	$(CC) $(CFLAGS) -o $@ $< -L$(OPT_DIR)/lib -lcapstone
 #	$(CC) $(CFLAGS) -o $@ $< /opt/local/lib/libcapstone.a   # This works, too, just 12x larger.
 #	cat meterpreter.hex | ./$(TARGET) -x -arch=x86-32
 
