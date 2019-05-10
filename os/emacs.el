@@ -49,7 +49,7 @@
 (setq auto-mode-alist (cons '("[Mm]akefile\..*$" . makefile-gmake-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.mak[e]*$" . makefile-gmake-mode) auto-mode-alist))
 
-(package-initialize)
+;REMOVED FOR MAC SHELL: (package-initialize)
 ; (require 'f)
 ; (require 'let-alist)
 ; (require 's)
@@ -1122,6 +1122,7 @@
 (global-set-key "\C-c\C-i"  'dr-set-tab-width-for-buffer)
 (global-set-key "\C-c\C-r"  'dr-revert-buffer-now)
 ; With C-x:
+(global-set-key "\C-xk"     'kill-this-buffer)      ; 'kill-buffer prompts for buffer to kill.
 (global-set-key "\C-x\C-m"  'eval-region)
 ; (global-set-key "\C-xc"     'compile)
 ; (global-set-key "\C-xC"     'dr-recompile-watch)   ; Takes over find-file-read-only short-cut.
@@ -1129,14 +1130,23 @@
 (global-set-key '[M-up]     (lambda () (interactive) (scroll-up 1)))
 (global-set-key '[M-down]   (lambda () (interactive) (scroll-down 1)))
 
-(global-set-key '[S-up]    'windmove-up)
-(global-set-key '[S-down]  'windmove-down)
-(global-set-key '[S-left]  'windmove-left)
-(global-set-key '[S-right] 'windmove-right)
-(global-set-key '[S-C-up]    'enlarge-window)
-(global-set-key '[S-C-down]  'shrink-window)
-(global-set-key '[S-C-left]  'shrink-window-horizontally)
-(global-set-key '[S-C-right] 'enlarge-window-horizontally)
+; It gets confused with these in -nw on some systems. Not sure why.
+;; (global-set-key '[S-up]    'windmove-up)
+;; (global-set-key '[S-down]  'windmove-down)
+;; (global-set-key '[S-left]  'windmove-left)
+;; (global-set-key '[S-right] 'windmove-right)
+;; (global-set-key '[S-C-up]    'enlarge-window)
+;; (global-set-key '[S-C-down]  'shrink-window)
+;; (global-set-key '[S-C-left]  'shrink-window-horizontally)
+;; (global-set-key '[S-C-right] 'enlarge-window-horizontally)
+(global-set-key "\C-xK" 'windmove-up)   ; Homage to vi.
+(global-set-key "\C-xJ" 'windmove-down)
+(global-set-key "\C-xH" 'windmove-left)
+(global-set-key "\C-xL" 'windmove-right)
+(global-set-key "\C-ch" 'shrink-window-horizontally)
+(global-set-key "\C-cH" 'enlarge-window-horizontally)
+(global-set-key "\C-cv" 'shrink-window-vertically)
+(global-set-key "\C-cV" 'enlarge-window-vertically)
 
 ; Move between adjacent buffers.
 (global-set-key [(control meta n)] 'next-buffer)
@@ -1211,7 +1221,7 @@
 (add-hook 'lisp-mode-hook       'hs-minor-mode)
 (add-hook 'perl-mode-hook       'hs-minor-mode)
 
-(require 'package)
+;REMOVED FOR MAC SHELL: (require 'package)
 (custom-set-variables
  '(column-number-mode t)
  '(auto-save-interval 1000)
