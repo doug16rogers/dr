@@ -80,14 +80,44 @@ uint64_t g_start_address = kDefaultStartAddress;
 FILE* g_out_file = NULL;
 
 /**
+ * Default assembly comment sequence.
+ */
+#define kDefaultAsmComment ";"
+
+/**
+ * String to use for assembly line comment.
+ */
+const char *g_asm_comment = kDefaultAsmComment;
+
+/**
+ * Default flag for printing extra comments in the assembly listing.
+ */
+#define kDefaultPrintAsmComments 1
+
+/**
+ * Whether or not to print summary comments in the assembly output.
+ */
+int g_print_asm_comments = kDefaultPrintAsmComments;
+
+/**
+ * Default percentage of bytes used for printing instructions.
+ */
+#define kDefaultMinPercentBytesUsed 0
+
+/**
+ * Percentage of bytes used for printing instructions.
+ */
+unsigned int g_min_percent_bytes_used = kDefaultMinPercentBytesUsed;
+
+/**
  * Default architecture as an index into the architecture list, kArchList[].
  */
-#define kDefaultArch 0
+#define kDefaultArchIndex 1
 
 /**
  * Architecture to use when disassembling.
  */
-size_t g_arch = kDefaultArch;
+size_t g_arch_index = kDefaultArchIndex;
 
 /**
  * Architecture descriptions.
@@ -100,15 +130,22 @@ typedef struct _ArchEntry {
 } ArchEntry;
 
 /**
+ * My own constant to try running against all architectures.
+ */
+#define ARCH_ALL -6487
+
+/**
  * List of supported architectures.
  */
 const ArchEntry kArchList[] = {
-    { CS_ARCH_X86,   CS_MODE_32,     "x86-32",  "Intel x86 32-bit" },
+    { ARCH_ALL, 0, "all", "Try all architectures." },
+
     { CS_ARCH_X86,   CS_MODE_64,     "x86-64",  "Intel x86 64-bit" },
+    { CS_ARCH_X86,   CS_MODE_32,     "x86-32",  "Intel x86 32-bit" },
     { CS_ARCH_X86,   CS_MODE_16,     "x86-16",  "Intel x86 16-bit" },
 
-    { CS_ARCH_ARM,   CS_MODE_ARM,    "arm-32",      "ARM32" },
     { CS_ARCH_ARM64, CS_MODE_ARM,    "arm-64",      "ARM64" },
+    { CS_ARCH_ARM,   CS_MODE_ARM,    "arm-32",      "ARM32" },
     { CS_ARCH_ARM,   CS_MODE_THUMB,  "arm-thumb",   "ARM Thumb and Thumb-2" },
     { CS_ARCH_ARM,   CS_MODE_MCLASS, "arm-cortex",  "ARM M-Cortex" },
     { CS_ARCH_ARM,   CS_MODE_V8,     "arm-v8",      "ARM V8 encodings" },
@@ -166,25 +203,33 @@ void Usage(FILE* file, int exit_code) {
             "    -h:elp                      Show this usage information.\n");
     fprintf(file,
             "\n"
-            "    -a:rch=arch                 Architecture. [%s]\n"
-            , kArchList[kDefaultArch].name);
+            "    -a:rch:itecture=arch        Architecture. [%s]\n"
+            , kArchList[kDefaultArchIndex].name);
     for (size_t i = 0; i < kArchListCount; ++i) {
         fprintf(file, "           %-14s %s\n", kArchList[i].name, kArchList[i].description);
     }
     fprintf(file,
+            "           %-14s %s\n", "all", "Try all defined architectures.");
+    fprintf(file,
             "\n"
-            "    -[no-]error-no-input         Whether to mark no input as an error. [%s-error-no-input]\n"
+            "    -[no-]error-no-input        Whether to mark no input as an error. [%s-error-no-input]\n"
             , kDefaultErrorNoInput ? "" : "-no");
     fprintf(file,
-            "\n"
-            "    -s:tart:-address=<hex>       Address of first instruction. [%08" PRIX64 "]\n"
+            "    -s:tart:-address=<hex>      Address of first instruction. [%08" PRIX64 "]\n"
             , (uint64_t) kDefaultStartAddress);
     fprintf(file,
-            "\n"
+            "    -<u|min-used-percent>=NUM   Minimum percentage of bytes used to print instructions. [%u]\n"
+            , kDefaultMinPercentBytesUsed);
+    fprintf(file,
+            "    -[no-]p:rint-comments       Whether to print comments. [%s-print-comments]\n"
+            , kDefaultPrintAsmComments ? "" : "-no");
+    fprintf(file,
+            "    -c:omment=STR               Line comment string. [\"%s\"]\n"
+            , kDefaultAsmComment);
+    fprintf(file,
             "    -[no-]hex, -x               Convert input from hexadecimal ASCII. [%s-hex]\n"
             , kDefaultHexInput ? "" : "-no");
     fprintf(file,
-            "\n"
             "    -[no-]v:erbose              Print verbose (debug) messages. [%s-verbose]\n"
             , kDefaultVerbose ? "" : "-no");
     exit(exit_code);
@@ -359,33 +404,29 @@ int IsFlagOption(const char* input, int* flag_value_ptr, const char* descriptor)
  */
 int ParseOptions(int argc, char* argv[]) {
     int rval = 1;       /* Skip program name. */
-    char** non_option_argument_list = argv;
     int i = 0;
     int end_of_options = 0;
     for (i = 1; i < argc; ++i) {
         char* arg = argv[i];
         const char* val;
         if (end_of_options || ('-' != *arg)) {
-            non_option_argument_list[rval++] = arg;
+            argv[rval++] = arg;
         } else if (('-' == arg[1]) && (0 == arg[2])) {
             end_of_options = 1;
         } else if (IsOption(arg, NULL, "h:elp")) {
             Usage(stdout, 0);
-        } else if (IsOption(arg, &val, "a:rch")) {
+        } else if (IsOption(arg, &val, "a:rch:itecture")) {
             size_t i = 0;
             if (NULL == val) {
                 PrintUsageError("no architecture given in -arch=...");
             }
             for (i = 0; i < kArchListCount; ++i) {
                 if (0 == strcasecmp(val, kArchList[i].name)) {
-                    g_arch = i;
+                    g_arch_index = i;
                     break;
                 }
             }
-            if (kArchListCount == i) {
-                PrintUsageError("unknown architecture \"%s\"", val);
-            }
-            PrintVerbose("Using architecture \"%s\".", kArchList[g_arch].name);
+            PrintVerbose("Using architecture \"%s\".", kArchList[g_arch_index].name);
         } else if (IsFlagOption(arg, &g_error_no_input, "error-no-input")) {
         } else if (IsFlagOption(arg, &g_hex_input, "hex")) {
         } else if (IsFlagOption(arg, &g_hex_input, "x")) {
@@ -396,6 +437,16 @@ int ParseOptions(int argc, char* argv[]) {
             if (sscanf(val, "%" PRIX64, &g_start_address) != 1) {
                 PrintUsageError("invalid -start-address=%s", val);
             }
+        } else if (IsOption(arg, &val, "min-used-percent") || IsOption(arg, &val, "u")) {
+            if (NULL == val) {
+                PrintUsageError("no minimum percent bytes used given in -min-used-percent=...");
+            }
+            if (sscanf(val, "%u", &g_min_percent_bytes_used) != 1) {
+                PrintUsageError("invalid -min-used-percent=%s", val);
+            }
+        } else if (IsOption(arg, &val, "s:tart:-address")) {
+            g_asm_comment = (NULL == val) ? "" : val;
+        } else if (IsFlagOption(arg, &g_print_asm_comments, "p:rint-comment:s")) {
         } else if (IsFlagOption(arg, &g_verbose, "v:erbose")) {
         } else {
             PrintUsageError("invalid option \"%s\"", arg);
@@ -458,7 +509,7 @@ size_t UnhexBufferInPlace(char* data, size_t size) {
 
 /* ------------------------------------------------------------------------- */
 /**
- * 
+ * Print instruction @p ins to FILE stream @p file.
  */
 void PrintInstruction(FILE* file, cs_insn* ins) {
     assert(NULL != file);
@@ -478,9 +529,9 @@ void PrintInstruction(FILE* file, cs_insn* ins) {
 /**
  * Print the disassembled data to @a file stream.
  *
- * @return the number of instructions printed, 0 on error.
+ * @return the number of instructions printed or @c 0 on error.
  */
-size_t PrintDisassembly(FILE* file, uint8_t* buffer, size_t size) {
+size_t PrintDisassembly(FILE* file, uint8_t* buffer, size_t size, int arch_index, size_t *opt_bytes_consumed) {
     if (NULL == file) {
         file = stdout;
     }
@@ -489,7 +540,12 @@ size_t PrintDisassembly(FILE* file, uint8_t* buffer, size_t size) {
     csh handle;
     cs_insn* instruction = NULL;
     size_t instruction_count = 0;
-    const ArchEntry* arch = &kArchList[g_arch];
+    size_t local_bytes_consumed = 0;
+    if (NULL == opt_bytes_consumed) {
+        opt_bytes_consumed = &local_bytes_consumed;
+    }
+    *opt_bytes_consumed = 0;
+    const ArchEntry* arch = &kArchList[arch_index];
     int cs_result = cs_open(arch->arch, arch->mode, &handle);
     if (CS_ERR_OK != cs_result) {
         PrintError("cs_open() returned error %d", cs_result);
@@ -497,15 +553,27 @@ size_t PrintDisassembly(FILE* file, uint8_t* buffer, size_t size) {
     }
     instruction_count = cs_disasm(handle, (const uint8_t*) buffer, size, g_start_address, 0, &instruction);
     PrintVerbose("cs_disasm() returned instruction_count=%u.", (unsigned) instruction_count);
-    if (0 == instruction_count) {
-        cs_close(&handle);
-        PrintError("disassembly failed for %d bytes", (int) size);
-        return 0;
+    if (instruction_count > 0) {
+        cs_insn *last_instruction = &instruction[instruction_count - 1];
+        *opt_bytes_consumed = last_instruction->address + last_instruction->size - g_start_address;
+    }
+    size_t per10k = *opt_bytes_consumed * 10000 / size;
+    if ((per10k / 100) < g_min_percent_bytes_used) {
+        PrintVerbose("Skipping %s because bytes used %zu.%02zu%% < %u.00%% minimum.", arch->name,
+                     per10k / 100, per10k % 100, g_min_percent_bytes_used);
+        goto Exit;
+    }
+    if (g_print_asm_comments) {
+        fprintf(g_out_file, "\n%s %s (%s)\n", g_asm_comment, arch->name, arch->description);
+        fprintf(g_out_file, "%s %zu / %zu (%zu.%02zu%%) bytes disassembled for arch=%s (%s)\n", g_asm_comment,
+                *opt_bytes_consumed, size, per10k / 100, per10k % 100, arch->name, arch->description);
     }
     size_t j = 0;
     for (j = 0; j < instruction_count; ++j) {
         PrintInstruction(file, &instruction[j]);
     }
+
+Exit:
     cs_free(instruction, instruction_count);
     cs_close(&handle);
     return instruction_count;
@@ -523,12 +591,17 @@ size_t PrintDisassembly(FILE* file, uint8_t* buffer, size_t size) {
  */
 int main(int argc, char* argv[]) {
 #define kMaxBufferBytes 0x00100000
+    int rval = 0;
     uint8_t* buffer = NULL;
     size_t buffer_bytes = 0;
+    size_t disasm_bytes = 0;
+    size_t longest_disasm_bytes = 0;
+    int longest_arch = 1;
+    size_t instructions = 0;
     g_program = NamePartOfPath(argv[0]);
     argc = ParseOptions(argc, argv);  /* Remove options; leave program name and arguments. */
     g_out_file = (NULL == g_out_file) ? stdout : g_out_file;
-    buffer = malloc(kMaxBufferBytes + 1);
+    buffer = calloc(1, kMaxBufferBytes + 1);
     if (NULL == buffer) {
         PrintError("could not allocate buffer");
         return 1;
@@ -537,7 +610,8 @@ int main(int argc, char* argv[]) {
         size_t bytes = fread(buffer, 1, kMaxBufferBytes, stdin);
         if (bytes == 0) {
             PrintError("could not read from stdin");
-            return 2;
+            rval = 2;
+            goto Exit;
         }
         buffer_bytes = bytes;
     } else {
@@ -547,13 +621,15 @@ int main(int argc, char* argv[]) {
             size_t bytes = 0;
             if (NULL == file) {
                 PrintError("could not open \"%s\"", argv[i]);
-                return 2;
+                rval = 2;
+                goto Exit;
             }
             bytes = fread(&buffer[buffer_bytes], 1, kMaxBufferBytes - buffer_bytes, file);
             if (bytes == 0) {
                 PrintError("could not read from \"%s\"", argv[i]);
                 fclose(file);
-                return 2;
+                rval = 2;
+                goto Exit;
             }
             buffer_bytes += bytes;
             if (buffer_bytes >= kMaxBufferBytes) {
@@ -562,47 +638,80 @@ int main(int argc, char* argv[]) {
         }
         if (i < (size_t) argc) {
             PrintError("buffer overflow reading \"%s\"; size limit is %d bytes", argv[i], (int) kMaxBufferBytes);
-            return 3;
+            rval = 3;
+            goto Exit;
         }
     }
+
     PrintVerbose("Read %u bytes of input.", (unsigned) buffer_bytes);
+
     if ((buffer_bytes > 0) && g_hex_input) {
-        /* if (g_verbose) { */
-        /*     buffer[buffer_bytes] = 0; */
-        /*     fprintf(stderr, "%s: Hex ASCII input: %s\n", g_program, (const char*) buffer); */
-        /* } */
         buffer_bytes = UnhexBufferInPlace((char*) buffer, buffer_bytes);
         if (0 == buffer_bytes) {
             PrintError("no buffer data left after unhexing");
-            return 4;
+            rval = 4;
+            goto Exit;
         }
         PrintVerbose("After unhexing, %u bytes of input.", (unsigned) buffer_bytes);
     }
+
     if (buffer_bytes > 0) {
         PrintVerbose("Disassembling %u bytes.", (unsigned) buffer_bytes);
+
         if (g_verbose && (buffer_bytes > 0)) {
             fprintf(stderr, "%s:   Data: %02X", g_program, buffer[0]);
-            if (buffer_bytes > 1) fprintf(stderr, " %02X", buffer[1]);
-            if (buffer_bytes > 2) fprintf(stderr, " %02X", buffer[2]);
-            if (buffer_bytes > 3) fprintf(stderr, " %02X", buffer[3]);
-            if (buffer_bytes > 4) fprintf(stderr, " %02X", buffer[4]);
-            if (buffer_bytes > 5) fprintf(stderr, " %02X", buffer[5]);
-            if (buffer_bytes > 6) fprintf(stderr, " %02X", buffer[6]);
-            if (buffer_bytes > 7) fprintf(stderr, " %02X", buffer[7]);
-            if (buffer_bytes > 8) fprintf(stderr, "...");
+            if (buffer_bytes >  1) fprintf(stderr, " %02X", buffer[1]);
+            if (buffer_bytes >  2) fprintf(stderr, " %02X", buffer[2]);
+            if (buffer_bytes >  3) fprintf(stderr, " %02X", buffer[3]);
+            if (buffer_bytes >  4) fprintf(stderr, " %02X", buffer[4]);
+            if (buffer_bytes >  5) fprintf(stderr, " %02X", buffer[5]);
+            if (buffer_bytes >  6) fprintf(stderr, " %02X", buffer[6]);
+            if (buffer_bytes >  7) fprintf(stderr, " %02X", buffer[7]);
+            if (buffer_bytes > 16) fprintf(stderr, " ...");
+            if (buffer_bytes > 15) fprintf(stderr, " %02X", buffer[buffer_bytes - 8]);
+            if (buffer_bytes > 14) fprintf(stderr, " %02X", buffer[buffer_bytes - 7]);
+            if (buffer_bytes > 13) fprintf(stderr, " %02X", buffer[buffer_bytes - 6]);
+            if (buffer_bytes > 12) fprintf(stderr, " %02X", buffer[buffer_bytes - 5]);
+            if (buffer_bytes > 11) fprintf(stderr, " %02X", buffer[buffer_bytes - 4]);
+            if (buffer_bytes > 10) fprintf(stderr, " %02X", buffer[buffer_bytes - 3]);
+            if (buffer_bytes >  9) fprintf(stderr, " %02X", buffer[buffer_bytes - 2]);
+            if (buffer_bytes >  8) fprintf(stderr, " %02X", buffer[buffer_bytes - 1]);
             fprintf(stderr, "\n");
         }
-        if (!PrintDisassembly(g_out_file, buffer, buffer_bytes)) {
-            return 5;   /* error message already printed */
+
+        if ((const cs_arch) ARCH_ALL == kArchList[g_arch_index].arch) {
+            int arch = 0;
+            for (arch = 1; arch < kArchListCount; arch++) {
+                instructions = PrintDisassembly(g_out_file, buffer, buffer_bytes, arch, &disasm_bytes);
+                if(disasm_bytes > longest_disasm_bytes) {
+                    longest_disasm_bytes = disasm_bytes;
+                    longest_arch = arch;
+                }
+                if (0 == disasm_bytes) {
+                    rval = 5;
+                }
+            }
+            size_t per10k = longest_disasm_bytes * 10000 / buffer_bytes;
+            fprintf(g_out_file, "\n%s Longest disassembly: %zu / %zu (%zu.%02zu%%) bytes disassembled for arch=%s\n",
+                    g_asm_comment, longest_disasm_bytes, buffer_bytes, per10k / 100, per10k % 100,
+                    kArchList[longest_arch].name);
+        } else {
+            instructions = PrintDisassembly(g_out_file, buffer, buffer_bytes, g_arch_index, &disasm_bytes);
+            if (0 == instructions) {
+                PrintError("%s disassembly failed for %zu bytes", kArchList[g_arch_index].name, buffer_bytes);
+                rval = 5;
+            }
         }
     } else if (g_error_no_input) {
         PrintError("no input bytes");
-        return 6;
+        rval = 6;
     }
+
+Exit:
     free(buffer);
     if (stdout != g_out_file) {
         fclose(g_out_file);
     }
-    return 0;
+    return rval;
 }   /* main() */
 
