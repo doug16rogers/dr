@@ -8,6 +8,8 @@ color_time="$color_gray"
 color_user="$color_yellow"
 color_host="$color_red"
 color_dir="$color_CYAN"
+color_hist="$color_reset"
+color_char="$color_reset"
 
 prompt_char="$"
 
@@ -36,4 +38,11 @@ else
     prompt_date='`date -u "+%y%m%d-%H%M%S"`'
 fi
 
-export PS1="\n$color_time${prompt_date} $color_user\u$color_reset@$color_host\h$color_reset $color_dir\w$color_reset\n$prompt_char "
+prompt_hist="\`history 1 | awk '{print \$1}' | (read _hist && echo \$[_hist+1])\`"
+
+# Readline (on MacOS anyway) struggles with complicated prompts, especially
+# when there are escape sequences embedded in the prompt after the last
+# newline. So just have the prompt character + space after the last newline.
+export PS1="\n$color_hist$prompt_hist $color_time${prompt_date} $color_user\u$color_reset@$color_host\h$color_reset $color_dir\w$color_reset\n$prompt_char "
+
+# echo "PS1=\"$PS1\""
