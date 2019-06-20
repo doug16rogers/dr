@@ -1,6 +1,6 @@
 
 mandelpi: mandelpi.c Makefile
-	$(CC) -o $@ -Wall -Werror -g $<
+	$(CC) -o $@ -Wall -Werror -g $< -lm
 	./$@ 2
 	./$@ 4
 	./$@ 6
