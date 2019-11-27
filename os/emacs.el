@@ -1083,7 +1083,7 @@
 (global-set-key "\C-cdA"    'dr-mark-all)
 (global-set-key "\C-cdb"    'dr-insert-buffer-name-base)
 (global-set-key "\C-cdB"    'dr-toggle-bell)
-(global-set-key "\C-cdc"    'dr-insert-company-copyright)
+(global-set-key "\C-cdc"    'dr-insert-rogers-copyright)
 (global-set-key "\C-cdC"    'c++-mode)
 (global-set-key "\C-cd\C-C" 'mandiant-set-c-style)
 (global-set-key "\C-cdd"    'dr-insert-date-time)
