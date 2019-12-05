@@ -224,6 +224,152 @@ grorig() {
 }
 
 # -----------------------------------------------------------------------------
+# find-grep usage.
+function fig_usage() {
+    cat <<EOF
+
+    Usage: fig [-Hviechmpsl] [-f FILE_GLOB] [options...] REGEX [PATH...]
+
+        'fig' performs a find-grep combination to search files for a regular
+        expression.
+
+        The given REGEX is sought in file matching the various '-f FILE_GLOB'
+        options (or short-cuts like '-c') in each PATH. If no PATH is provided,
+        '*' is used. If FILE_GLOB is provided, '*' is used.
+
+        The default value for PRUNE_GLOB is '-P .git -P .svn', meaning that
+        those subdirectories will not be traversed when finding source files to
+        search.
+
+    OPTIONS
+
+        -H              Show this usage information.
+        -v              Print the command that will be run before running it.
+
+        -F FILE_GLOB    Globs to match for files [default is '*'].
+        -c              C-like files: '*.c' '*.cc' '*.cpp' '*.c++' '*.cs'
+        -h              Header files: '*.h' '*.hh' '*.hpp' '*.h++'
+        -m              Make files: 'Makefile' 'CMakeLists.txt' '*.mk'
+        -p              Python source: '*.py'
+        -s              Script source: '*.sh' '*.py' '*.lua' '*.sch'
+        -j              Java-ish files: '*.java' '*.js'
+
+        -G GREP_OPTS    Specify other options to pass to 'grep'.
+        -i              Perform case-insensitive search; same as '-g -i'.
+        -e              Use egrep-style regular expression; same as '-g -e'.
+
+        -P PRUNE_GLOB   Glob to match subdirectory names *not* to search.
+
+EOF
+}
+
+# -----------------------------------------------------------------------------
+# find-grep.
+function fig() {
+    VERBOSE=0
+    FILE_GLOBS=()
+    GREP_OPTS=()
+    PRUNE_GLOBS=(.git .svn)
+    PATHS=()
+
+    OPTIND=1
+
+    while getopts "HvF:chmpsjG:ieP:" opt; do
+        case $opt in
+            H)
+                fig_usage
+                return 0
+                ;;
+            v)
+                VERBOSE=1
+                ;;
+            F)
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'$OPTARG'")
+                ;;
+            c)
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'*.c'" "'*.cc'" "'*.cpp'" "'*.c++'" "'*.cs'")
+                ;;
+            h)
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'*.h'" "'*.hh'" "'*.hpp'" "'*.h++'")
+                ;;
+            m)
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'Makefile'" "'CMakeLists.txt'" "'*.mk'")
+                ;;
+            p)
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'*.py'")
+                ;;
+            s)
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'*.sh'" "'*.py'" "'*.lua'" "'*.sch'")
+                ;;
+            j)
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'*.java'" "'*.js'")
+                ;;
+            G)
+                GREP_OPTS=(${GREP_OPTS[@]} "'$OPTARG'")
+                ;;
+            i)
+                GREP_OPTS=(${GREP_OPTS[@]} -i)
+                ;;
+            e)
+                GREP_OPTS=(${GREP_OPTS[@]} -e)
+                ;;
+            P)
+                PRUNE_GLOBS=(${PRUNE_GLOBS[@]} "'$OPTARG'")
+                ;;
+        esac
+    done
+
+    shift $[OPTIND - 1]
+
+    if [ $# -lt 1 ]; then
+        echo "fig: no REGEX provided; use '-H' for usage" 1>&2
+        return 1
+    fi
+
+    REGEX="$1"
+    shift
+
+    while [ $# -gt 0 ]; do
+        PATHS=(${PATHS[@]} "$1")
+        shift
+    done
+
+    if [ ${#PATHS[@]} -eq 0 ]; then
+        PATHS=(.)
+    fi
+
+    if [ ${#FILE_GLOBS[@]} -eq 0 ]; then
+        FILE_GLOBS=("'*'")
+    fi
+
+    file_args=""
+
+    # Add directories to be pruned.
+    for ((i=0; i<${#PRUNE_GLOBS[@]}; i++)); do
+        if [ -n "$file_args" ]; then
+            file_args="$file_args -o"
+        fi
+        file_args="$file_args \\( -iname ${PRUNE_GLOBS[$i]} \\)"
+    done
+
+    # Add files to be searched.
+    for ((i=0; i<${#FILE_GLOBS[@]}; i++)); do
+        if [ -n "$file_args" ]; then
+            file_args="$file_args -o"
+        fi
+        file_args="$file_args \\( -iname ${FILE_GLOBS[$i]} \\)"
+    done
+
+    cmd="find ${PATHS[@]} -type f \\( $file_args \\) -exec grep -n ${GREP_OPTS[@]} '$REGEX' /dev/null {} \\;"
+
+    if [ $VERBOSE -ne 0 ]; then
+        echo "$cmd"
+    fi
+
+    eval "$cmd"
+}   # fig()
+    
+# -----------------------------------------------------------------------------
 # grep-find
 # Note that this ignores .svn directories.
 function grind()
