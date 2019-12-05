@@ -10,6 +10,7 @@ export PATH="$PATH:$HOME/opt/bin"
 
 for dir in \
    /opt/local/bin \
+   /opt/android-studio/bin \
    "$DR_OS_DIR/$DR_OS_NAME/bin" \
     ; do
     if [ -d "$dir" ]; then
