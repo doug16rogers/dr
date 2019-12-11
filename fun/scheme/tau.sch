@@ -1,7 +1,6 @@
 ; (define (ltau) (load "tau.sch"))  ; Easy reloader.
 
-(load "gcf.sch")        ; For generalized continued fraction code.
-(load "to-base.sch")    ; For converting to a particular base.
+(load "gcf3.sch")       ; For generalized continued fraction code.
 
 ; -----------------------------------------------------------------------------
 ; At https://en.wikipedia.org/wiki/Generalized_continued_fraction this is
@@ -15,9 +14,18 @@
 (define (tau-rational-by-gcf n) (gcf-rational-func n 0 tau-ak-func tau-bk-func))
 (define (tau-float-by-gcf n) (exact->inexact (tau-rational-by-gcf-iterations n)))
 
-; This shows the first 324 hex digits of tau (guile < tau.sch), which are
-; correct:
-; (to-hex (tau-rational 512) 1 324)
+(define (current-time-usec)
+  (let ((ct (gettimeofday)))
+    (+ (* 1000000 (car ct)) (cdr ct))))
+(define (time-usec proc)
+  (letrec ((start-usec (current-time-usec))
+           (result (proc))
+           (end-usec (current-time-usec)))
+    (display (string-append (number->string (- end-usec start-usec)) " usec \n"))
+    result))
+
+; This generates the first 4096 digits of tau in base 16. It's quick:
+(time-usec (lambda () (tau-to-digits-string 16 4096))
 
 ; -----------------------------------------------------------------------------
 ; Calculate tau to N digits (in any base) by calculating tau-rational-by-gcf
