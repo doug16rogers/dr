@@ -21,11 +21,12 @@
   (letrec ((start-usec (current-time-usec))
            (result (proc))
            (end-usec (current-time-usec)))
-    (display (string-append (number->string (- end-usec start-usec)) " usec \n"))
+    (display (string-append (number->string (- end-usec start-usec)) " usec\n"))
     result))
 
 ; This generates the first 4096 digits of tau in base 16. It's quick:
-(time-usec (lambda () (tau-to-digits-string 16 4096))
+(display "; Use this to peform a timed run:\n(load \"tau.sch\")\n(time-usec (lambda () (tau-to-digits-string 16 4096)))\n")
+; (time-usec (lambda () (tau-to-digits-string 16 4096)))
 
 ; -----------------------------------------------------------------------------
 ; Calculate tau to N digits (in any base) by calculating tau-rational-by-gcf
