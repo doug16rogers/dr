@@ -1,7 +1,7 @@
 # Copyright (c) 2016-2019 Doug Rogers under the Zero Clause BSD License.
 # You are free to do whatever you want with this software. See LICENSE.txt.
 
-TARGETS = wd-match wd-in wd-shift
+TARGETS = wd-match wd-in wd-score wd-shift
 
 CFLAGS = -Wall -Werror -g
 CC = gcc
@@ -20,6 +20,9 @@ wd-match: wd-match.o $(OBJS) Makefile
 wd-in: wd-in.o $(OBJS) Makefile
 	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
 
+wd-scores: wd-score.o $(OBJS) Makefile
+	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
+
 wd-shift: wd-shift.o $(OBJS) Makefile
 	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
 
@@ -36,6 +39,17 @@ wd-in-test: wd-in Makefile
             echo Mind | diff -u - test.out
 	echo "Never\nYou\nMind" | ./$< Mdn. > test.out ; \
             echo Mind | diff -u - test.out
+
+.PHONY: wd-score-test
+wd-score-test: wd-score Makefile
+	./$< -s the quick brown fox > test.out; \
+		echo "6 the\n20 quick\n10 brown\n13 fox" | diff -u - test.out
+	./$< -w the quick brown fox > test.out; \
+		echo "5 the\n22 quick\n12 brown\n13 fox" | diff -u - test.out
+	./$< -wn the quick brown fox > test.out; \
+		echo "5\n22\n12\n13" | diff -u - test.out
+	echo "the quick\nbrown\nfox" | ./$< -w > test.out; \
+		echo "5 the\n22 quick\n12 brown\n13 fox" | diff -u - test.out
 
 .PHONY: wd-shift-test
 wd-shift-test: wd-shift Makefile
