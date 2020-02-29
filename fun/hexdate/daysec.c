@@ -108,7 +108,7 @@ int daysec_set_civil (DAYSEC daysec,
         is_leap_year = 1;
     }
     if ((is_leap_year && (month == 2) && (day > 29)) ||
-        (day > kDaysInMonth[month-1])) {
+        (!is_leap_year && (day > kDaysInMonth[month-1]))) {
         return 0;
     }
     if (NULL != daysec) {
