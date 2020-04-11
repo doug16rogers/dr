@@ -97,15 +97,15 @@ static LINK_LIST_INLINE link_t* list_remove_next(list_t* list) {
 }   /* list_remove_next() */
 
 /**
- * Remove the prev link from @a _listp, returning a structure of type @a
- * _struct_type that has a link_t field name @a _link_field_name.
+ * Remove the prev link from @p _listp, returning a structure of type @p
+ * _struct_type that has a link_t field name @p _link_field_name.
  */
 #define list_remove_prev_struct(_listp,_struct_type,_link_field_name) \
     STRUCT_CONTAINING_LINK(list_remove_prev(_listp), _struct_type, _link_field_name)
 
 /**
- * Remove the next link from @a _listp, returning a structure of type @a
- * _struct_type that has a link_t field name @a _link_field_name.
+ * Remove the next link from @p _listp, returning a structure of type @p
+ * _struct_type that has a link_t field name @p _link_field_name.
  */
 #define list_remove_next_struct(_listp,_struct_type,_link_field_name) \
     STRUCT_CONTAINING_LINK(list_remove_next(_listp), _struct_type, _link_field_name)
@@ -136,7 +136,7 @@ static LINK_LIST_INLINE link_t* list_remove_next(list_t* list) {
     (list_is_empty(_list) ? NULL : STRUCT_CONTAINING_LINK((_list)->next, _struct_type, _link_field_name))
 
 /**
- * Move @a src_list to the end of @a tgt_list quickly.
+ * Move @p src_list to the end of @p tgt_list quickly.
  */
 static LINK_LIST_INLINE list_t* list_append_list(list_t* tgt_list, list_t* src_list) {
     if (!list_is_empty(src_list)) {
@@ -150,7 +150,7 @@ static LINK_LIST_INLINE list_t* list_append_list(list_t* tgt_list, list_t* src_l
 }   /* list_append_list() */
 
 /**
- * @return 1 if @a link is found within the first @a max_count items in @a
+ * @return 1 if @p link is found within the first @p max_count items in @p
  * list, starting with the list's next pointer.
  */
 static LINK_LIST_INLINE int list_has_link(list_t* list, link_t* link, int max_count) {
@@ -165,10 +165,10 @@ static LINK_LIST_INLINE int list_has_link(list_t* list, link_t* link, int max_co
 }
 
 /**
- * For each link in @a _listp, run @a _code using variable name @a _linkp to
+ * For each link in @p _listp, run @p _code using variable name @p _linkp to
  * hold the current link pointer.
  *
- * @a _linkp may be safely removed from @a _listp in @a _code.
+ * @p _linkp may be safely removed from @p _listp in @p _code.
  */
 #define list_foreach_link(_listp,_linkp,_code)                          \
     do {                                                                \
@@ -181,11 +181,11 @@ static LINK_LIST_INLINE int list_has_link(list_t* list, link_t* link, int max_co
     } while (0)
 
 /**
- * Using @a _listp as a list of structures of type @a _struct_type that are
- * linked through link_t field name @a _link_field_name, for each struct
- * pointer @a _structp in the list, execute @a _code.
+ * Using @p _listp as a list of structures of type @p _struct_type that are
+ * linked through link_t field name @p _link_field_name, for each struct
+ * pointer @p _structp in the list, execute @p _code.
  *
- * @a _structp may be safely removed from @a _listp in @a _code.
+ * @p _structp may be safely removed from @p _listp in @p _code.
  */
 #define list_foreach_struct(_listp,_structp,_struct_type,_link_field_name,_code) \
     do {                                                                \

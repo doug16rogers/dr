@@ -25,15 +25,15 @@ extern int g_verbose;
  * Set the name of this program. Usually this is done with
  * SetProgramName(argv[0]) in main().
  *
- * @note This does not make a copy of @a path_or_name; it stores a pointer
- *       in @a g_program to the basename inside @a path_or_name (as in
+ * @note This does not make a copy of @p path_or_name; it stores a pointer
+ *       in @p g_program to the basename inside @p path_or_name (as in
  *       NamePartOfPath() below).
  */
 const char* SetProgramName(char* path_or_name);
 
 /* ------------------------------------------------------------------------- */
 /**
- * Shift a string's characters to the left by @a n characters.
+ * Shift a string's characters to the left by @p n characters.
  *
  * @param s - string to shift.
  * @param len - length of string.
@@ -45,7 +45,7 @@ char* CircularShiftLeft(char* s, size_t len, size_t n);
 
 /* ------------------------------------------------------------------------- */
 /**
- * Shift a string's characters to the right by @a n characters.
+ * Shift a string's characters to the right by @p n characters.
  *
  * @param s - string to shift.
  * @param len - length of string.
@@ -59,14 +59,14 @@ char* CircularShiftRight(char* s, size_t len, size_t n);
 /**
  * Look for an option of the form "[-[-]]option[=value]".
  *
- * If @a input contains '=' then non-null @a *value_ptr is set to point
+ * If @p input contains '=' then non-null @p *value_ptr is set to point
  * to the character after '=' (or is set to NULL if there is no argument).
  *
- * @a descriptor may contain ':' characters which indicate abbreviation
+ * @p descriptor may contain ':' characters which indicate abbreviation
  * points for the option. For example, "o:pt:ion" will match "-o",
  * "-o=value", "-opt", "-opt=value", "-option" and "-option=value".
  *
- * @return 1 if @a input matches @a descriptor, 0 otherwise.
+ * @return 1 if @p input matches @p descriptor, 0 otherwise.
  */
 int IsOption(const char* input, const char** value_ptr, const char* descriptor);
 
@@ -74,15 +74,15 @@ int IsOption(const char* input, const char** value_ptr, const char* descriptor);
 /**
  * Look for flag option of the form "-[-][no-]option".
  *
- * @a descriptor may contain ':' characters which indicate abbreviation
+ * @p descriptor may contain ':' characters which indicate abbreviation
  * points for the option. See IsOption() for more information.
  *
- * If @a input matches the descriptor then the value of @a *flag_value_ptr (if
- * not NULL) will be set to 1. If @a input matches the descriptor with "no-"
- * prefixed then @a *flag_value_ptr will be set to 0. If @a input does not
- * match @a descriptor, @a *flag_value_ptr is not modified.
+ * If @p input matches the descriptor then the value of @p *flag_value_ptr (if
+ * not NULL) will be set to 1. If @p input matches the descriptor with "no-"
+ * prefixed then @p *flag_value_ptr will be set to 0. If @p input does not
+ * match @p descriptor, @p *flag_value_ptr is not modified.
  *
- * @return 1 if @a input matches @a descriptor with or without a "no-" prefix,
+ * @return 1 if @p input matches @p descriptor with or without a "no-" prefix,
  * 0 otherwise.
  */
 int IsFlagOption(const char* input, int* flag_value_ptr, const char* descriptor);
@@ -91,26 +91,26 @@ int IsFlagOption(const char* input, int* flag_value_ptr, const char* descriptor)
 /**
  * Look for flag option of the form "-[-]option[=value]".
  *
- * @a descriptor may contain ':' characters which indicate abbreviation
+ * @p descriptor may contain ':' characters which indicate abbreviation
  * points for the option. See IsOption() for more information.
  *
- * If @a input matches the descriptor then the value of @a *int_value_ptr (if
+ * If @p input matches the descriptor then the value of @p *int_value_ptr (if
  * not NULL) will be set to the "[=value]" portion of the input as an integer.
- * If no "[=value]"  portion is present, then @a default_value is used for
+ * If no "[=value]"  portion is present, then @p default_value is used for
  * the integer.
  *
- * @return 1 if @a input matches @a descriptor with a valid integer value, 0
+ * @return 1 if @p input matches @p descriptor with a valid integer value, 0
  * otherwise.
  */
 int IsIntOption(const char* input, int* int_value_ptr, const char* descriptor, int default_value);
 
 /* ------------------------------------------------------------------------- */
 /**
- * Copy @a n bytes from @a src to @a tgt, but backwards (last byte first).
+ * Copy @p n bytes from @p src to @p tgt, but backwards (last byte first).
  *
  * @note No checking is performed on any arguments.
  *
- * @return @a tgt.
+ * @return @p tgt.
  */
 void* memcpy_backward(void* tgt, const void* src, size_t n);
 
@@ -122,19 +122,19 @@ void PrintUsageError(const char* format, ...);
 
 /* ------------------------------------------------------------------------- */
 /**
- * Find and return a pointer to the file name portion of @a path.
+ * Find and return a pointer to the file name portion of @p path.
  *
  * @param path - a path whose name is desired. Typically this is argv[0] from
  * main().
  *
  * @return a pointer the first character after the last directory delimiter
- * (forward or back slash) in @a path, or @a path if none is found.
+ * (forward or back slash) in @p path, or @p path if none is found.
  */
 const char* NamePartOfPath(const char* path);
 
 /* ------------------------------------------------------------------------- */
 /**
- * If global g_verbose is non-zero, print the message described by @a format.
+ * If global g_verbose is non-zero, print the message described by @p format.
  */
 void PrintVerbose(const char* format, ...);
 

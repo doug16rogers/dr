@@ -14,8 +14,8 @@ all: test
 .PHONY: test
 test: $(addsuffix -test,$(TARGETS))
 
-wd-match: wd-match.o $(OBJS) Makefile
-	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
+wd-match: wd-match.o Makefile
+	$(CC) $(CLFAGS) -o $@ $< $(LIBS)
 
 wd-in: wd-in.o $(OBJS) Makefile
 	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
@@ -30,7 +30,11 @@ wd-shift: wd-shift.o $(OBJS) Makefile
 wd-match-test: wd-match Makefile
 	echo "Makefile\nwd-match\na\nb\ntestrant\n" | ./$< abcdefgd > test.out ; \
             echo Makefile | diff -u - test.out
+	echo "MakEfile\nwd-match\na\nb\ntestrant\n" | ./$< -i abcdefgd > test.out ; \
+            echo MakEfile | diff -u - test.out
 	echo "Makefile\nwd-match\na\nb\ntestrant\n" | ./$< -s cdefgdab > test.out ; \
+            echo Makefile | diff -u - test.out
+	echo "Makefile\nwd-match\na\nb\ntestrant\n" | ./$< -a aabcdefg > test.out ; \
             echo Makefile | diff -u - test.out
 
 .PHONY: wd-in-test
