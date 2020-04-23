@@ -37,7 +37,7 @@ int g_verbose = 0;
 /**
  * Length of shortest pattern added.
  */
-size_t g_min_pattern_len = SIZE_T_MAX;
+size_t g_min_pattern_len = ULLONG_MAX;
 
 /**
  * Length of longest pattern added.
@@ -81,7 +81,7 @@ void usage(FILE* file, int exit_code) {
             "    -v  Print verbose (debug) messages to stderr.\n"
             "    -i  Comparisons and patterns are case-insensitive.\n"
             "    -s  Check shifts (rotations) of pattern.\n"
-            "    -a  Check all permutations of pattern (same as `wd-in`)\n"
+            "    -a  Check all permutations of pattern (like `wd-in` but patterns)\n"
             "\n"
             "EXAMPLES:\n"
             "\n"
