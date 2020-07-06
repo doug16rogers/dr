@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [[ -z "$2" ]]; then
+    echo "$0: usage: gw <grep-pattern> <letter-tile-list>"
+    exit 1
+fi
+
+# From largest to smallest.
+lists=(/usr/share/dict/american-english-huge \
+        $HOME/dr/fun/itasoftware-puzzles/word.lst \
+        /usr/share/dict/american-english-large \
+        /etc/dictionaries-common/words)
+
+for f in ${lists[@]}; do
+    if [[ -e "$f" ]]; then
+        break
+    fi
+done
+
+if [[ -z "$f" ]]; then
+    echo "$0: failed to find any of: (${lists[@]})"
+    exit 1
+fi
+
+cat "$f" | grep "$1" | wd-in "$2"
+
