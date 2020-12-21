@@ -18,6 +18,9 @@ alias shredusb="shred -n0 -z --remove "
 # Open any file using its default application.
 alias launch="xdg-open 2> /dev/null "
 
+# Remove the silly copyright banner from ffmpeg.
+alias ffm='ffmpeg -hide_banner '
+
 # A lot of git aliases...
 alias g1='git log --format="%ci %Cgreen%h%Creset %Cred(%cn)%Creset %s" --date=local --abbrev-commit'
 alias g1m='g1 master...'
