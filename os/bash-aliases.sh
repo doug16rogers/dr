@@ -18,8 +18,10 @@ alias shredusb="shred -n0 -z --remove "
 # Open any file using its default application.
 alias launch="xdg-open 2> /dev/null "
 
-# Remove the silly copyright banner from ffmpeg.
-alias ffm='ffmpeg -hide_banner '
+# Make ffmpeg/ffprobe easier to read.
+alias ffm='ffmpeg -hide_banner -loglevel warning -stats'
+alias ffM='ffmpeg -hide_banner'
+alias ffi="ffprobe -hide_banner -show_entries 'stream_tags : format_tags : program_stream_tags' "
 
 # A lot of git aliases...
 alias g1='git log --format="%ci %Cgreen%h%Creset %Cred(%cn)%Creset %s" --date=local --abbrev-commit'
@@ -37,6 +39,9 @@ alias gf='git show --pretty="format:" --name-only '   # Show files for a commit.
 alias gbd='git branch -d '
 alias grc='git rebase --continue '
 alias gmt='git mergetool -y '
+alias mv='mv -i '
+alias vlcc='vlc >/dev/null 2>&1 '
+alias vlcp='vlc --play-and-exit >/dev/null 2>&1 '
 
 gd1() {         # Show changes just in the named commits, one at a time.
     while [[ $# -gt 0 ]]; do
