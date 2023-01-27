@@ -342,25 +342,31 @@ function fig() {
         FILE_GLOBS=("'*'")
     fi
 
-    file_args=""
+    prune_args=""
 
     # Add directories to be pruned.
     for ((i=0; i<${#PRUNE_GLOBS[@]}; i++)); do
-        if [ -n "$file_args" ]; then
-            file_args="$file_args -o"
+        if [ -n "$prune_args" ]; then
+            prune_args="$prune_args -o "
         fi
-        file_args="$file_args \\( -iname ${PRUNE_GLOBS[$i]} \\)"
+        prune_args="${prune_args}-name ${PRUNE_GLOBS[$i]}"
     done
+
+    if [ -n "$prune_args" ]; then
+        prune_args="\\( $prune_args \\) -prune -o "
+    fi
+
+    file_args=""
 
     # Add files to be searched.
     for ((i=0; i<${#FILE_GLOBS[@]}; i++)); do
         if [ -n "$file_args" ]; then
-            file_args="$file_args -o"
+            file_args="$file_args -o "
         fi
-        file_args="$file_args \\( -iname ${FILE_GLOBS[$i]} \\)"
+        file_args="${file_args}-iname ${FILE_GLOBS[$i]}"
     done
 
-    cmd="find ${PATHS[@]} -type f \\( $file_args \\) -exec grep -n ${GREP_OPTS[@]} '$REGEX' /dev/null {} \\;"
+    cmd="find ${PATHS[@]} ${prune_args}\\( -type f -a \\( $file_args \\) \\) -exec grep -n ${GREP_OPTS[@]} '$REGEX' /dev/null {} \\;"
 
     if [ $VERBOSE -ne 0 ]; then
         echo "$cmd"
