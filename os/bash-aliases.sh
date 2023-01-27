@@ -43,6 +43,13 @@ alias mv='mv -i '
 alias vlcc='vlc >/dev/null 2>&1 '
 alias vlcp='vlc --play-and-exit >/dev/null 2>&1 '
 
+if [ $DR_OS_NAME == "darwin" ]; then
+    alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
+fi
+
+alias vlcc='vlc >/dev/null 2>&1'
+alias vlcp='vlc --play-and-exit >/dev/null 2>&1'
+
 gd1() {         # Show changes just in the named commits, one at a time.
     while [[ $# -gt 0 ]]; do
         gd $1{^,}
