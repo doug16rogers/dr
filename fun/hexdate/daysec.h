@@ -29,10 +29,10 @@ void daysec_add_seconds(DAYSEC time, double seconds);
 
 /* ------------------------------------------------------------------------- */
 /**
- * Set the @a daysec value, if not NULL, to the days and seconds
+ * Set the @p daysec value, if not NULL, to the days and seconds
  * according to the given individual fields.
  *
- * Use NULL for @a daysec to simply check the fields for validity.
+ * Use NULL for @p daysec to simply check the fields for validity.
  *
  * @return 1 if the fields constitute a valid time, 0 otherwise.
  */
@@ -47,9 +47,10 @@ int daysec_set_civil (DAYSEC daysec,
 
 // ---------------------------------------------------------------------------
 /**
- * Not yet implemented.
+ * Convert @p daysec to civil time in the given time zone.
+ *
+ * @return 1 if the conversion succeeded, 0 otherwise.
  */
-#if 0
 int daysec_get_civil (DAYSEC daysec,
                       int    time_zone_seconds_west,    // -12h .. +12h
                       int*   year,
@@ -58,7 +59,6 @@ int daysec_get_civil (DAYSEC daysec,
                       int*   hour,     // 0 .. 23
                       int*   minute,   // 0 .. 59
                       int*   second);  // 0 .. 59
-#endif
 
 // ---------------------------------------------------------------------------
 /**

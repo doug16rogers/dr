@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include <time.h>
 #else
+#include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
 #endif
@@ -65,11 +66,16 @@ void Usage(FILE* file) {
   fprintf(file, "longer in duration than a civil second. Note that there are no time zones in\n");
   fprintf(file, "hexon time.\n");
   fprintf(file, "\n");
-  fprintf(file, "[time] should by given in ISO 8601 form, [[YY]YY-]MM-DD[Thh:mm[:ss][Z]]. By\n");
+  fprintf(file, "[time] may be given in ISO 8601 form, '[[YY]YY-]MM-DD[Thh:mm[:ss][Z]]'. By\n");
   fprintf(file, "default the local time zone is used. Append 'Z' to specify UTC. If [time]\n");
   fprintf(file, "includes just the time of day, hh:mm[:ss][Z], then the current date is used. If\n");
   fprintf(file, "[time] includes just a date then the current time of day will be used for the\n");
   fprintf(file, "time of day portion of [time].\n");
+  fprintf(file, "\n");
+  fprintf(file, "[time] may be in the form 'XXXX[.XXXX][Z]', where X are hexadecimal digits, to\n");
+  fprintf(file, "specify a hex time to convert to standard civil time for the specified epoch.\n");
+  fprintf(file, "If [time] ends in 'Z' then the time displayed will be in UTC, otherwise it will\n");
+  fprintf(file, "be in the current time zone.\n");
   fprintf(file, "\n");
   fprintf(file, "If [time] is not given then the current time is converted and displayed.\n");
   fprintf(file, "\n");
@@ -165,10 +171,114 @@ Exception:
 }   // SetFormat()
 
 // ---------------------------------------------------------------------------
+static void HandleDaysecToHexon(struct DAYSEC_STRUCT *daysec, const char *time_text) {
+  struct HEXON_TIME_STRUCT hexon;
+
+  EZLOGD("converting text time: %s", time_text);
+  EZLOGD("days.seconds source time : %10lu.%05lu (hex 0x%lx/0x%05lx.",
+         daysec->day, (long) daysec->sec, daysec->day, (long) daysec->sec);
+  EZLOGD("days.seconds epoch time  : %10lu.%05lu (hex 0x%lx/0x%05lx.",
+         epoch.day, (long) epoch.sec, epoch.day, (long) epoch.sec);
+
+  daysec_sub(daysec, daysec, &epoch);
+
+  EZLOGD("days.seconds since epoch : %10lu.%05lu (hex 0x%lx/0x%05lx.",
+         daysec->day, (long) daysec->sec, daysec->day, (long) daysec->sec);
+
+  Hexon_Set_Day_Second(&hexon, daysec->day, daysec->sec);
+
+  EZLOGD("decimal hexon (double): %20.6f.", hexon.hexon);
+
+  if (!Hexon_Print(stdout, output_format, g_newline, &hexon)) {
+    fprintf(stderr, PROGRAM_NAME ": *** error: could not print using format \"%s\".\n", NullCheck(output_format));
+    exit(1);
+  }
+}   // HandleDaysecToHexon()
+
+// ---------------------------------------------------------------------------
+static int HexonFromText(struct HEXON_TIME_STRUCT *hexon, int *zone_seconds, const char *time_text) {
+  long days = 0;
+  char *end = NULL;
+  double hexons = 0.0;
+
+  days = strtol(time_text, &end, 16);
+
+  if ((days < 0) || (end == time_text) || ((*end != '\0') && (NULL == strchr(".zZ", *end)))) {
+    return 0;
+  }
+
+  hexons = 65536.0 * days;
+
+  if ((end[0] == '.') && (end[1] != '\0')) {
+    int digits = 0;
+    double day_fraction_denominator = 1.0;
+    long day_fraction_numerator = 0;
+    digits = strlen(end + 1);
+    day_fraction_numerator = strtol(end + 1, &end, 16);
+
+    if ((*end != '\0') && (*end != 'z') && (*end != 'Z')) {
+      return 0;
+    }
+
+    // 4 digits for hexons, the rest are fractional hexons.
+    day_fraction_denominator = exp(log(16.0) * digits);
+    hexons += 65536.0 * day_fraction_numerator / day_fraction_denominator;
+  }
+
+  if (*end == 'z' || *end == 'Z') {
+    *zone_seconds = 0;
+  } else {
+    struct tm tm;
+    time_t time_now = time(NULL);
+#ifdef WIN32
+    localtime_s(&tm, time_now);
+    _get_timezone(zone_seconds);
+#else
+    if (NULL != localtime_r(&time_now, &tm)) {
+      *zone_seconds = (int) tm.tm_gmtoff;
+    }
+#endif
+  }
+
+  hexon->hexon = hexons;
+  return 1;
+}  // HexonFromText()
+
+// ---------------------------------------------------------------------------
+static void HandleHexonToDate(struct HEXON_TIME_STRUCT *hexon, int zone_seconds, const char *time_text) {
+  struct DAYSEC_STRUCT daysec;
+  int year = 0;
+  int month = 0;
+  int day = 0;
+  int hour = 0;
+  int minute = 0;
+  int second = 0;
+  EZLOGD("converting text days.hexons: %s", time_text);
+  EZLOGD("decimal hexon (double): %20.6f.", hexon->hexon);
+  daysec.day = hexon->hexon / 65536.0;
+  daysec.sec = (hexon->hexon - (65536.0 * daysec.day)) * 86400.0 / 65536.0;
+  EZLOGD("days.seconds since epoch : %10lu.%05lu (hex 0x%lx/0x%05lx.",
+         (long) daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
+  EZLOGD("days.seconds epoch time  : %10lu.%05lu (hex 0x%lx/0x%05lx.",
+         (long) epoch.day, (long) epoch.sec, epoch.day, (long) epoch.sec);
+  daysec_add(&daysec, &daysec, &epoch);
+  EZLOGD("days.seconds target time : %10lu.%05lu (hex 0x%lx/0x%05lx.",
+         (long) daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
+
+  if (!daysec_get_civil(&daysec, zone_seconds, &year, &month, &day, &hour, &minute, &second)) {
+    fprintf(stderr, "Failed to convert day.sec %d.%05ld to civil time.\n", daysec.day, (long) daysec.sec);
+    exit(1);
+  }
+
+  printf("%04d-%02d-%02dT%02d:%02d:%02d%s\n", year, month, day, hour, minute, second, zone_seconds ? "" : "Z");
+}   // HandleDaysecToHexon()
+
+// ---------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
   size_t i = 0;
   struct HEXON_TIME_STRUCT hexon;
   struct DAYSEC_STRUCT     daysec;
+  int zone_seconds = 0;
 
   SetEpoch(kDefaultEpoch);
   SetFormat(kDefaultFormat);
@@ -203,27 +313,14 @@ int main(int argc, char* argv[]) {
    * Go through the list of times to check.
    */
   for (i = 0; i < time_count; i++) {
-    if (!daysec_from_text(&daysec, time_list[i], kDateShortcuts)) {
-      fprintf(stderr, PROGRAM_NAME ": *** error: invalid time \"%s\".\n", NullCheck(time_list[i]));
+    if (daysec_from_text(&daysec, time_list[i], kDateShortcuts)) {
+      HandleDaysecToHexon(&daysec, time_list[i]);
+    } else if (HexonFromText(&hexon, &zone_seconds, time_list[i])) {
+      HandleHexonToDate(&hexon, zone_seconds, time_list[i]);
+    } else {
+      fprintf(stderr, PROGRAM_NAME ": *** error: could not convert time \"%s\".\n",
+              NullCheck(time_list[i]));
       UsageReference(stderr);
-    }
-    EZLOGD("converting time: %s", time_list[i]);
-    EZLOGD("days.seconds source time : %10lu.%05lu (hex 0x%lx/0x%05lx.",
-           daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
-    EZLOGD("days.seconds epoch time  : %10lu.%05lu (hex 0x%lx/0x%05lx.",
-           epoch.day, (long) epoch.sec, epoch.day, (long) epoch.sec);
-
-    daysec_sub(&daysec, &daysec, &epoch);
-
-    EZLOGD("days.seconds since epoch : %10lu.%05lu (hex 0x%lx/0x%05lx.",
-           daysec.day, (long) daysec.sec, daysec.day, (long) daysec.sec);
-
-    Hexon_Set_Day_Second(&hexon, daysec.day, daysec.sec);
-
-    EZLOGD("decimal hexon (double): %20.6f.", hexon.hexon);
-
-    if (!Hexon_Print(stdout, output_format, g_newline, &hexon)) {
-      fprintf(stderr, PROGRAM_NAME ": *** error: could not print using format \"%s\".\n", NullCheck(output_format));
       return 1;
     }
   }   /* For each time to check */

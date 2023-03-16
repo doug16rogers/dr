@@ -29,6 +29,9 @@
 #define kZoneSecondsMin (-12*60*60)
 #define kZoneSecondsMax (+12*60*60)
 
+#define kUnixEpochDays    ((long long) 719528)
+#define kUnixEpochSeconds (kUnixEpochDays * kSecondsPerDay)
+
 typedef void (*DAYSEC_BINARY_OPERATION)(DAYSEC result, const DAYSEC left, const DAYSEC right);
 
 // ---------------------------------------------------------------------------
@@ -144,12 +147,13 @@ int daysec_set_civil (DAYSEC daysec,
 
         daysec->day = days;
         daysec->sec = seconds;
+        // EZLOGD("days.seconds => %ld.%05ld", (long) daysec->day, (long) daysec->sec);
     }
     return 1;
 }   // daysec_set_civil
 
 // ---------------------------------------------------------------------------
-int daysec_get_civil (DAYSEC time,
+int daysec_get_civil (DAYSEC daysec,
                       int    time_zone_seconds_west,    // -12h .. +12h.
                       int*   year,
                       int*   month,     // Jan=1 .. Dec=12
@@ -157,14 +161,50 @@ int daysec_get_civil (DAYSEC time,
                       int*   hour,      // 0 .. 23
                       int*   minute,    // 0 .. 59
                       int*   second) {  // 0 .. 59
-    if ((time_zone_seconds_west < kZoneSecondsMin) ||
+    struct tm tm;
+
+    if ((NULL == daysec) ||
+        (time_zone_seconds_west < kZoneSecondsMin) ||
         (time_zone_seconds_west > kZoneSecondsMax)) {
         return 0;
     }
-    /*
-     * @TODO(dr) Write this code!
-     */
-    return 0;
+
+    long long seconds_since_zero = (long long) daysec->day * kSecondsPerDay + daysec->sec;
+    EZLOGD("Seconds since zero       : %lld", seconds_since_zero);
+    time_t seconds_since_unix = (time_t) (seconds_since_zero - kUnixEpochSeconds);
+    seconds_since_unix += time_zone_seconds_west;
+    EZLOGD("Seconds since Unix epoch : %lld", seconds_since_unix);
+
+    if (NULL == gmtime_r(&seconds_since_unix, &tm)) {
+        return 0;
+    }
+
+    if (NULL != year) {
+        *year = tm.tm_year + 1900;
+        EZLOGD("tm.tm_year=%d *year=%d", tm.tm_year, *year);
+    }
+
+    if (NULL != month) {
+        *month = tm.tm_mon + 1;
+    }
+
+    if (NULL != day) {
+        *day = tm.tm_mday;
+    }
+
+    if (NULL != hour) {
+        *hour = tm.tm_hour;
+    }
+
+    if (NULL != minute) {
+        *minute = tm.tm_min;
+    }
+
+    if (NULL != second) {
+        *second = tm.tm_sec;
+    }
+
+    return 1;
 }   /* daysec_get_civil() */
 
 /* ------------------------------------------------------------------------- */
