@@ -49,6 +49,13 @@ int g_verbose = 0;
 #define kDefaultErrorNoInput 0
 
 /**
+ * Default value for whether instructions are stored big-endian.
+ */
+#define kDefaultBigEndian 0
+
+int g_big_endian = kDefaultBigEndian;
+
+/**
  * Whether or not to emit an error message when no input data bytes are seen.
  */
 int g_error_no_input = kDefaultErrorNoInput;
@@ -214,6 +221,9 @@ void Usage(FILE* file, int exit_code) {
             "\n"
             "    -[no-]error-no-input        Whether to mark no input as an error. [%s-error-no-input]\n"
             , kDefaultErrorNoInput ? "" : "-no");
+    fprintf(file,
+            "    -b:ig:-endian               Instructions are stored big-endian. [-%sbig-endian]\n"
+            , kDefaultBigEndian ? "" : "no-");
     fprintf(file,
             "    -s:tart:-address=<hex>      Address of first instruction. [%08" PRIX64 "]\n"
             , (uint64_t) kDefaultStartAddress);
@@ -430,6 +440,7 @@ int ParseOptions(int argc, char* argv[]) {
         } else if (IsFlagOption(arg, &g_error_no_input, "error-no-input")) {
         } else if (IsFlagOption(arg, &g_hex_input, "hex")) {
         } else if (IsFlagOption(arg, &g_hex_input, "x")) {
+        } else if (IsFlagOption(arg, &g_big_endian, "b:ig:-endian")) {
         } else if (IsOption(arg, &val, "s:tart:-address")) {
             if (NULL == val) {
                 PrintUsageError("no start address given in -start-address=...");
@@ -546,7 +557,8 @@ size_t PrintDisassembly(FILE* file, uint8_t* buffer, size_t size, int arch_index
     }
     *opt_bytes_consumed = 0;
     const ArchEntry* arch = &kArchList[arch_index];
-    int cs_result = cs_open(arch->arch, arch->mode, &handle);
+    int mode = arch->mode | (g_big_endian ? CS_MODE_BIG_ENDIAN : 0);
+    int cs_result = cs_open(arch->arch, mode, &handle);
     if (CS_ERR_OK != cs_result) {
         PrintError("cs_open() returned error %d", cs_result);
         return 0;
