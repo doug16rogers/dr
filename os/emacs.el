@@ -11,6 +11,7 @@
 ; (set-face-foreground 'font-lock-variable-name-face "blue")
 (column-number-mode t)
 
+(dr-load "chatgpt.el")
 (dr-load "google-c-style.el")
 (dr-load "mandiant-c-style.el")
 (dr-load "rust-mode.el")
@@ -1066,74 +1067,6 @@
 ;  )
 ;  (widen)
 ;)
-
-; -----------------------------------------------------------------------------
-; ChatGPT interface. Use M-x package-install to install `request` package.
-(require 'request)
-
-(setq openai-api-key-file "~/.openai-api-key.txt")
-(setq openai-api-chat-url "https://api.openai.com/v1/chat/completions")
-(setq openai-model "gpt-3.5-turbo")
-;; 0 means not to set it.Default appears to be 'inf' at API reference, but error message says 4097 for gpt-3.5-turbo; plus, the limit includes the message takens, too.
-(setq openai-max-tokens 0)
-(setq openai-request-timeout 120)
-
-(defun read-api-key (filename)
-  "Read OpenAI API key from a file."
-  (with-temp-buffer
-    (insert-file-contents filename)
-    (buffer-string)))
-
-;; The request package fails to handle responses if this isn't defined:
-(if (not (boundp 'auto-revert-notify-watch-descriptor-hash-list))
-    (setq auto-revert-notify-watch-descriptor-hash-list '()))
-
-(defun openai-gpt-chat-request (prompt)
-  "Send a request to the OpenAI API with given MESSAGES. Return the response as a string."
-  (let* ((api-key (read-api-key openai-api-key-file))
-         (url openai-api-chat-url)
-         (headers `(("Content-Type" . "application/json")
-                    ("Authorization" . ,(concat "Bearer " (string-trim api-key)))))
-         (messages `((("role" . "system") ("content" . "Helpful and terse assistant."))
-                     (("role" . "user") ("content" . ,prompt))))
-         (base-alist `(("messages" . ,messages)
-                       ("model" . ,openai-model)))
-         (full-alist (if (> openai-max-tokens 0)
-                         (append base-list `("max_tokens" . ,openai-max-tokens))
-                       base-alist))
-         (data (json-encode full-alist))
-         (result nil))
-    (message (format "Data = '%s'\n" data))
-    (request
-     url
-     :type "POST"
-     :timeout openai-request-timeout
-     :headers headers
-     :data data
-     :parser 'json-read
-     :sync t
-     :complete (cl-function
-                (lambda (&key data &allow-other-keys)
-                  (message (format "Result in cl-function: %s" data))
-                  (setq result (format "%s\n"
-                                  (assoc-default 'content
-                                    (assoc-default 'message
-                                      (elt (assoc-default 'choices data) 0))))))))
-    result))
-
-(defun openai-gpt-chat-buffer (prompt)
-  "Send a request to the OpenAI API with a given PROMPT and insert the response into a buffer."
-  (interactive "sEnter the prompt: ")
-  (let ((response (openai-gpt-chat-request prompt)))
-    (with-current-buffer (get-buffer-create "*chat*")
-      (goto-char (point-max))
-      (insert "\nUser\n")
-      (insert prompt)
-      (insert "\nChatGPT\n")
-      (insert response))))
-
-;(global-set-key (kbd "C-c C") 'openai-gpt-chat-buffer)
-(global-set-key "\C-cC" 'openai-gpt-chat-buffer)
 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
