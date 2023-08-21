@@ -2,6 +2,9 @@
 ; ChatGPT interface. Use M-x package-install to install `request` package.
 (require 'request)
 
+(setq max-specpdl-size 65536)   ;; Default is "only" 1600.
+(setq max-lisp-eval-depth 4096) ;; Default is 500. I should look into why I need this.
+
 (setq openai-api-key-file "~/.openai-api-key.txt")
 (setq openai-api-chat-url "https://api.openai.com/v1/chat/completions")
 (setq openai-chatgpt-model "gpt-3.5-turbo")

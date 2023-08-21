@@ -3,6 +3,10 @@
 
 (setq inhibit-splash-screen t)  ;; OMG that thing is annoying.
 
+(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+
 (setq font-lock-maximum-decoration t)
 ;(global-font-lock-mode 1 t)
 (global-font-lock-mode t)
@@ -1234,9 +1238,7 @@
  '(indent-tabs-mode nil)     ; In Unix I never want to use tabs. Use t (not nil) for tabs.
  '(fill-column 77)
  '(hide-ifdef-read-only 1)
- '(python-indent 4)
- '(package-archives (quote (("gnu" . "http://elpa.gnu.org/packages/")
-                            ("melpa-stable" . "http://stable.melpa.org/packages/")))))
+ '(python-indent 4))
 
 (prefer-coding-system 'utf-8)
 
