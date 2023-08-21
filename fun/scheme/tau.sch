@@ -33,3 +33,7 @@
 ; until the first N digits do not change.
 ;; (define (tau-rational-digits base digits)
 ;;   )
+;;
+;; To write the results to a file:
+;; (call-with-output-file "tau-00010000.txt"
+;;   (lambda (port) (display (tau-to-digits-string 16 65536) port)))
