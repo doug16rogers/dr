@@ -53,6 +53,7 @@ source "$DR_OS_DIR/bash-path.sh"
 source "$DR_OS_DIR/bash-functions.sh"
 source "$DR_OS_DIR/bash-aliases.sh"
 source "$DR_OS_DIR/bash-prompt.sh"
+source "$DR_OS_DIR/bash-tab-completion.sh"
 
 # Load the OS-specific bashrc.
 
