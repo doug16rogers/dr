@@ -671,13 +671,13 @@ respar() {
         echo "usage: respar <R1> ... [RN]"
         exit 1
     else
-        r=$1
+        r=$[$1 * 100]
         shift
         while [[ $# -gt 0 ]]; do
-            s=$1
+            s=$[$1 * 100]
             shift
             r=$[ r * s / (r + s) ]
         done
-        echo $r
+        echo $[(r + 50) / 100]
     fi
 }   # respar()
