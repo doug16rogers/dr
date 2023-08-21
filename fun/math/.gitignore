@@ -5,7 +5,6 @@ mksieve
 sizeof
 all-sieve-primes
 all-sieve-primes.txt
-sieve-1K.c
-sieve-4G.c
+sieve-*.c
 test.out
 perm

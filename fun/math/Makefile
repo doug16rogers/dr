@@ -3,7 +3,7 @@
 
 TARGETS = isprime mksieve all-sieve-primes factor perm
 
-CC = clang
+CC = gcc
 CFLAGS = -Wall -Werror -g -I/opt/local/include
 LDFLAGS = -L/opt/local/lib -lgmp
 
@@ -18,7 +18,7 @@ isprime: isprime.o
 mksieve: mksieve.o
 	$(CC) -o $@ $(CFLAGS) $^ $(LDFLAGS)
 
-factor: factor.o sieve.o sieve-4G.o
+factor: factor.o sieve.o sieve-1K.o
 	$(CC) -o $@ $(CFLAGS) $^ $(LDFLAGS)
 
 .PHONY: test-mksieve
@@ -26,11 +26,14 @@ test-mksieve: mksieve all-sieve-primes Makefile
 	./all-sieve-primes > all-sieve-primes.txt
 	diff primes-to-1024.txt all-sieve-primes.txt
 
-all-sieve-primes: all-sieve-primes.c sieve-1K.c
+all-sieve-primes: all-sieve-primes.c sieve-1G.c
 	$(CC) -o all-sieve-primes $(CFLAGS) all-sieve-primes.c sieve.c sieve-1K.c
 
 sieve-1K.c: mksieve
 	./mksieve 1024 > sieve-1K.c
+
+sieve-1G.c: mksieve
+	./mksieve 1048576 > sieve-1G.c
 
 sieve-4G.c: mksieve
 	@echo '* Building 64-bit sieve. This might take a minute or so...'
@@ -59,4 +62,4 @@ install:
 
 .PHONY: clean
 clean:
-	rm -f *.o *~ $(TARGETS) all-sieve-primes sieve-4G.c sieve-1K.c
+	rm -f *.o *~ $(TARGETS) all-sieve-primes sieve-*.c
