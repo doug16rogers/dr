@@ -18,6 +18,9 @@ alias shredusb="shred -n0 -z --remove "
 # Open any file using its default application.
 alias launch="xdg-open 2> /dev/null "
 
+# cd to the directory in ~/.cur - current project I'm working on.
+alias cdcur='cd $(cat ~/.cur)'
+
 # Make ffmpeg/ffprobe easier to read.
 alias ffm='ffmpeg -hide_banner -loglevel warning -stats'
 alias ffM='ffmpeg -hide_banner'
@@ -45,6 +48,9 @@ alias vlcp='vlc --play-and-exit >/dev/null 2>&1 '
 
 if [ $DR_OS_NAME == "darwin" ]; then
     alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
+else
+    alias pbcopy='xclip -selection clipboard -i'
+    alias pbpaste='xclip -selection clipboard -o'
 fi
 
 alias vlcc='vlc >/dev/null 2>&1'
