@@ -58,6 +58,10 @@ fi
 while [ $# -gt 0 ]; do
     site="$1"
     shift
+    if [[ "${site:0:8}" = "https://" ]]; then
+        site="${site:8:${#site}}"
+    fi
+    site="$(echo $site | grep -o '^[^/]*')"
     certfile="${site}-${TIMESTAMP}.crt"
     last_certfile="$certfile"
     run "echo \
