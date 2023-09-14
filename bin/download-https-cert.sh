@@ -17,7 +17,7 @@ usage() {
     echo "    named '<domain-name>-YYYYMMDD-HHMMSS.crt'."
     echo ""
     echo "    -h          Print this usage information."
-    echo "    -v          Print verbose information."
+    echo "    -v          Print verbose information (dump certificate text)."
     echo ""
     exit $1
 }
