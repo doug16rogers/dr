@@ -10,7 +10,7 @@ if [ $# -lt 2 ]; then
         echo "heh. funny. a version."
         exit 0
     else
-        echo "Usage: bf.sh <output-program> <branfuck-source-file>..."
+        echo "Usage: bf.sh <output-binary-name> <branfuck-source-file>..."
         exit 1
     fi
 fi
@@ -54,4 +54,5 @@ cat <<EOF >> "$c_file"
 }
 EOF
 
+echo "gcc -o '$exe' '$c_file'"
 gcc -o "$exe" "$c_file"
