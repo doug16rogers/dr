@@ -66,7 +66,10 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Receive UDP data from a remote client.')
+    parser = argparse.ArgumentParser(
+        description='''
+        Receive UDP data from a remote client.
+        ''')
     parser.add_argument('port', type=int, help='Local port to listen on.')
     parser.add_argument('ip', nargs='?', help='Local IP address to bind to.'
                         f' [{DEFAULT_UDP_IP}]',

@@ -89,7 +89,10 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Send UDP data to a remote IP address.')
+    parser = argparse.ArgumentParser(
+        description='''
+        Send UDP data to a remote IP address.
+        ''')
     parser.add_argument('ip', help='Remote host or IP address')
     parser.add_argument('port', type=int, help='Remote port to send to')
     parser.add_argument('content', nargs='*',
