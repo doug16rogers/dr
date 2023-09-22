@@ -36,7 +36,7 @@ cleanup() {
 }
 
 fail_with() {
-    echo "$SCRIPT: fail"
+    echo "**** fail ****"
     exit $1
 }
 
@@ -108,9 +108,8 @@ while [[ $# -gt 0 ]]; do
     shift
 
     if [[ ! "$dest" == *":"* ]]; then
-        echo "$SCRIPT: no ':' in destination '$dest' (not valid scp remote destination)"
-        cleanup
-        fail_with 5
+        echo "$SCRIPT: no ':' in destination '$dest' (not valid scp remote destination); appending one."
+        dest="$dest:"
     fi
 
     echo "scp $enc_file $dest"
