@@ -346,20 +346,22 @@ int ProbablyPrime(const mpz_t n) {
 /* ------------------------------------------------------------------------- */
 void handle_ui(unsigned long un) {
     uint64_t uq = 0;
+    unsigned long factor_count = 0;
     PrintVerbose(1, "  handling %lu as uint64_t", un);
     switch (un) {
     case 0:
     case 1:
     case 2:
     case 3:
-        printf("%lu ", (unsigned long) un);
+        printf("%lu", (unsigned long) un);
         return;
     default:
         break;
     }
     while (un != 1) {
+        factor_count++;
         uq = sieve_least_prime_factor(un);
-        printf("%lu ", (unsigned long) uq);
+        printf("%s%lu", (factor_count == 1) ? "" : " ", (unsigned long) uq);
         un /= uq;
         if (un != 1) {
             PrintVerbose(1, "  factor %lu; now n=%lu", uq, un);
@@ -373,6 +375,7 @@ void handle_number(const char* s) {
     mpz_t q;
     mpz_t r;
     unsigned long d = 0;
+    unsigned long factor_count = 0;
     assert(sizeof(unsigned long) >= 8);
 
     mpz_init(n);
@@ -402,6 +405,7 @@ void handle_number(const char* s) {
     /* If the value is a uint64_t, then just use sieve.h services. */
     /* Try 2 first. */
     for (d = 2; (d < 0x100000000ull) && (mpz_cmp_ui(n, d * d) >= 0); d += 2) {
+        factor_count++;
         if (mpz_cmp_ui(n, kMaxSieveNumber) <= 0) {
             handle_ui(mpz_get_ui(n));
             goto done;
@@ -415,7 +419,7 @@ void handle_number(const char* s) {
                 fprintf(stderr, ", ur=%lu\n", ur);
             }
             if (ur == 0) {
-                printf("%lu ", d);
+                printf("%s%lu", (factor_count == 1) ? "" : " ", d);
                 if (mpz_cmp_ui(q, 1) == 0) {
                     break;
                 }

@@ -54,7 +54,7 @@ uint64_t sieve_least_prime_factor(uint64_t n) {
     if ((n < kSieveTableMax) && sieve_is_prime(n)) {
         return n;
     }
-    for (uint64_t p = 3; (p < kSieveTableMax) && ((p * p) < n); p += 2) {
+    for (uint64_t p = 3; (p < kSieveTableMax) && ((p * p) <= n); p += 2) {
         if (!sieve_is_prime(p)) {
             continue;
         }
