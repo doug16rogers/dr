@@ -17,3 +17,7 @@ for dir in \
         export PATH="$dir:$PATH"
     fi
 done
+
+if [[ -e "$HOME/.cargo/env" ]]; then
+    source "$HOME/.cargo/env"
+fi
