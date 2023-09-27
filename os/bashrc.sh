@@ -49,17 +49,32 @@ if [ ${DR_OS_NAME:0:5} == "mingw" ]; then
     export DR_OS_NAME="mingw"
 fi
 
-source "$DR_OS_DIR/bash-path.sh"
-source "$DR_OS_DIR/bash-functions.sh"
-source "$DR_OS_DIR/bash-aliases.sh"
-source "$DR_OS_DIR/bash-prompt.sh"
-source "$DR_OS_DIR/bash-tab-completion.sh"
+for subbash in \
+        path \
+        functions \
+        aliases \
+        prompt \
+        fzf \
+        pyenv \
+        tab-completion;
+do
+    subfile="$DR_OS_DIR/bash-${subbash}.sh"
+    if [[ -e "$subfile" ]]; then
+        source "$subfile"
+    fi
+done
+
+# Other specific packages:
+
+if [[ -e "$HOME/.cargo/env" ]]; then
+    source "$HOME/.cargo/env"
+fi
 
 # Load the OS-specific bashrc.
 
 os_bashrc="$DR_OS_DIR/$DR_OS_NAME/bashrc.sh"
 
-if [ -x "$os_bashrc" ]; then
+if [[ -x "$os_bashrc" ]]; then
     source "$os_bashrc"
 fi
 
@@ -67,12 +82,12 @@ fi
 
 site_file="$HOME/.dr/site"
 
-if [ -f "$site_file" ]; then
+if [[ -f "$site_file" ]]; then
     export DR_SITE="`cat \"$site_file\"`"
 fi
 
 site_bashrc="$HOME/dr/os/bashrc-${DR_SITE}.sh"
 
-if [ -f "$site_bashrc" ]; then
+if [[ -f "$site_bashrc" ]]; then
     source "$site_bashrc"
 fi

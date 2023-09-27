@@ -7,6 +7,13 @@
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 
+; Run this once on a new system.
+(defun dr-install-packages ()
+  "Install packages from MELPA, etc."
+  (interactive)
+  (package-install 'fzf)                ; https://github.com/bling/fzf.el
+  (package-install 'request))
+
 (setq font-lock-maximum-decoration t)
 ;(global-font-lock-mode 1 t)
 (global-font-lock-mode t)
