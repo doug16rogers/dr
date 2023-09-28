@@ -25,6 +25,8 @@ const char* g_program = kProgram;
 /**
  * Base to use for conversion. 0 means that the value can contain 0x/0X
  * (hexadecimal), 0b (binary) or leading 0 (octal).
+ *
+ * `g_base` is an `int` to match its usage in GMP.
  */
 #define kDefaultBase 0
 int g_base = kDefaultBase;
@@ -43,9 +45,9 @@ int g_base = kDefaultBase;
 int g_verbose = 0;
 
 /**
- * Maximum value supported by sieve package - uint64_t.
+ * Maximum value supported by sieve package.
  */
-unsigned long kMaxSieveNumber = 0xFFFFFFFFFFFFFFFFull;
+unsigned long g_max_sieve_number = 0xFFFFFFFFFFFFFFFFull;
 
 /* ------------------------------------------------------------------------- */
 /**
@@ -345,9 +347,9 @@ int ProbablyPrime(const mpz_t n) {
 
 /* ------------------------------------------------------------------------- */
 void handle_ui(unsigned long un) {
-    uint64_t uq = 0;
+    unsigned long uq = 0;
     unsigned long factor_count = 0;
-    PrintVerbose(1, "  handling %lu as uint64_t", un);
+    PrintVerbose(1, "  handling %lu as unsigned long", un);
     switch (un) {
     case 0:
     case 1:
@@ -382,7 +384,7 @@ void handle_number(const char* s) {
     mpz_init(q);
     mpz_init(r);
     if (0 != mpz_set_str(n, s, g_base)) {
-        PrintUsageError("invalid integer number \"%s\".", s);
+        PrintUsageError("invalid integer number \"%s\" in base %d.", s, g_base);
     }
     if (g_verbose >= 1) {
         fprintf(stderr, "loaded decimal n=");
@@ -397,16 +399,16 @@ void handle_number(const char* s) {
         mpz_clear(r);
     }
 
-    if (mpz_cmp_ui(n, kMaxSieveNumber) <= 0) {
+    if (mpz_cmp_ui(n, g_max_sieve_number) <= 0) {
         handle_ui(mpz_get_ui(n));
         goto done;
     }
     
-    /* If the value is a uint64_t, then just use sieve.h services. */
+    /* If the value is an unsigned long, then just use sieve.h services. */
     /* Try 2 first. */
     for (d = 2; (d < 0x100000000ull) && (mpz_cmp_ui(n, d * d) >= 0); d += 2) {
         factor_count++;
-        if (mpz_cmp_ui(n, kMaxSieveNumber) <= 0) {
+        if (mpz_cmp_ui(n, g_max_sieve_number) <= 0) {
             handle_ui(mpz_get_ui(n));
             goto done;
         }
@@ -463,6 +465,11 @@ done:
 int main(int argc, char* argv[]) {
     g_program = NamePartOfPath(argv[0]);
     argc = ParseOptions(argc, argv);  /* Remove options; leave program name and arguments. */
+    g_max_sieve_number = (kSieveTableMax * kSieveTableMax) - 1;
+    if (g_verbose) {
+        fprintf(stderr, "factor: kSieveTableMax=%lu (0x%08lx), g_max_sieve_number=%lu (0x%016lx)\n",
+                kSieveTableMax, kSieveTableMax, g_max_sieve_number, g_max_sieve_number);
+    }
     if (argc < 2) {
         for (;;) {
             char* line = NULL;

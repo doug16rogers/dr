@@ -8,11 +8,20 @@
 
 #include "sieve.h"
 
-int main(void) {
-    uint64_t n;
-    for (n = 2; n < kSieveTableMax; n++) {
+int main(int argc, char **argv) {
+    uint64_t max = 0;
+    uint64_t n = 0;
+    if ((argc != 2) || (sscanf(argv[1], "%lu", &max) != 1)) {
+        fprintf(stderr, "Usage: all-sieve-primes <up-to-max>\n");
+        return 1;
+    }
+    if (max > kSieveTableMax) {
+        fprintf(stderr, "all-sieve-primes: max value %lu > %lu kSieveTableMax\n", max, kSieveTableMax);
+        return 1;
+    }
+    for (n = 2; n < max; n++) {
         if (sieve_is_prime(n)) {
-            printf("%llu\n", (unsigned long long) n);
+            printf("%lu\n", n);
         }
     }
     return 0;
