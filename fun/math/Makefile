@@ -1,7 +1,7 @@
 # Copyright (c) 2016-2019 Doug Rogers under the Zero Clause BSD License.
 # You are free to do whatever you want with this software. See LICENSE.txt.
 
-TARGETS = isprime mksieve all-sieve-primes factor perm
+TARGETS = choose factor isprime mksieve all-sieve-primes perm
 
 # This will allow process substitution like `diff <(prog arg1 arg2) <(echo expected)`.
 SHELL = /bin/bash
@@ -15,7 +15,28 @@ SIEVE_SIZE = 16777216
 %.o: %.c
 	$(CC) -o $@ $(CFLAGS) -c $<
 
-all: $(TARGETS) test-factor test-isprime test-mksieve test-perm
+all: $(TARGETS) test-choose test-factor test-isprime test-mksieve test-perm
+
+choose: choose.c
+	$(CC) -o $@ $(CFLAGS) $^
+
+.PHONY: test-choose
+test-choose: choose Makefile
+	diff <(./choose 0 0) <(echo 1)
+	diff <(./choose 1 0) <(echo 1)
+	diff <(./choose 1 1) <(echo 1)
+	diff <(./choose 2 0) <(echo 1)
+	diff <(./choose 2 1) <(echo 2)
+	diff <(./choose 2 2) <(echo 1)
+	diff <(./choose 6 0) <(echo 1)
+	diff <(./choose 6 1) <(echo 6)
+	diff <(./choose 6 2) <(echo 15)
+	diff <(./choose 6 3) <(echo 20)
+	diff <(./choose 6 4) <(echo 15)
+	diff <(./choose 6 5) <(echo 6)
+	diff <(./choose 6 6) <(echo 1)
+	diff <(./choose 52 5) <(echo 2598960)
+	diff <(./choose 52 13) <(echo 635013559600)
 
 factor: factor.o sieve.o sieve-$(SIEVE_SIZE).o
 	$(CC) -o $@ $(CFLAGS) $^ $(LDFLAGS)
@@ -66,7 +87,7 @@ test-mksieve: mksieve all-sieve-primes Makefile
 	diff primes-to-1024.txt all-sieve-primes.txt
 
 perm: perm.c
-	$(CC) -o perm $(CFLAGS) $^
+	$(CC) -o $@ $(CFLAGS) $^
 
 .PHONY: test-perm
 test-perm: perm Makefile
@@ -74,8 +95,8 @@ test-perm: perm Makefile
 	./perm 012345 | diff - perm-012345.txt
 
 .PHONY: install
-install: isprime factor perm
-	cp -f isprime factor perm $(DR_BIN)
+install: choose factor isprime perm
+	cp -f $^ $(DR_BIN)
 
 .PHONY: clean
 clean:

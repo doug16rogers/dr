@@ -8,3 +8,4 @@ all-sieve-primes.txt
 sieve-*.c
 test.out
 perm
+choose
