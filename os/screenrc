@@ -10,3 +10,5 @@ defscrollback 10000
 # bufferfile /home/drogers/tmp/screen-clipboard
 # bind b eval "writebuf" "exec sh -c 'pbcopy < /home/drogers/tmp/screen-clipboard'"
 
+# `other` binding matches tmux's `last-window` (goto previous current window):
+bind l other
