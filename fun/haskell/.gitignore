@@ -1,0 +1,8 @@
+# Add local ignores...
+*.hi
+
+# Targets
+ack
+ack-1-1
+testread
+hello
