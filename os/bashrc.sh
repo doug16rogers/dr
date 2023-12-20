@@ -96,8 +96,8 @@ ssh_agent_file="$HOME/ssh-agent.out"
 
 if [[ -e "$ssh_agent_file" ]]; then
     # Seems more secure than `source "$ssh_agent_file"`:
-    ssh_auth_sock=$(cat "$ssh_agent_file" | grep '^SSH_AUTH_SOCK' | sed -e 's/SSH_AUTH_SOCK=\([^;]*\);.*$/\1/')
-    ssh_agent_pid=$(cat "$ssh_agent_file" | grep '^SSH_AGENT_PID' | sed -e 's/SSH_AGENT_PID=\([^;]*\);.*$/\1/')
+    ssh_auth_sock=$(cat "$ssh_agent_file" | grep '^SSH_AUTH_SOCK' | sed -e 's/SSH_AUTH_SOCK=\([-+_./0-9a-zA-Z]*\);.*$/\1/')
+    ssh_agent_pid=$(cat "$ssh_agent_file" | grep '^SSH_AGENT_PID' | sed -e 's/SSH_AGENT_PID=\([0-9]*\);.*$/\1/')
     export SSH_AUTH_SOCK="$ssh_auth_sock"
     export SSH_AGENT_PID="$ssh_agent_pid"
 fi
