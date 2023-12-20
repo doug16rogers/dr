@@ -25,6 +25,30 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
+def hex_dump(bs, writer=sys.stdout):
+    """
+    Write a hex dump with indexes.
+    """
+    BYTES_PER_LINE = 16
+    ascii = ''
+    for i in range(len(bs)):
+        if i % BYTES_PER_LINE == 0:
+            ascii = ''
+            writer.write(f'{i:04x}:')
+        writer.write(f' {int(bs[i]):02x}')
+        if bs[i] < 0x20 or bs[i] > 0x7e:
+            ascii += ' '
+        else:
+            ascii += chr(bs[i])
+        if i % BYTES_PER_LINE == (BYTES_PER_LINE - 1):
+            writer.write(f' |{ascii}|\n')
+    if len(bs) % BYTES_PER_LINE != 0:
+        for i in range((16 - (len(bs) % BYTES_PER_LINE)) % BYTES_PER_LINE):
+            writer.write(' --')
+            ascii += ' '
+        writer.write(f' |{ascii}|\n')
+
+
 def main(args):
     """
     Handle command line arguments and receive the UDP datagrams.
@@ -56,11 +80,14 @@ def main(args):
         while (args.count == 0) or (n < args.count):
             n += 1
             message, addr = sock.recvfrom(65516)
-            byte_count = len(message)
-            if not args.raw:
-                message = message.decode('utf-8')
-            logger.debug(f'Received {byte_count} bytes from {addr}.')
-            sys.stdout.write(message)
+            logger.debug(f'Received {len(message)} bytes from {addr}.')
+            if args.hex:
+                hex_dump(message)
+            elif args.raw:
+                sys.stdout.buffer.write(message)
+            else:
+                sys.stdout.write(message.decode('utf-8'))
+            sys.stdout.flush()
     except KeyboardInterrupt:
         logger.debug('Ctrl+C pressed. Exiting...')
 
