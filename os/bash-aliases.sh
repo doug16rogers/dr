@@ -43,6 +43,7 @@ alias gbd='git branch -d '
 alias grc='git rebase --continue '
 alias gmt='git mergetool -y '
 alias mv='mv -i '
+alias startsshagent='eval $(ssh-agent | tee "$HOME/ssh-agent.out")'
 alias vlcc='vlc >/dev/null 2>&1 '
 alias vlcp='vlc --play-and-exit >/dev/null 2>&1 '
 
