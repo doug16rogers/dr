@@ -1133,6 +1133,7 @@
 (global-set-key "\C-cw"     'write-region)
 (global-set-key "\C-c\C-c"  'comment-region)
 (global-set-key "\C-c\C-i"  'dr-set-tab-width-for-buffer)
+(global-set-key "\C-c\C-m"  'menu-bar-open)
 (global-set-key "\C-c\C-r"  'dr-revert-buffer-now)
 ; With C-x:
 (global-set-key "\C-xk"     'kill-this-buffer)      ; 'kill-buffer prompts for buffer to kill.
