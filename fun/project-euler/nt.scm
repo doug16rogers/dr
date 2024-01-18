@@ -11,12 +11,12 @@
 
 (define (fib n) (if (= n 0) 0 (fibnext n 1 1 0)))
 
-(define (fibnext_by_value MAX n fn1 fn2)
-  (if (>= fn1 MAX) n
-      (fibnext_by_value MAX (+ n 1) (+ fn1 fn2) fn1)))
+(define (fib-with-value-at-least-it min-value n fn1 fn2)
+  (if (>= fn1 min-value) n
+      (fib-with-value-at-least-it min-value (+ n 1) (+ fn1 fn2) fn1)))
 
-(define (fib_value_more_than MAX)
-  (fibnext_by_value MAX 1 1 0))
+(define (fib-with-value-at-least min-value)
+  (fib-with-value-at-least-it min-value 1 1 0))
 
 
 
