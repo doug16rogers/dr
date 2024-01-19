@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
         prev_c = c;
         c *= n;
         if (c < prev_c) {
-            fprintf(stderr, "choose: uint64 overflow (c=%" PRIu64 ", i=%" PRIu64 ").\n", prev_c, i);
+            fprintf(stderr, "choose: uint64 overflow (n=%" PRIu64 ", k=%" PRIu64
+                    ", prev_c=%" PRIu64 ", i=%" PRIu64 ")", n, k, prev_c, i);
             return 3;
         }
         c /= i;

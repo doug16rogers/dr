@@ -21,10 +21,22 @@ alias launch="xdg-open 2> /dev/null "
 # cd to the directory in ~/.cur - current project I'm working on.
 alias cdcur='cd $(cat ~/.cur)'
 
+# Get rid of the annoying \$ effect when running tmux.
+alias completedir='complete -r; shopt -s direxpand'
+
 # Make ffmpeg/ffprobe easier to read.
 alias ffm='ffmpeg -hide_banner -loglevel warning -stats'
 alias ffM='ffmpeg -hide_banner'
 alias ffi="ffprobe -hide_banner -show_entries 'stream_tags : format_tags : program_stream_tags' "
+
+ffa() {
+    if [ $# -ne 2 ]; then
+        echo "Usage: ffa <infile> <outfile>"
+        exit 1
+    fi
+    ffm -i "$1" -c copy "$2"
+    append-vid-specs.py "$2"
+}
 
 # A lot of git aliases...
 alias g1='git log --format="%ci %Cgreen%h%Creset %Cred(%cn)%Creset %s" --date=local --abbrev-commit'

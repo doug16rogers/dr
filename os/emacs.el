@@ -3,6 +3,7 @@
 
 (setq inhibit-splash-screen t)  ;; OMG that thing is annoying.
 
+(package-initialize)
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
@@ -11,6 +12,7 @@
 (defun dr-install-packages ()
   "Install packages from MELPA, etc."
   (interactive)
+  (package-refresh-contents)
   (package-install 'fzf)                ; https://github.com/bling/fzf.el
   (package-install 'request))
 
