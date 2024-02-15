@@ -147,10 +147,6 @@ typedef struct _ArchEntry {
 const ArchEntry kArchList[] = {
     { ARCH_ALL, 0, "all", "Try all architectures." },
 
-    { CS_ARCH_X86,   CS_MODE_64,     "x86-64",  "Intel x86 64-bit" },
-    { CS_ARCH_X86,   CS_MODE_32,     "x86-32",  "Intel x86 32-bit" },
-    { CS_ARCH_X86,   CS_MODE_16,     "x86-16",  "Intel x86 16-bit" },
-
     { CS_ARCH_ARM64, CS_MODE_ARM,    "arm-64",      "ARM64" },
     { CS_ARCH_ARM,   CS_MODE_ARM,    "arm-32",      "ARM32" },
     { CS_ARCH_ARM,   CS_MODE_THUMB,  "arm-thumb",   "ARM Thumb and Thumb-2" },
@@ -162,7 +158,12 @@ const ArchEntry kArchList[] = {
     { CS_ARCH_MIPS,  CS_MODE_MIPS3,  "mips-iii",    "MIPS III" },
     { CS_ARCH_MIPS,  CS_MODE_MICRO,  "mips-micro",  "MicroMIPS" },
 
+    { CS_ARCH_X86,   CS_MODE_64,     "x86-64",  "Intel x86 64-bit" },
+    { CS_ARCH_X86,   CS_MODE_32,     "x86-32",  "Intel x86 32-bit" },
+    { CS_ARCH_X86,   CS_MODE_16,     "x86-16",  "Intel x86 16-bit" },
+
     { CS_ARCH_PPC,   CS_MODE_32,   "ppc",     "PowerPC 32-bit" },
+    { CS_ARCH_PPC,   CS_MODE_64,   "ppc-64",  "PowerPC 64-bit" },
 
     { CS_ARCH_SPARC, CS_MODE_32,    "sparc-32",   "SPARC 32-bit" },
     { CS_ARCH_SPARC, CS_MODE_V9,    "sparc-v9",   "SPARC V9" },
@@ -170,6 +171,28 @@ const ArchEntry kArchList[] = {
     { CS_ARCH_SYSZ,  0,  "sysz",    "SystemZ" },
 
     { CS_ARCH_XCORE, 0,  "xcore",   "X-Core" },
+
+    { CS_ARCH_M68K,  CS_MODE_M68K_000, "m68000", "Motorola 68000" },
+    { CS_ARCH_M68K,  CS_MODE_M68K_010, "m68010", "Motorola 68010" },
+    { CS_ARCH_M68K,  CS_MODE_M68K_020, "m68020", "Motorola 68020" },
+    { CS_ARCH_M68K,  CS_MODE_M68K_030, "m68030", "Motorola 68030" },
+    { CS_ARCH_M68K,  CS_MODE_M68K_040, "m68040", "Motorola 68040" },
+    { CS_ARCH_M68K,  CS_MODE_M68K_060, "m68060", "Motorola 68060" },
+
+    { CS_ARCH_TMS320C64X, 0, "tms320c64", "TMS32064X" },
+
+    { CS_ARCH_M680X, CS_MODE_M680X_6301, "m680x-6301", "Hitachi 6301, 6303 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_6309, "m680x-6309", "Hitachi 6309 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_6800, "m680x-6800", "Motorola 6800, 6802 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_6801, "m680x-6801", "Motorola 6801, 6803 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_6805, "m680x-6805", "Motorola/Freescale 6805 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_6808, "m680x-6808", "Motorola/Freescale/NXP 68HC08 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_6809, "m680x-6809", "Motorola 6309 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_6811, "m680x-6811", "Motorola/Freescale/NXP 68HC11 mode" },
+    { CS_ARCH_M680X, CS_MODE_M680X_CPU12, "m680x-cpu12", "Motorola/Freescale/NXP CPU12 from M68HC12/HCS12" },
+    { CS_ARCH_M680X, CS_MODE_M680X_HCS08, "m680x-hcs08", "Motorola/Freescale/NXP HCS08 mode" },
+
+    { CS_ARCH_EVM,   0, "evm", "Ethereum code" },
 };
 
 /**
@@ -215,8 +238,6 @@ void Usage(FILE* file, int exit_code) {
     for (size_t i = 0; i < kArchListCount; ++i) {
         fprintf(file, "           %-14s %s\n", kArchList[i].name, kArchList[i].description);
     }
-    fprintf(file,
-            "           %-14s %s\n", "all", "Try all defined architectures.");
     fprintf(file,
             "\n"
             "    -[no-]error-no-input        Whether to mark no input as an error. [%s-error-no-input]\n"
@@ -602,7 +623,7 @@ Exit:
  * @return the program's exit code: 0 on success, something else on failure.
  */
 int main(int argc, char* argv[]) {
-#define kMaxBufferBytes 0x00100000
+#define kMaxBufferBytes 0x01000000
     int rval = 0;
     uint8_t* buffer = NULL;
     size_t buffer_bytes = 0;
