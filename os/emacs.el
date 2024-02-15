@@ -28,6 +28,7 @@
 (dr-load "google-c-style.el")
 (dr-load "mandiant-c-style.el")
 (dr-load "rust-mode.el")
+(dr-load "clojure-mode.el")
 (if (not (fboundp 'lua-mode))
     (progn
       (dr-load "lua-mode.el")
