@@ -252,7 +252,7 @@ function fig_usage() {
         -m              Make files: 'Makefile' 'CMakeLists.txt' '*.mk'
         -p              Python source: '*.py'
         -s              Script source: '*.sh' '*.py' '*.lua' '*.sch'
-        -j              Java-ish files: '*.java' '*.js'
+        -j              Java-ish files: '*.java' '*.js' '*.clj'
 
         -G GREP_OPTS    Specify other options to pass to 'grep'.
         -i              Perform case-insensitive search; same as '-g -i'.
@@ -302,7 +302,7 @@ function fig() {
                 FILE_GLOBS=(${FILE_GLOBS[@]} "'*.sh'" "'*.py'" "'*.lua'" "'*.sch'")
                 ;;
             j)
-                FILE_GLOBS=(${FILE_GLOBS[@]} "'*.java'" "'*.js'")
+                FILE_GLOBS=(${FILE_GLOBS[@]} "'*.java'" "'*.js'" "'*.clj'")
                 ;;
             G)
                 GREP_OPTS=(${GREP_OPTS[@]} "'$OPTARG'")

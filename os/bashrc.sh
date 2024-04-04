@@ -101,3 +101,13 @@ if [[ -e "$ssh_agent_file" ]]; then
     export SSH_AUTH_SOCK="$ssh_auth_sock"
     export SSH_AGENT_PID="$ssh_agent_pid"
 fi
+
+brew_file="/home/linuxbrew/.linuxbrew/bin/brew"
+
+if [[ -x "$brew_file" ]]; then
+    eval "$($brew_file shellenv)"
+fi
+
+if [[ -n "$(which direnv)" ]]; then
+    eval "$(direnv hook bash)"
+fi

@@ -9,9 +9,11 @@ fi
 export PATH="$PATH:$HOME/opt/bin"
 
 for dir in \
-   /opt/local/bin \
-   /opt/android-studio/bin \
-   "$DR_OS_DIR/$DR_OS_NAME/bin" \
+    /opt/local/bin \
+    /opt/jdk/bin \
+    /opt/gradle/bin \
+    /opt/android-studio/bin \
+    "$DR_OS_DIR/$DR_OS_NAME/bin" \
     ; do
     if [ -d "$dir" ]; then
         export PATH="$dir:$PATH"

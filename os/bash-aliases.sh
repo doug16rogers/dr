@@ -51,6 +51,7 @@ alias gdno='gd --name-only '         # Only the files change over the range of c
 alias gi="git branch | grep '^[*]'; git describe; git remote -v | grep -v push; g1 -3 | cat"
 alias gs='git status '
 alias gf='git show --pretty="format:" --name-only '   # Show files for a commit.
+alias gt='git ls-tree -r --name-only "$(git branch --show-current)"'   # Show files being tracked.
 alias gbd='git branch -d '
 alias grc='git rebase --continue '
 alias gmt='git mergetool -y '
