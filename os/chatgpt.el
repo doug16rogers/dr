@@ -7,7 +7,8 @@
 
 (setq openai-api-key-file "~/.openai-api-key.txt")
 (setq openai-api-chat-url "https://api.openai.com/v1/chat/completions")
-(setq openai-chatgpt-model "gpt-3.5-turbo")
+;; Models at: https://platform.openai.com/docs/models/chatgpt
+(setq openai-chatgpt-model "gpt-4-turbo-preview")   ;; "gpt-3.5-turbo"
 (setq chatbot-buffer-alist '())
 (setq chatbot-user-name "#==> User")
 (setq chatbot-bot-name  "#--> ChatGPT")
