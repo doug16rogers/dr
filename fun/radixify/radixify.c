@@ -62,6 +62,16 @@ const char* g_output_digits = NULL;
 int g_output_radix = 0;
 
 /**
+ * Default setting for emitting a newline after numbers.
+ */
+#define kDefaultNewline 1
+
+/**
+ * Whether to add a newline after numbers.
+ */
+int g_newline = kDefaultNewline;
+
+/**
  * Whether to check the case of input characters for matches against letters
  * in g_input_digits. This will be set automatically.
  */
@@ -191,6 +201,9 @@ void Usage(FILE* file, int exit_code) {
             "    -b:nary:-size=<num>         Number of bytes to read at a time (0=text) [%d].\n",
             INPUT_CHUNK_SIZE_DEFAULT);
     fprintf(file,
+            "    -[no-]n:ewline:s            Print a newline after each nnumber. [%s-newline]\n"
+            , kDefaultNewline ? "" : "-no");
+    fprintf(file,
             "    -[no-]v:erbose              Print verbose (debug) messages. [%s-verbose]\n"
             , kDefaultVerbose ? "" : "-no");
     exit(exit_code);
@@ -269,7 +282,9 @@ void HandleOutputNumber(mpz_t number) {
     }
     mpz_clear(n);
     fwrite(str_data(str), 1, str_len(str), stdout);
-    fputc('\n', stdout);
+    if (g_newline) {
+        fputc('\n', stdout);
+    }
     str_delete(str);
 }   /* HandleOutputNumber() */
 
@@ -561,6 +576,7 @@ int ParseOptions(int argc, char* argv[]) {
         } else if (IsOption(arg, NULL, "h:elp")) {
             Usage(stdout, 0);
         } else if (IsFlagOption(arg, &g_verbose, "v:erbose")) {
+        } else if (IsFlagOption(arg, &g_newline, "n:ewline:s")) {
         } else {
             PrintUsageError("invalid argument \"%s\" (unrecognized option and both digit sets have been seen)", arg);
         }
