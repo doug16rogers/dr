@@ -1,7 +1,7 @@
 # Copyright (c) 2016-2019 Doug Rogers under the Zero Clause BSD License.
 # You are free to do whatever you want with this software. See LICENSE.txt.
 
-TARGETS = wd-match wd-in wd-score wd-shift
+TARGETS = wd-match wd-nodup wd-in wd-score wd-shift
 
 CFLAGS = -Wall -Werror -g
 CC = gcc
@@ -18,6 +18,9 @@ wd-match: wd-match.o Makefile
 	$(CC) $(CLFAGS) -o $@ $< $(LIBS)
 
 wd-in: wd-in.o $(OBJS) Makefile
+	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
+
+wd-nodup: wd-nodup.o $(OBJS) Makefile
 	$(CC) $(CLFAGS) -o $@ $< $(OBJS) $(LIBS)
 
 wd-scores: wd-score.o $(OBJS) Makefile
@@ -43,6 +46,17 @@ wd-in-test: wd-in Makefile
             echo Mind | diff -u - test.out
 	echo "Never\nYou\nMind" | ./$< Mdn. > test.out ; \
             echo Mind | diff -u - test.out
+
+.PHONY: wd-nodup-test
+wd-nodup-test: wd-nodup Makefile
+	echo "sloop\nslop\nplop\nOomph" | ./$< > test.out ; \
+	   echo "slop\nOomph" | diff -u - test.out
+	echo "sloop\nslop\nplop\nOomph" | ./$< -i > test.out ; \
+	   echo "slop" | diff -u - test.out
+	echo "sloop\nslop\nplop\nOomph" | ./$< -r > test.out ; \
+	   echo "sloop\nplop" | diff -u - test.out
+	echo "sloop\nslop\nplop\nOomph" | ./$< -ir > test.out ; \
+	   echo "sloop\nplop\nOomph" | diff -u - test.out
 
 .PHONY: wd-score-test
 wd-score-test: wd-score Makefile
